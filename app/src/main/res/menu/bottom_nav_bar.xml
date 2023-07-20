@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:icon="@drawable/medication_icon_menu"
+        android:title="Прием" />
+    <item
+        android:icon="@drawable/meds_tracking_icon_menu"
+        android:title="Лекарства" />
+    <item
+        android:icon="@drawable/add_icon_menu"
+        android:title="Добавить" />
+    <item
+        android:icon="@drawable/notifications_icon_menu"
+        android:title="Уведомления" />
+    <item
+        android:icon="@drawable/profile_icon_menu"
+        android:title="Профиль" />
+</menu>
