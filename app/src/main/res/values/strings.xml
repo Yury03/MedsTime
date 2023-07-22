@@ -2,4 +2,6 @@
     <string name="app_name">MedsTime</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="default_date">19 июля</string>
+    <string name="default_time">8:00</string>
 </resources>
