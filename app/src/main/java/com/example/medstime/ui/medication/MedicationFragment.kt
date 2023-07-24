@@ -1,17 +1,12 @@
 package com.example.medstime.ui.medication
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
-import com.example.medstime.R
 import com.example.medstime.databinding.FragmentMedicationBinding
-
 
 class MedicationFragment : Fragment() {
 
@@ -21,9 +16,6 @@ class MedicationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMedicationBinding.inflate(inflater, container, false)
-        binding.calendar.visibility = View.VISIBLE
-        val view = binding.root
-        binding.calendar.visibility = View.GONE
         binding.showCalendar.post { setTopMargin(binding.showCalendar.height) }
         binding.showCalendar.setOnClickListener {
             if (binding.calendar.visibility == View.VISIBLE) {
@@ -32,7 +24,7 @@ class MedicationFragment : Fragment() {
                 binding.calendar.visibility = View.VISIBLE
             }
         }
-        return view
+        return binding.root
     }
 
     private fun setTopMargin(topMargin: Int) {
