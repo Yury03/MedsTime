@@ -6,15 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.medstime.databinding.FragmentMedicationBinding
+import com.example.medstime.ui.main_activity.MainViewModel
 
 class MedicationFragment : Fragment() {
 
     private lateinit var binding: FragmentMedicationBinding
+//    private val vm = ViewModelProvider(this)[MainViewModel::class.java]
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+
         binding = FragmentMedicationBinding.inflate(inflater, container, false)
         binding.showCalendar.post { setTopMargin(binding.showCalendar.height) }
         binding.showCalendar.setOnClickListener {
