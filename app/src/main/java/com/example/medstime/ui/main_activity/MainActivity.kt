@@ -33,33 +33,27 @@ class MainActivity : AppCompatActivity() {
         val bottomNavigation: BottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.menu_medication -> {
+                R.id.menu_medication ->
                     navController.navigate(R.id.medicationFragment)
-                    true
-                }
 
-                R.id.menu_medsTracking -> {
+                R.id.menu_medsTracking ->
                     navController.navigate(R.id.medsTrackingFragment)
-                    true
-                }
 
                 R.id.menu_add_item -> {
                     if (!popupMenuIsOpen) {
                         showAddItemAlertDialog(bottomNavigation.height)
                     }
                     popupMenuIsOpen = !popupMenuIsOpen
-                    true
                 }
 
-                R.id.menu_notifications -> {
+                R.id.menu_notifications ->
                     navController.navigate(R.id.notificationsFragment)
-                    true
-                }
 //                R.id.menu_profile -> {
 //                    false
 //                }
-                else -> false
+
             }
+            true
         }
     }
 
@@ -78,11 +72,12 @@ class MainActivity : AppCompatActivity() {
         val buttonOption1 = customView.findViewById<Button>(R.id.button_option1)
         val buttonOption2 = customView.findViewById<Button>(R.id.button_option2)
         buttonOption1.setOnClickListener {
-//            vm.addMedicationItem()
+            //vm.addMedicationItem()
             popupWindow.dismiss()
         }
 
         buttonOption2.setOnClickListener {
+            //vm.addMedsTrackingItem()
             popupWindow.dismiss()
         }
 

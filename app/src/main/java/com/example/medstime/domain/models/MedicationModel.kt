@@ -8,7 +8,8 @@ data class MedicationModel(
     val intakeTimes: List<Time>, // Время приема лекарства в течение дня
     val reminderTime: Int, // Время за которое напоминать (в минутах)
     val frequency: Frequency, // Частота приема лекарства (например, "DAILY", "EVERY_OTHER_DAY", "SELECTED_DAYS")
-    val selectedDays: List<Int>? // Список выбранных дней приема (если применимо)
+    val selectedDays: List<Int>?, // Список выбранных дней приема (если применимо)
+
 ) {
     data class Time(
         val hour: Int, // Час
@@ -21,5 +22,7 @@ data class MedicationModel(
         SELECTED_DAYS // Прием в выбранные дни
     }
 }
+
+
 
 
