@@ -2,5 +2,9 @@
 <resources>
     <color name="selected_bottom_menu_item">#FF00B670</color>
     <color name="bottom_menu_item">#FFB0B0B0</color>
-    <color name="background_fragment">#000000</color>
+    <color name="screen_back">#000000</color>
+    <color name="screen_front">#C2C2C2</color>
+    <color name="default_text">#FFB0B0B0</color>
+    <color name="item_text_meds_taken">#00B670</color>
+    <color name="item_text_meds_missed">#F32B2B</color>
 </resources>

@@ -9,5 +9,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="selected_bottom_menu_item">#FF4376FE</color>
     <color name="bottom_menu_item">#000000</color>
-    <color name="background_fragment">#FFF0F1F5</color>
+    <color name="screen_back">#FFF0F1F5</color>
+    <color name="screen_front">#FFFFFF</color>
+    <color name="default_text">#000000</color>
+    <color name="item_text_meds_taken">#56C2A3</color>
+    <color name="item_text_meds_missed">#C25656</color>
 </resources>

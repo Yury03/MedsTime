@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/medicationFragment">
+
+    <fragment
+        android:id="@+id/medicationFragment"
+        android:name="com.example.medstime.ui.medication.MedicationFragment"
+        android:label="fragment_medication"
+        tools:layout="@layout/fragment_medication" />
+    <fragment
+        android:id="@+id/medsTrackingFragment"
+        android:name="com.example.medstime.ui.meds_tracking.MedsTrackingFragment"
+        android:label="fragment_meds_tracking"
+        tools:layout="@layout/fragment_meds_tracking" />
+    <fragment
+        android:id="@+id/notificationsFragment"
+        android:name="com.example.medstime.ui.notifications.NotificationsFragment"
+        android:label="fragment_notifications"
+        tools:layout="@layout/fragment_notifications" />
+</navigation>

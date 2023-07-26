@@ -2,18 +2,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/menu_medication"
         android:icon="@drawable/medication_icon_menu"
         android:title="Прием" />
     <item
+        android:id="@+id/menu_medsTracking"
         android:icon="@drawable/meds_tracking_icon_menu"
         android:title="Лекарства" />
     <item
+        android:id="@+id/menu_add_item"
         android:icon="@drawable/add_icon_menu"
         android:title="Добавить" />
+
     <item
+        android:id="@+id/menu_notifications"
         android:icon="@drawable/notifications_icon_menu"
         android:title="Уведомления" />
-    <item
-        android:icon="@drawable/profile_icon_menu"
-        android:title="Профиль" />
+
+    <!--    <item-->
+    <!--        android:id="@+id/menu_profile"-->
+    <!--        android:icon="@drawable/profile_icon_menu"-->
+    <!--        android:title="Профиль" />-->
 </menu>
