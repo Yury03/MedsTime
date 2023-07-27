@@ -13,7 +13,10 @@ data class MedicationEntity(
     @ColumnInfo val intakeTimes: List<Pair<Int, Int>>,
     @ColumnInfo val reminderTime: Int,
     @ColumnInfo val frequency: String,
-    @ColumnInfo val selectedDays: List<Int>?
+    @ColumnInfo val selectedDays: List<Int>?,
+    @ColumnInfo val startDate: String,
+    @ColumnInfo val endDate: String?,
+
 )
 
 
