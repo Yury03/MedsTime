@@ -20,4 +20,8 @@
         android:name="com.example.medstime.ui.notifications.NotificationsFragment"
         android:label="fragment_notifications"
         tools:layout="@layout/fragment_notifications" />
+    <dialog
+        android:id="@+id/addFragment"
+        android:name="com.example.medstime.ui.add_sheet.AddFragment"
+        android:label="AddFragment" />
 </navigation>
