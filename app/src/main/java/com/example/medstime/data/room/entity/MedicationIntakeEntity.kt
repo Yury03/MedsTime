@@ -4,19 +4,17 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "medications")
-data class MedicationEntity(
+
+@Entity(tableName = "medication_intake")
+data class MedicationIntakeEntity(
     @PrimaryKey val id: String,
-    @ColumnInfo val name: String,//todo ColumnInfo?
+    @ColumnInfo val name: String,
     @ColumnInfo val dosage: Double,
     @ColumnInfo val dosageUnit: String,
-    @ColumnInfo val intakeTimes: List<Pair<Int, Int>>,
+    @ColumnInfo val isTaken: Boolean,
     @ColumnInfo val reminderTime: Int,
-    @ColumnInfo val frequency: String,
-    @ColumnInfo val selectedDays: List<Int>?,
+    @ColumnInfo val medicationId: Int,
+    @ColumnInfo val intakeTime: Pair<Int, Int>,
+    @ColumnInfo val actualIntakeTime: Pair<Int, Int>?,
     @ColumnInfo val intakeType: String,
 )
-
-
-
-

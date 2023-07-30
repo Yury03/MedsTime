@@ -15,13 +15,15 @@ object MedicationMapper {
             intakeTimes = intakeTimes,
             reminderTime = model.reminderTime,
             frequency = model.frequency.name,
-            selectedDays = model.selectedDays
+            selectedDays = model.selectedDays,
+            intakeType = model.intakeType.name,
         )
     }
 
     fun mapToModel(entity: MedicationEntity): MedicationModel {
         val intakeTimes = entity.intakeTimes.map { MedicationModel.Time(it.first, it.second) }
         val frequency = MedicationModel.Frequency.valueOf(entity.frequency)
+        val intakeType = MedicationModel.IntakeType.valueOf(entity.intakeType)
         return MedicationModel(
             id = entity.id,
             name = entity.name,
@@ -30,7 +32,8 @@ object MedicationMapper {
             intakeTimes = intakeTimes,
             reminderTime = entity.reminderTime,
             frequency = frequency,
-            selectedDays = entity.selectedDays
+            selectedDays = entity.selectedDays,
+            intakeType = intakeType,
         )
     }
     /*private fun generateUniqueId(): String {
