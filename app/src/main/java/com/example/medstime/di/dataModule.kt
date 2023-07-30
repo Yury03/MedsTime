@@ -1,4 +1,4 @@
-package com.example.medstime.ui.di
+package com.example.medstime.di
 
 import com.example.medstime.data.MedicationContractImpl
 import org.koin.dsl.module

@@ -1,4 +1,4 @@
-package com.example.medstime.ui.di
+package com.example.medstime.di
 
 import com.example.medstime.domain.usecase.medication.GetIntakeList
 import com.example.medstime.domain.usecase.medication.GetMedicationById

@@ -1,4 +1,4 @@
-package com.example.medstime.ui.di
+package com.example.medstime.di
 
 import com.example.medstime.ui.main_activity.MainViewModel
 import com.example.medstime.ui.medication.MedicationViewModel

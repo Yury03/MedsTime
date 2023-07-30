@@ -1,9 +1,9 @@
 package com.example.medstime.app
 
 import android.app.Application
-import com.example.medstime.ui.di.appModule
-import com.example.medstime.ui.di.dataModule
-import com.example.medstime.ui.di.domainModule
+import com.example.medstime.di.appModule
+import com.example.medstime.di.dataModule
+import com.example.medstime.di.domainModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

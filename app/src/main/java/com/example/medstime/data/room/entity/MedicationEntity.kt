@@ -15,6 +15,9 @@ data class MedicationEntity(
     @ColumnInfo val frequency: String,
     @ColumnInfo val selectedDays: List<Int>?,
     @ColumnInfo val intakeType: String,
+    @ColumnInfo val startDate: String,
+    @ColumnInfo val endDate: String?,
+
 )
 
 
