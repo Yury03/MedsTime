@@ -19,6 +19,7 @@ object MedicationMapper {
             reminderTime = model.reminderTime,
             frequency = model.frequency.name,
             selectedDays = model.selectedDays,
+            intakeType = model.intakeType.name,
             startDate = dateToString(model.startDate)!!,
             endDate = dateToString(model.endDate)
         )
@@ -27,6 +28,7 @@ object MedicationMapper {
     fun mapToModel(entity: MedicationEntity): MedicationModel {
         val intakeTimes = entity.intakeTimes.map { MedicationModel.Time(it.first, it.second) }
         val frequency = MedicationModel.Frequency.valueOf(entity.frequency)
+        val intakeType = MedicationModel.IntakeType.valueOf(entity.intakeType)
         val startDate = stringToDate(entity.startDate)!!
         val endDate = stringToDate(entity.endDate)
 
@@ -39,6 +41,7 @@ object MedicationMapper {
             reminderTime = entity.reminderTime,
             frequency = frequency,
             selectedDays = entity.selectedDays,
+            intakeType = intakeType,
             startDate = startDate,
             endDate = endDate
         )

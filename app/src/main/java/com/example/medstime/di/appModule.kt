@@ -7,13 +7,15 @@ import org.koin.dsl.module
 
 val appModule = module {
     viewModel<MainViewModel> {
-        MainViewModel()//todo usecase для добавления medicationModel и MedsTrackingModel
+        MainViewModel()
     }
     viewModel<MedicationViewModel> {
         MedicationViewModel(
-            getMedicationListUseCase = get(),
+            getIntakeList = get(),
             removeMedicationItemUseCase = get(),
-            replaceMedicationItemUseCase = get()
+            replaceMedicationItemUseCase = get(),
+            getMedicationById = get(),
+            get
         )
     }
 }
