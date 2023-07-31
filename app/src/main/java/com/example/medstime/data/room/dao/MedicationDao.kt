@@ -17,6 +17,10 @@ interface MedicationDao {
     @Delete
     fun delete(medication: MedicationEntity)
 
+    @Query("SELECT * FROM medications WHERE id = :medicationId")
+    fun getById(medicationId: String): MedicationEntity
+
     @Query("DELETE FROM medications WHERE id = :medicationId")
     fun deleteById(medicationId: String)
+
 }

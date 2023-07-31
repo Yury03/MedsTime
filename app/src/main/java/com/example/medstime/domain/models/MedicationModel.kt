@@ -13,6 +13,7 @@ data class MedicationModel(
     val selectedDays: List<Int>?, // Список выбранных дней приема (если применимо)
     val startDate: Date,
     val endDate: Date?
+    val intakeType: IntakeType,     // Тип приема
 
 ) {
     data class Time(
@@ -24,6 +25,13 @@ data class MedicationModel(
         DAILY, // Прием каждый день
         EVERY_OTHER_DAY, // Прием через день
         SELECTED_DAYS // Прием в выбранные дни
+    }
+
+    enum class IntakeType {
+        AFTER_MEAL,    // После еды
+        BEFORE_MEAL,   // До еды
+        DURING_MEAL,   // Во время еды
+        NONE           // Без еды (не указано)
     }
 }
 
