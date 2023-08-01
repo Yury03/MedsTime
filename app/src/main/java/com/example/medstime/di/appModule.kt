@@ -15,7 +15,7 @@ val appModule = module {
             removeMedicationItemUseCase = get(),
             replaceMedicationItemUseCase = get(),
             getMedicationById = get(),
-            get
+            replaceMedicationIntake = get(),
         )
     }
 }

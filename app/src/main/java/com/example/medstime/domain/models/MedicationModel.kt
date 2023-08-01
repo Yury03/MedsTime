@@ -12,7 +12,7 @@ data class MedicationModel(
     val frequency: Frequency, // Частота приема лекарства (например, "DAILY", "EVERY_OTHER_DAY", "SELECTED_DAYS")
     val selectedDays: List<Int>?, // Список выбранных дней приема (если применимо)
     val startDate: Date,
-    val endDate: Date?
+    val endDate: Date?,
     val intakeType: IntakeType,     // Тип приема
 
 ) {
