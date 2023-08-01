@@ -9,12 +9,19 @@ data class MedicationIntakeModel(
     val reminderTime: Int,          // Время за которое напоминать (в минутах)
     val medicationId: Int,          // id модели приема
     val intakeTime: Time,           // Время приема лекарства
+    val intakeDate: Date,           // Дата приема лекарства
     val actualIntakeTime: Time?,    // Время фактического приема лекарства
+    val actualIntakeDate: Date?,    // Дата фактического приема лекарства
     val intakeType: IntakeType,     // Тип приема
 ) {
     data class Time(
         val hour: Int,  // Час
-        val minute: Int // Минуты
+        val minute: Int,// Минуты
+    )
+
+    data class Date(
+        val day: Int,   // День
+        val month: Int, // Месяц
     )
 
     enum class IntakeType {
@@ -23,5 +30,4 @@ data class MedicationIntakeModel(
         DURING_MEAL,   // Во время еды
         NONE           // Без еды (не указано)
     }
-
 }

@@ -9,6 +9,9 @@ object MedicationIntakeMapper {
         val actualIntakeTime = model.actualIntakeTime?.let {
             Pair(it.hour, it.minute)
         }
+        val actualIntakeDate = model.actualIntakeDate?.let {
+            Pair(it.day, it.month)
+        }
         return MedicationIntakeEntity(
             id = model.id,
             name = model.name,
@@ -19,13 +22,18 @@ object MedicationIntakeMapper {
             medicationId = model.medicationId,
             intakeType = model.intakeType.name,
             intakeTime = Pair(model.intakeTime.hour, model.intakeTime.minute),
-            actualIntakeTime = actualIntakeTime
+            intakeDate = Pair(model.intakeDate.day, model.intakeDate.month),
+            actualIntakeTime = actualIntakeTime,
+            actualIntakeDate = actualIntakeDate,
         )
     }
 
     fun mapToModel(entity: MedicationIntakeEntity): MedicationIntakeModel {
         val actualIntakeTime = entity.actualIntakeTime?.let {
             MedicationIntakeModel.Time(it.first, it.second)
+        }
+        val actualIntakeDate = entity.actualIntakeDate?.let {
+            MedicationIntakeModel.Date(it.first, it.second)
         }
         return MedicationIntakeModel(
             id = entity.id,
@@ -36,10 +44,15 @@ object MedicationIntakeMapper {
             reminderTime = entity.reminderTime,
             medicationId = entity.medicationId,
             actualIntakeTime = actualIntakeTime,
+            actualIntakeDate = actualIntakeDate,
             intakeType = MedicationIntakeModel.IntakeType.valueOf(entity.intakeType),
             intakeTime = MedicationIntakeModel.Time(
                 entity.intakeTime.first,
-                entity.intakeTime.second
+                entity.intakeTime.second,
+            ),
+            intakeDate = MedicationIntakeModel.Date(
+                entity.intakeDate.first,
+                entity.intakeDate.second,
             ),
         )
     }

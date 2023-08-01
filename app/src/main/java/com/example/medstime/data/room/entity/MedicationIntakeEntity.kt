@@ -14,7 +14,9 @@ data class MedicationIntakeEntity(
     @ColumnInfo val isTaken: Boolean,
     @ColumnInfo val reminderTime: Int,
     @ColumnInfo val medicationId: Int,
-    @ColumnInfo val intakeTime: Pair<Int, Int>,
-    @ColumnInfo val actualIntakeTime: Pair<Int, Int>?,
+    @ColumnInfo val intakeTime: Pair<Int, Int>,         //hour, minute
+    @ColumnInfo val intakeDate: Pair<Int, Int>,         //day, month
+    @ColumnInfo val actualIntakeTime: Pair<Int, Int>?,  //hour, minute
+    @ColumnInfo val actualIntakeDate: Pair<Int, Int>?,  //day, month
     @ColumnInfo val intakeType: String,
 )
