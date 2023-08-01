@@ -9,19 +9,20 @@
     android:paddingHorizontal="10dp">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/time"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
 
+        android:layout_height="wrap_content"
         android:text="@string/default_time"
         android:textColor="@color/default_text"
         android:textSize="@dimen/text_1_level" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/intakeList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/medication_item"
-        tools:itemCount="3">
+        tools:itemCount="3"
+        tools:listitem="@layout/medication_item">
 
     </androidx.recyclerview.widget.RecyclerView>
 </LinearLayout>

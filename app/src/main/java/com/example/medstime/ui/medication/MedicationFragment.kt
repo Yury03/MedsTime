@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentMedicationBinding
+import com.example.medstime.ui.medication.adapters.TimesListAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MedicationFragment : Fragment(R.layout.fragment_medication) {
@@ -19,16 +21,20 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
         _binding = FragmentMedicationBinding.bind(view)
         binding.calendar.visibility = View.GONE//todo баг calendarView
         binding.showCalendar.post { setTopMargin(binding.showCalendar.height) }
-
         binding.showCalendar.setOnClickListener {
             changeVisible(false)
         }
         binding.hideCalendar.setOnClickListener {
             changeVisible(true)
         }
-
+        viewModel.intakeListToday.observe(viewLifecycleOwner) {
+//            val manager = LinearLayoutManager(context)
+//            binding.medicationsList.layoutManager = manager
+//            binding.medicationsList.adapter = TimesListAdapter(it)
+        }
     }
-    private fun changeVisible(calendarIsVisible: Boolean){
+
+    private fun changeVisible(calendarIsVisible: Boolean) {
         if (calendarIsVisible) {
             binding.calendar.visibility = View.GONE
             binding.showCalendar.visibility = View.VISIBLE

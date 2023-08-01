@@ -3,19 +3,21 @@ package com.example.medstime.ui.medication.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.medstime.R
+import com.example.medstime.domain.models.MedicationIntakeModel
 
-class MedicationsListAdapter(private val dataList: List<String>) :
+class MedicationsListAdapter(private val dataList: List<MedicationIntakeModel>) :
     RecyclerView.Adapter<MedicationsListAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // Здесь можно инициализировать вьюхи элемента списка
-        // Например:
-        // val textViewTitle: TextView = itemView.findViewById(R.id.textViewTitle)
+
+        val name: TextView = itemView.findViewById(R.id.medName)
+        val dosage: TextView = itemView.findViewById(R.id.medDosage)
+        val timeMedication: TextView = itemView.findViewById(R.id.timeMedication)
     }
 
-    // Создание нового ViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView =
             LayoutInflater.from(parent.context).inflate(R.layout.medication_item, parent, false)
@@ -26,8 +28,6 @@ class MedicationsListAdapter(private val dataList: List<String>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val dataItem = dataList[position]
 
-        // Присваиваем значения вьюхам элемента списка на основе данных из списка
-        // Например:
         // holder.textViewTitle.text = dataItem.title
     }
 

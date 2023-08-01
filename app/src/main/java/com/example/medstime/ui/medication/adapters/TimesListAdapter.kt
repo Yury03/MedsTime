@@ -3,33 +3,32 @@ package com.example.medstime.ui.medication.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.medstime.R
+import com.example.medstime.domain.models.MedicationIntakeModel
 
-class TimesListAdapter(private val dataList: List<String>) : RecyclerView.Adapter<TimesListAdapter.ViewHolder>() {
+class TimesListAdapter(private val dataList: List<Pair<MedicationIntakeModel.Time, List<MedicationIntakeModel>>>) :
+    RecyclerView.Adapter<TimesListAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // Здесь можно инициализировать вьюхи элемента списка
-        // Например:
-        // val textViewTitle: TextView = itemView.findViewById(R.id.textViewTitle)
+        val time: TextView = itemView.findViewById(R.id.timeMedication)
+        val intakeList: RecyclerView = itemView.findViewById(R.id.intakeList)
     }
 
-    // Создание нового ViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.medication_with_time_item, parent, false)
+        val itemView = LayoutInflater.from(parent.context)
+            .inflate(R.layout.medication_with_time_item, parent, false)
         return ViewHolder(itemView)
     }
 
-    // Привязка данных к ViewHolder
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val dataItem = dataList[position]
-
-        // Присваиваем значения вьюхам элемента списка на основе данных из списка
-        // Например:
-        // holder.textViewTitle.text = dataItem.title
+        val time = dataItem.first.toString() + ":" + dataItem.second.toString()
+        holder.time.text = time
+        holder.intakeList.adapter = MedicationsListAdapter(dataItem.second)
     }
 
-    // Возвращаем количество элементов в списке
     override fun getItemCount(): Int {
         return dataList.size
     }
