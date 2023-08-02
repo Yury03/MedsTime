@@ -24,7 +24,7 @@
             android:id="@+id/medName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text="@string/medicaton_name_placeholder"
             android:textColor="@color/default_text"
             android:textSize="@dimen/text_4_level" />
 
@@ -32,7 +32,7 @@
             android:id="@+id/medDosage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text="@string/medication_dosage_placeholder"
             android:textColor="@color/default_text"
             android:textSize="@dimen/text_5_level" />
 
@@ -40,7 +40,6 @@
             android:id="@+id/timeMedication"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
             android:textColor="@color/item_text_meds_missed"
             android:textSize="@dimen/text_6_level" />
     </LinearLayout>

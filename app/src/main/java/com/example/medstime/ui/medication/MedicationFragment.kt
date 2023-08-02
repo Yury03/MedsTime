@@ -1,12 +1,15 @@
 package com.example.medstime.ui.medication
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentMedicationBinding
+import com.example.medstime.domain.models.MedicationIntakeModel
 import com.example.medstime.ui.medication.adapters.TimesListAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -16,22 +19,27 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
     private val binding get() = _binding!!
     private val viewModel by viewModel<MedicationViewModel>()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMedicationBinding.bind(view)
+        viewModel.setDate()
+
         binding.calendar.visibility = View.GONE//todo баг calendarView
+
         binding.showCalendar.post { setTopMargin(binding.showCalendar.height) }
-        binding.showCalendar.setOnClickListener {
-            changeVisible(false)
-        }
-        binding.hideCalendar.setOnClickListener {
-            changeVisible(true)
-        }
+
+        binding.showCalendar.setOnClickListener { changeVisible(false) }
+        binding.hideCalendar.setOnClickListener { changeVisible(true) }
+
+        binding.medicationsList.layoutManager = LinearLayoutManager(context)
+
         viewModel.intakeListToday.observe(viewLifecycleOwner) {
-//            val manager = LinearLayoutManager(context)
-//            binding.medicationsList.layoutManager = manager
-//            binding.medicationsList.adapter = TimesListAdapter(it)
+            binding.medicationsList.adapter = context?.let { it1 -> TimesListAdapter(it, it1) }
         }
+
+
+        viewModel.currentDate.observe(viewLifecycleOwner) { binding.showCalendar.text = it.first }
     }
 
     private fun changeVisible(calendarIsVisible: Boolean) {
@@ -46,7 +54,7 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
         }
     }
 
-    private fun setTopMargin(topMargin: Int) {//задает отступ сверху для списка
+    private fun setTopMargin(topMargin: Int) {
         val layoutParams = binding.medicationsList.layoutParams as FrameLayout.LayoutParams
         layoutParams.setMargins(0, topMargin, 0, 0)
         binding.medicationsList.layoutParams = layoutParams

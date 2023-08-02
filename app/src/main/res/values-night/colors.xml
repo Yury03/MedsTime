@@ -7,4 +7,5 @@
     <color name="default_text">#FFB0B0B0</color>
     <color name="item_text_meds_taken">#00B670</color>
     <color name="item_text_meds_missed">#F32B2B</color>
+    <color name="item_background">#333333</color>
 </resources>

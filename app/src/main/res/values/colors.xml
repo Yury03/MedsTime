@@ -14,4 +14,5 @@
     <color name="default_text">#000000</color>
     <color name="item_text_meds_taken">#56C2A3</color>
     <color name="item_text_meds_missed">#C25656</color>
+    <color name="item_background">#FFFFFF</color>
 </resources>

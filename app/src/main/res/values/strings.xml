@@ -6,4 +6,8 @@
     <string name="default_time">8:00</string>
     <string name="add_medication_item">Прием</string>
     <string name="add_meds_tracking_item">Лекарство</string>
+    <string name="medication_taken">Принято в </string>
+    <string name="medication_missed">Пропущено</string>
+    <string name="medicaton_name_placeholder">Название лекарства</string>
+    <string name="medication_dosage_placeholder">0.5 таб.</string>
 </resources>

@@ -27,8 +27,20 @@ class MedicationsListAdapter(private val dataList: List<MedicationIntakeModel>) 
     // Привязка данных к ViewHolder
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val dataItem = dataList[position]
+        holder.name.text = dataItem.name
+        holder.dosage.text = buildString {
+        append(dataItem.dosage.toString())
+        append(" ")
+        append(dataItem.dosageUnit)
+    }
+        with(holder.timeMedication) {
+            text = context.getString(R.string.add_medication_item)
+            if (dataItem.isTaken) {
+                setTextColor(context.getColor(R.color.item_text_meds_taken))
+            }
+        }
 
-        // holder.textViewTitle.text = dataItem.title
+
     }
 
     // Возвращаем количество элементов в списке
