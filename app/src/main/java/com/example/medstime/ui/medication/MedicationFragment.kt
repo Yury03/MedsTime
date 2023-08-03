@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.medstime.R
@@ -23,9 +24,8 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMedicationBinding.bind(view)
-        viewModel.setDate()
-
         binding.calendar.visibility = View.GONE//todo баг calendarView
+        viewModel.setDate()
 
         binding.showCalendar.post { setTopMargin(binding.showCalendar.height) }
 
@@ -33,9 +33,12 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
         binding.hideCalendar.setOnClickListener { changeVisible(true) }
 
         binding.medicationsList.layoutManager = LinearLayoutManager(context)
-
+        val medicationClick = { it: MedicationIntakeModel ->
+            showAlertDialog()
+        }
         viewModel.intakeListToday.observe(viewLifecycleOwner) {
-            binding.medicationsList.adapter = context?.let { it1 -> TimesListAdapter(it, it1) }
+            binding.medicationsList.adapter =
+                context?.let { it1 -> TimesListAdapter(it, it1, medicationClick) }
         }
 
 
@@ -63,5 +66,21 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun showAlertDialog() {
+
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setTitle("AlertDialog Title")
+        alertDialogBuilder.setMessage("This is the message of the AlertDialog.")
+        alertDialogBuilder.setView(R.layout.medication_alert_dialog)
+        alertDialogBuilder.setNegativeButton("Cancel") { dialog, which ->
+            // Код, который будет выполнен при нажатии на кнопку Cancel
+            dialog.dismiss() // Закрыть AlertDialog
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+
     }
 }

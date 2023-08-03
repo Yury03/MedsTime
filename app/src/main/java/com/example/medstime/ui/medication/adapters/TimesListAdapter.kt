@@ -12,7 +12,8 @@ import com.example.medstime.domain.models.MedicationIntakeModel
 
 class TimesListAdapter(
     private val dataList: List<Pair<MedicationIntakeModel.Time, List<MedicationIntakeModel>>>,
-    private val context: Context
+    private val context: Context,
+    private val medicationClick: (MedicationIntakeModel) -> Unit,
 ) :
     RecyclerView.Adapter<TimesListAdapter.ViewHolder>() {
 
@@ -29,14 +30,19 @@ class TimesListAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val dataItem = dataList[position]
-        val time = dataItem.first.hour.toString() + ":" + dataItem.first.minute.toString()
-        val manager = LinearLayoutManager(context)
-        holder.time.text = time
-        holder.intakeList.layoutManager = manager
-        holder.intakeList.adapter = MedicationsListAdapter(dataItem.second)
+        holder.time.text = buildTimeString(dataItem.first)
+        holder.intakeList.layoutManager = LinearLayoutManager(context)
+        holder.intakeList.adapter = MedicationsListAdapter(dataItem.second, medicationClick)
     }
 
     override fun getItemCount(): Int {
         return dataList.size
+    }
+
+    private fun buildTimeString(time: MedicationIntakeModel.Time): String {
+        with(time) {
+            if (minute < 10) return "$hour:0$minute"
+            else return "$hour:$minute"
+        }
     }
 }

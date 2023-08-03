@@ -8,4 +8,5 @@
     <color name="item_text_meds_taken">#00B670</color>
     <color name="item_text_meds_missed">#F32B2B</color>
     <color name="item_background">#333333</color>
+    <color name="alert_dialog">#000000</color>
 </resources>
