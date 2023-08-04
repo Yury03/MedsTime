@@ -1,17 +1,23 @@
 package com.example.medstime.ui.medication
 
+import android.annotation.SuppressLint
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageButton
+import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentMedicationBinding
 import com.example.medstime.domain.models.MedicationIntakeModel
 import com.example.medstime.ui.medication.adapters.TimesListAdapter
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MedicationFragment : Fragment(R.layout.fragment_medication) {
@@ -34,7 +40,7 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
 
         binding.medicationsList.layoutManager = LinearLayoutManager(context)
         val medicationClick = { it: MedicationIntakeModel ->
-            showAlertDialog()
+            showAlertDialog(it)
         }
         viewModel.intakeListToday.observe(viewLifecycleOwner) {
             binding.medicationsList.adapter =
@@ -68,19 +74,70 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
         _binding = null
     }
 
-    private fun showAlertDialog() {
+    @SuppressLint("UseCompatLoadingForDrawables", "InflateParams")//TODO
+    private fun showAlertDialog(medicationIntakeModel: MedicationIntakeModel) {
+        val alertDialogBuilder = MaterialAlertDialogBuilder(requireContext())
+        val customLayout: View = layoutInflater.inflate(R.layout.medication_alert_dialog, null)
+        with(alertDialogBuilder) {
+            setView(customLayout)
+            background = ColorDrawable(Color.TRANSPARENT)
 
-        val alertDialogBuilder = AlertDialog.Builder(requireContext())
-        alertDialogBuilder.setTitle("AlertDialog Title")
-        alertDialogBuilder.setMessage("This is the message of the AlertDialog.")
-        alertDialogBuilder.setView(R.layout.medication_alert_dialog)
-        alertDialogBuilder.setNegativeButton("Cancel") { dialog, which ->
-            // Код, который будет выполнен при нажатии на кнопку Cancel
-            dialog.dismiss() // Закрыть AlertDialog
+        }
+        val alertDialog = alertDialogBuilder.create()
+        with(customLayout) {
+            findViewById<TextView>(R.id.AD_medicationName).text = medicationIntakeModel.name
+            findViewById<TextView>(R.id.AD_timeAndDosage).text =
+                buildTimeAndDosageText(medicationIntakeModel)
+            findViewById<ImageButton>(R.id.AD_editButton).setOnClickListener {
+
+            }
+            findViewById<AppCompatButton>(R.id.AD_remindFiveMinButton).setOnClickListener {
+                alertDialog.dismiss()
+            }
+            findViewById<AppCompatButton>(R.id.AD_skipButton).setOnClickListener {
+                alertDialog.dismiss()
+            }
+            findViewById<AppCompatButton>(R.id.AD_takenButton).setOnClickListener {
+
+                alertDialog.dismiss()
+            }
         }
 
-        val alertDialog = alertDialogBuilder.create()
+        alertDialogBuilder.setOnDismissListener {
+
+        }
         alertDialog.show()
 
+
     }
+
+    private fun buildTimeAndDosageText(medicationIntakeModel: MedicationIntakeModel): String {
+        val time = buildTimeString(medicationIntakeModel.intakeTime)
+        val dosage = buildDosageString(medicationIntakeModel)
+        return "$time $dosage"
+    }
+
+    private fun buildTimeString(time: MedicationIntakeModel.Time): String =
+        with(time) {
+            if (minute < 10) return "$hour:0$minute"
+            else return "$hour:$minute"
+        }
+
+    private fun buildDosageString(medicationIntakeModel: MedicationIntakeModel): String {
+        val commonText =
+            "${medicationIntakeModel.dosageUnit} ${medicationIntakeModel.intakeType.toRussianString()}"
+        return if (medicationIntakeModel.dosage == medicationIntakeModel.dosage.toInt().toDouble())
+            "${medicationIntakeModel.dosage.toInt()} $commonText"
+        else
+            "${medicationIntakeModel.dosage} $commonText"
+    }
+
+    private fun MedicationIntakeModel.IntakeType.toRussianString() =
+        when (this) {
+            MedicationIntakeModel.IntakeType.AFTER_MEAL -> getString(R.string.after_meal)
+            MedicationIntakeModel.IntakeType.BEFORE_MEAL -> getString(R.string.before_meal)
+            MedicationIntakeModel.IntakeType.DURING_MEAL -> getString(R.string.during_meal)
+            MedicationIntakeModel.IntakeType.NONE -> getString(R.string.empty_string)
+        }
+
 }

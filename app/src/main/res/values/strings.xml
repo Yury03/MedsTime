@@ -2,12 +2,19 @@
     <string name="app_name">MedsTime</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="default_date">19 июля</string>
-    <string name="default_time">8:00</string>
+    <string name="date_placeholder">19 июля</string>
+    <string name="time_placeholder">8:00</string>
     <string name="add_medication_item">Прием</string>
     <string name="add_meds_tracking_item">Лекарство</string>
     <string name="medication_taken">Принято в\u0020</string>
     <string name="medication_missed">Пропущено</string>
-    <string name="medicaton_name_placeholder">Название лекарства</string>
+    <string name="medication_name_placeholder">Название лекарства</string>
     <string name="medication_dosage_placeholder">0.5 таб.</string>
+    <string name="remind_five_minute">Напомнить через 5 минут</string>
+    <string name="skipped">Пропущено</string>
+    <string name="taken">Принято</string>
+    <string name="after_meal">после еды</string>
+    <string name="before_meal">до еды</string>
+    <string name="during_meal">во время еды</string>
+    <string name="empty_string"></string>
 </resources>
