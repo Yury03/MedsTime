@@ -27,33 +27,46 @@ class MedicationViewModel(
         MutableLiveData(getIntakeList.invoke())
     val intakeList: LiveData<List<MedicationIntakeModel>> get() = _intakeList
 
+    /**список пар Время - Список приемов лекарств**/
     private val _intakeListToday: MutableLiveData<List<Pair<MedicationIntakeModel.Time, List<MedicationIntakeModel>>>> =
-        MutableLiveData()//список пар Время - Список приемов лекарств
+        MutableLiveData()
     val intakeListToday: LiveData<List<Pair<MedicationIntakeModel.Time, List<MedicationIntakeModel>>>>
         get() = _intakeListToday
-    private val _currentDate = MutableLiveData<Pair<String, MedicationIntakeModel.Date>>()
-    val currentDate: LiveData<Pair<String, MedicationIntakeModel.Date>>
+
+    /** фактическая дата: нужна для кнопки и начального displayDate**/
+    private val _currentDate = MutableLiveData<String>()
+    val currentDate: LiveData<String>
         get() = _currentDate
 
+    /**выбранная пользователем дата, по дефолту currentDate (фактическая)**/
+    private val _displayDate = MutableLiveData<MedicationIntakeModel.Date>()
+    val displayDate: LiveData<MedicationIntakeModel.Date>
+        get() = _displayDate
 
     @RequiresApi(Build.VERSION_CODES.O)//TODO
-    fun setDate() {//todo необходимо обновление даты и времени в риалтайме
+    fun setCurrentDate() {
+        //todo метод устанавливает фактическую дату, необходимо доработать до обновления в риалтайме
+        val formatterIntakeDate = DateTimeFormatter.ofPattern("d M")
+        val scanner = Scanner(LocalDateTime.now().format(formatterIntakeDate))
+        val intakeDate = MedicationIntakeModel.Date(scanner.nextInt(), scanner.nextInt())
+        setDisplayDate(intakeDate)
+        getIntakeListWithDate(intakeDate)
+    }
+
+    /**метод устанавливает дату на верхней кнопке, по дефолту это текущая дата**/
+    @RequiresApi(Build.VERSION_CODES.O)//TODO
+    fun setDisplayDate(date: MedicationIntakeModel.Date) {
         val formatterTopButton = DateTimeFormatter.ofPattern(
             "d MMMM", Locale(
                 "ru", "RU"
             )
-        )//получаем дату в двух форматах: String для верхней кнопки фрагмента,
-        // Date для обработки внутри ViewModel и Fragment
-        val formatterIntakeDate = DateTimeFormatter.ofPattern("d M")
+        )
         val dateForTopButton = LocalDateTime.now().format(formatterTopButton)
-//        val scanner = Scanner(LocalDateTime.now().format(formatterIntakeDate))
-        val scanner = Scanner("19 7")//placeholder
-        val intakeDate = MedicationIntakeModel.Date(scanner.nextInt(), scanner.nextInt())
-        _currentDate.postValue(Pair(dateForTopButton, intakeDate))
-        getIntakeListWithDate(intakeDate)
+        _currentDate.postValue(dateForTopButton)
     }
 
-    private fun getIntakeListWithDate(date: MedicationIntakeModel.Date) {
+
+    fun getIntakeListWithDate(date: MedicationIntakeModel.Date) {
         val list = _intakeList.value?.filter {
             it.intakeDate == date
         }
@@ -67,6 +80,4 @@ class MedicationViewModel(
             _intakeListToday.postValue(groupedMedications)
         }
     }
-
-
 }

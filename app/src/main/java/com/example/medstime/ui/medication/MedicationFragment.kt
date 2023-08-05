@@ -19,6 +19,7 @@ import com.example.medstime.domain.models.MedicationIntakeModel
 import com.example.medstime.ui.medication.adapters.TimesListAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.Date
 
 class MedicationFragment : Fragment(R.layout.fragment_medication) {
 
@@ -29,16 +30,30 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         _binding = FragmentMedicationBinding.bind(view)
-        binding.calendar.visibility = View.GONE//todo баг calendarView
-        viewModel.setDate()
+        viewModel.setCurrentDate()
+        with(binding) {
+            calendar.visibility = View.GONE//todo баг calendarView
+            medicationsList.layoutManager = LinearLayoutManager(context)
+            showCalendar.post { setTopMargin(binding.showCalendar.height) }
+            showCalendar.setOnClickListener { changeVisible(false) }
+            hideCalendar.setOnClickListener { changeVisible(true) }
+            calendar.setOnDateChangeListener { _, _, month, dayOfMonth ->
+                viewModel.getIntakeListWithDate(
+                    MedicationIntakeModel.Date(
+                        dayOfMonth,
+                        month + 1
+                    )
+                )//todo
+                hideCalendar.callOnClick()
+            }
+            val maxDate = (1000 * 3600 * 24 * 14)
+            val minDate = (1000 * 3600 * 24 * 14)
+            calendar.minDate = (Date().time - minDate)
+            calendar.maxDate = (Date().time + maxDate)
+        }
 
-        binding.showCalendar.post { setTopMargin(binding.showCalendar.height) }
-
-        binding.showCalendar.setOnClickListener { changeVisible(false) }
-        binding.hideCalendar.setOnClickListener { changeVisible(true) }
-
-        binding.medicationsList.layoutManager = LinearLayoutManager(context)
         val medicationClick = { it: MedicationIntakeModel ->
             showAlertDialog(it)
         }
@@ -47,8 +62,8 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
                 context?.let { it1 -> TimesListAdapter(it, it1, medicationClick) }
         }
 
+        viewModel.currentDate.observe(viewLifecycleOwner) { binding.showCalendar.text = it }
 
-        viewModel.currentDate.observe(viewLifecycleOwner) { binding.showCalendar.text = it.first }
     }
 
     private fun changeVisible(calendarIsVisible: Boolean) {
@@ -69,10 +84,6 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
         binding.medicationsList.layoutParams = layoutParams
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
 
     @SuppressLint("UseCompatLoadingForDrawables", "InflateParams")//TODO
     private fun showAlertDialog(medicationIntakeModel: MedicationIntakeModel) {
@@ -81,7 +92,6 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
         with(alertDialogBuilder) {
             setView(customLayout)
             background = ColorDrawable(Color.TRANSPARENT)
-
         }
         val alertDialog = alertDialogBuilder.create()
         with(customLayout) {
@@ -89,7 +99,6 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
             findViewById<TextView>(R.id.AD_timeAndDosage).text =
                 buildTimeAndDosageText(medicationIntakeModel)
             findViewById<ImageButton>(R.id.AD_editButton).setOnClickListener {
-
             }
             findViewById<AppCompatButton>(R.id.AD_remindFiveMinButton).setOnClickListener {
                 alertDialog.dismiss()
@@ -98,17 +107,10 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
                 alertDialog.dismiss()
             }
             findViewById<AppCompatButton>(R.id.AD_takenButton).setOnClickListener {
-
                 alertDialog.dismiss()
             }
         }
-
-        alertDialogBuilder.setOnDismissListener {
-
-        }
         alertDialog.show()
-
-
     }
 
     private fun buildTimeAndDosageText(medicationIntakeModel: MedicationIntakeModel): String {
@@ -140,4 +142,8 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
             MedicationIntakeModel.IntakeType.NONE -> getString(R.string.empty_string)
         }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 }
