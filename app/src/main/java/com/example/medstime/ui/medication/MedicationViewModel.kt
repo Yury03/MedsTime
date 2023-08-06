@@ -11,6 +11,7 @@ import com.example.medstime.domain.usecase.medication.GetMedicationById
 import com.example.medstime.domain.usecase.medication.RemoveMedicationItem
 import com.example.medstime.domain.usecase.medication.ReplaceMedicationIntake
 import com.example.medstime.domain.usecase.medication.ReplaceMedicationItem
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -49,24 +50,26 @@ class MedicationViewModel(
         val formatterIntakeDate = DateTimeFormatter.ofPattern("d M")
         val scanner = Scanner(LocalDateTime.now().format(formatterIntakeDate))
         val intakeDate = MedicationIntakeModel.Date(scanner.nextInt(), scanner.nextInt())
-        setDisplayDate(intakeDate)
+
         getIntakeListWithDate(intakeDate)
     }
 
     /**метод устанавливает дату на верхней кнопке, по дефолту это текущая дата**/
     @RequiresApi(Build.VERSION_CODES.O)//TODO
     fun setDisplayDate(date: MedicationIntakeModel.Date) {
-        val formatterTopButton = DateTimeFormatter.ofPattern(
+        val formatter = DateTimeFormatter.ofPattern(
             "d MMMM", Locale(
                 "ru", "RU"
             )
         )
-        val dateForTopButton = LocalDateTime.now().format(formatterTopButton)
+        val dateForTopButton = LocalDate.of(2023, date.month, date.day).format(formatter)
         _currentDate.postValue(dateForTopButton)
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getIntakeListWithDate(date: MedicationIntakeModel.Date) {
+        setDisplayDate(date)
         val list = _intakeList.value?.filter {
             it.intakeDate == date
         }
@@ -79,5 +82,6 @@ class MedicationViewModel(
                     }
             _intakeListToday.postValue(groupedMedications)
         }
+
     }
 }

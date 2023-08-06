@@ -46,16 +46,17 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
                         month + 1
                     )
                 )//todo
+
                 hideCalendar.callOnClick()
             }
             val maxDate = (1000 * 3600 * 24 * 14)
             val minDate = (1000 * 3600 * 24 * 14)
-            calendar.minDate = (Date().time - minDate)
+//            calendar.minDate = (Date().time - minDate)
             calendar.maxDate = (Date().time + maxDate)
         }
 
-        val medicationClick = { it: MedicationIntakeModel ->
-            showAlertDialog(it)
+        val medicationClick = { it: MedicationIntakeModel, timeAndDosageText: String ->
+            showAlertDialog(it, timeAndDosageText)
         }
         viewModel.intakeListToday.observe(viewLifecycleOwner) {
             binding.medicationsList.adapter =
@@ -86,7 +87,10 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
 
 
     @SuppressLint("UseCompatLoadingForDrawables", "InflateParams")//TODO
-    private fun showAlertDialog(medicationIntakeModel: MedicationIntakeModel) {
+    private fun showAlertDialog(
+        medicationIntakeModel: MedicationIntakeModel,
+        timeAndDosageText: String
+    ) {
         val alertDialogBuilder = MaterialAlertDialogBuilder(requireContext())
         val customLayout: View = layoutInflater.inflate(R.layout.medication_alert_dialog, null)
         with(alertDialogBuilder) {
@@ -96,8 +100,7 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
         val alertDialog = alertDialogBuilder.create()
         with(customLayout) {
             findViewById<TextView>(R.id.AD_medicationName).text = medicationIntakeModel.name
-            findViewById<TextView>(R.id.AD_timeAndDosage).text =
-                buildTimeAndDosageText(medicationIntakeModel)
+            findViewById<TextView>(R.id.AD_timeAndDosage).text = timeAndDosageText
             findViewById<ImageButton>(R.id.AD_editButton).setOnClickListener {
             }
             findViewById<AppCompatButton>(R.id.AD_remindFiveMinButton).setOnClickListener {
@@ -113,34 +116,6 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
         alertDialog.show()
     }
 
-    private fun buildTimeAndDosageText(medicationIntakeModel: MedicationIntakeModel): String {
-        val time = buildTimeString(medicationIntakeModel.intakeTime)
-        val dosage = buildDosageString(medicationIntakeModel)
-        return "$time $dosage"
-    }
-
-    private fun buildTimeString(time: MedicationIntakeModel.Time): String =
-        with(time) {
-            if (minute < 10) return "$hour:0$minute"
-            else return "$hour:$minute"
-        }
-
-    private fun buildDosageString(medicationIntakeModel: MedicationIntakeModel): String {
-        val commonText =
-            "${medicationIntakeModel.dosageUnit} ${medicationIntakeModel.intakeType.toRussianString()}"
-        return if (medicationIntakeModel.dosage == medicationIntakeModel.dosage.toInt().toDouble())
-            "${medicationIntakeModel.dosage.toInt()} $commonText"
-        else
-            "${medicationIntakeModel.dosage} $commonText"
-    }
-
-    private fun MedicationIntakeModel.IntakeType.toRussianString() =
-        when (this) {
-            MedicationIntakeModel.IntakeType.AFTER_MEAL -> getString(R.string.after_meal)
-            MedicationIntakeModel.IntakeType.BEFORE_MEAL -> getString(R.string.before_meal)
-            MedicationIntakeModel.IntakeType.DURING_MEAL -> getString(R.string.during_meal)
-            MedicationIntakeModel.IntakeType.NONE -> getString(R.string.empty_string)
-        }
 
     override fun onDestroy() {
         super.onDestroy()

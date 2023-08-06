@@ -13,7 +13,7 @@ import com.example.medstime.domain.models.MedicationIntakeModel
 class TimesListAdapter(
     private val dataList: List<Pair<MedicationIntakeModel.Time, List<MedicationIntakeModel>>>,
     private val context: Context,
-    private val medicationClick: (MedicationIntakeModel) -> Unit,
+    private val medicationClick: (MedicationIntakeModel, String) -> Unit,
 ) :
     RecyclerView.Adapter<TimesListAdapter.ViewHolder>() {
 
@@ -32,7 +32,8 @@ class TimesListAdapter(
         val dataItem = dataList[position]
         holder.time.text = buildTimeString(dataItem.first)
         holder.intakeList.layoutManager = LinearLayoutManager(context)
-        holder.intakeList.adapter = MedicationsListAdapter(dataItem.second, medicationClick)
+        holder.intakeList.adapter =
+            MedicationsListAdapter(dataItem.second, medicationClick, context)
     }
 
     override fun getItemCount(): Int {
