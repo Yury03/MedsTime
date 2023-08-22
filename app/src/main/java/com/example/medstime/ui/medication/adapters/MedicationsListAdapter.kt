@@ -44,10 +44,10 @@ class MedicationsListAdapter(
                         append(context.getString(R.string.medication_taken))
                         append(buildTimeString(dataItem.actualIntakeTime!!))
                     }
-                    setTextColor(context.getColor(R.color.item_text_meds_taken))
+                    setTextColor(context.getColor(R.color.medication_item_text_meds_taken))
                 } else {
                     text = context.getString(R.string.medication_missed)
-                    setTextColor(context.getColor(R.color.item_text_meds_missed))
+                    setTextColor(context.getColor(R.color.medication_item_text_meds_missed))
                 }
             }
         }

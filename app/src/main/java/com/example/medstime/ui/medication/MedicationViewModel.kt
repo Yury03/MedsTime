@@ -5,12 +5,15 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.medstime.domain.models.MedicationIntakeModel
 import com.example.medstime.domain.usecase.medication.GetIntakeList
 import com.example.medstime.domain.usecase.medication.GetMedicationById
 import com.example.medstime.domain.usecase.medication.RemoveMedicationItem
 import com.example.medstime.domain.usecase.medication.ReplaceMedicationIntake
 import com.example.medstime.domain.usecase.medication.ReplaceMedicationItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -25,8 +28,13 @@ class MedicationViewModel(
     replaceMedicationIntake: ReplaceMedicationIntake,
 ) : ViewModel() {
     private val _intakeList: MutableLiveData<List<MedicationIntakeModel>> =
-        MutableLiveData(getIntakeList.invoke())
+        MutableLiveData()
     val intakeList: LiveData<List<MedicationIntakeModel>> get() = _intakeList
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) { getIntakeList.invoke() }
+    }
+
 
     /**список пар Время - Список приемов лекарств**/
     private val _intakeListToday: MutableLiveData<List<Pair<MedicationIntakeModel.Time, List<MedicationIntakeModel>>>> =
@@ -44,7 +52,7 @@ class MedicationViewModel(
     val displayDate: LiveData<MedicationIntakeModel.Date>
         get() = _displayDate
 
-    @RequiresApi(Build.VERSION_CODES.O)//TODO
+
     fun setCurrentDate() {
         //todo метод устанавливает фактическую дату, необходимо доработать до обновления в риалтайме
         val formatterIntakeDate = DateTimeFormatter.ofPattern("d M")
@@ -55,8 +63,8 @@ class MedicationViewModel(
     }
 
     /**метод устанавливает дату на верхней кнопке, по дефолту это текущая дата**/
-    @RequiresApi(Build.VERSION_CODES.O)//TODO
-    fun setDisplayDate(date: MedicationIntakeModel.Date) {
+
+    private fun setDisplayDate(date: MedicationIntakeModel.Date) {
         val formatter = DateTimeFormatter.ofPattern(
             "d MMMM", Locale(
                 "ru", "RU"
@@ -67,7 +75,7 @@ class MedicationViewModel(
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     fun getIntakeListWithDate(date: MedicationIntakeModel.Date) {
         setDisplayDate(date)
         val list = _intakeList.value?.filter {

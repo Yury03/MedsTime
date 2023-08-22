@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--default colors-->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -7,14 +8,20 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!--menu colors-->
     <color name="selected_bottom_menu_item">#FF4376FE</color>
     <color name="bottom_menu_item">#000000</color>
+
+    <!--general colors-->
     <color name="screen_back">#FFF0F1F5</color>
     <color name="screen_front">#FFFFFF</color>
     <color name="default_text">#000000</color>
-    <color name="item_text_meds_taken">#56C2A3</color>
-    <color name="item_text_meds_missed">#C25656</color>
-    <color name="item_background">#FFFFFF</color>
-    <color name="alert_dialog">#F0F1F5</color>
-    <color name="alpha_null">#00000000</color>
+
+    <!--medication fragment colors-->
+    <color name="medication_item_text_meds_taken">#56C2A3</color>
+    <color name="medication_item_text_meds_missed">#C25656</color>
+    <color name="medication_item_background">#FFFFFF</color>
+    <color name="local_transparent">#00000000</color>
+    <color name="medication_alert_dialog_background">#F0F1F5</color>
 </resources>

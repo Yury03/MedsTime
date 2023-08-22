@@ -1,22 +1,37 @@
 package com.example.medstime.data.room.entity
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 
 
-@Entity(tableName = "medication_intake")
+@Entity(tableName = "medication_intake_database")
 data class MedicationIntakeEntity(
     @PrimaryKey val id: String,
-    @ColumnInfo val name: String,
-    @ColumnInfo val dosage: Double,
-    @ColumnInfo val dosageUnit: String,
-    @ColumnInfo val isTaken: Boolean,
-    @ColumnInfo val reminderTime: Int,
-    @ColumnInfo val medicationId: Int,
-    @ColumnInfo val intakeTime: Pair<Int, Int>,         //hour, minute
-    @ColumnInfo val intakeDate: Pair<Int, Int>,         //day, month
-    @ColumnInfo val actualIntakeTime: Pair<Int, Int>?,  //hour, minute
-    @ColumnInfo val actualIntakeDate: Pair<Int, Int>?,  //day, month
-    @ColumnInfo val intakeType: String,
-)
+    val name: String,
+    val dosage: Double,
+    val dosageUnit: String,
+    val isTaken: Boolean,
+    val reminderTime: Int,
+    val medicationId: Int,
+    @TypeConverters(IntPairConverter::class) val intakeTime: Pair<Int, Int>,         //hour, minute
+    @TypeConverters(IntPairConverter::class) val intakeDate: Pair<Int, Int>,         //day, month
+    @TypeConverters(IntPairConverter::class) val actualIntakeTime: Pair<Int, Int>?,  //hour, minute
+    @TypeConverters(IntPairConverter::class) val actualIntakeDate: Pair<Int, Int>?,  //day, month
+    val intakeType: String,
+) {
+    class IntPairConverter {
+        @TypeConverter
+        fun fromIntPair(value: Pair<Int, Int>?): String? {
+            return value?.let { "${it.first},${it.second}" }
+        }
+
+        @TypeConverter
+        fun toIntPair(value: String?): Pair<Int, Int>? {
+            return value?.split(",")?.let {
+                Pair(it[0].toInt(), it[1].toInt())
+            }
+        }
+    }
+}

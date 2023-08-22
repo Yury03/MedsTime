@@ -1,16 +1,9 @@
 package com.example.medstime.ui.medication
 
 import android.annotation.SuppressLint
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.ImageButton
-import android.widget.TextView
-import androidx.annotation.RequiresApi
-import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.medstime.R
@@ -27,7 +20,7 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
     private val binding get() = _binding!!
     private val viewModel by viewModel<MedicationViewModel>()
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -55,14 +48,17 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
             calendar.maxDate = (Date().time + maxDate)
         }
 
-        val medicationClick = { it: MedicationIntakeModel, timeAndDosageText: String ->
-            showAlertDialog(it, timeAndDosageText)
+        val medicationClick = { model: MedicationIntakeModel,
+                                timeAndDosageText: String ->
+//            showAlertDialog(it, timeAndDosageText)
+            MedicationClickAlert(requireContext(), model, timeAndDosageText).show()
         }
         viewModel.intakeListToday.observe(viewLifecycleOwner) {
             binding.medicationsList.adapter =
-                context?.let { it1 -> TimesListAdapter(it, it1, medicationClick) }
+                context?.let { context ->
+                    TimesListAdapter(it, context, medicationClick)
+                }
         }
-
         viewModel.currentDate.observe(viewLifecycleOwner) { binding.showCalendar.text = it }
 
     }
@@ -95,24 +91,9 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
         val customLayout: View = layoutInflater.inflate(R.layout.medication_alert_dialog, null)
         with(alertDialogBuilder) {
             setView(customLayout)
-            background = ColorDrawable(Color.TRANSPARENT)
+
         }
         val alertDialog = alertDialogBuilder.create()
-        with(customLayout) {
-            findViewById<TextView>(R.id.AD_medicationName).text = medicationIntakeModel.name
-            findViewById<TextView>(R.id.AD_timeAndDosage).text = timeAndDosageText
-            findViewById<ImageButton>(R.id.AD_editButton).setOnClickListener {
-            }
-            findViewById<AppCompatButton>(R.id.AD_remindFiveMinButton).setOnClickListener {
-                alertDialog.dismiss()
-            }
-            findViewById<AppCompatButton>(R.id.AD_skipButton).setOnClickListener {
-                alertDialog.dismiss()
-            }
-            findViewById<AppCompatButton>(R.id.AD_takenButton).setOnClickListener {
-                alertDialog.dismiss()
-            }
-        }
         alertDialog.show()
     }
 

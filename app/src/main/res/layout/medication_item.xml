@@ -44,7 +44,7 @@
             android:id="@+id/timeMedication"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/item_text_meds_missed"
+            android:textColor="@color/medication_item_text_meds_missed"
             android:textSize="@dimen/text_6_level" />
     </LinearLayout>
 </LinearLayout>
