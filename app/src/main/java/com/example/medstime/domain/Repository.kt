@@ -11,4 +11,5 @@ interface Repository {
         fun getMedicationById(id: String): MedicationModel
         fun replaceMedicationIntake(medicationIntakeModel: MedicationIntakeModel)
     }
+
 }

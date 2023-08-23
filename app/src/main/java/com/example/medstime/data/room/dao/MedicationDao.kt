@@ -8,7 +8,7 @@ import com.example.medstime.data.room.entity.MedicationEntity
 
 @Dao
 interface MedicationDao {
-    @Query("SELECT * FROM medications")
+    @Query("SELECT * FROM medication_database")
     fun getAll(): List<MedicationEntity>
 
     @Insert
@@ -17,10 +17,10 @@ interface MedicationDao {
     @Delete
     fun delete(medication: MedicationEntity)
 
-    @Query("SELECT * FROM medications WHERE id = :medicationId")
+    @Query("SELECT * FROM medication_database WHERE id = :medicationId")
     fun getById(medicationId: String): MedicationEntity
 
-    @Query("DELETE FROM medications WHERE id = :medicationId")
+    @Query("DELETE FROM medication_database WHERE id = :medicationId")
     fun deleteById(medicationId: String)
 
 }
