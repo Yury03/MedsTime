@@ -1,4 +1,4 @@
-package com.example.medstime.ui.di
+package com.example.medstime.di
 
 import com.example.medstime.ui.main_activity.MainViewModel
 import com.example.medstime.ui.medication.MedicationViewModel
@@ -7,13 +7,15 @@ import org.koin.dsl.module
 
 val appModule = module {
     viewModel<MainViewModel> {
-        MainViewModel()//todo usecase для добавления medicationModel и MedsTrackingModel
+        MainViewModel()
     }
     viewModel<MedicationViewModel> {
         MedicationViewModel(
-            getMedicationListUseCase = get(),
+            getIntakeList = get(),
             removeMedicationItemUseCase = get(),
-            replaceMedicationItemUseCase = get()
+            replaceMedicationItemUseCase = get(),
+            getMedicationById = get(),
+            replaceMedicationIntake = get(),
         )
     }
 }
