@@ -17,4 +17,69 @@
     <string name="before_meal">до еды</string>
     <string name="during_meal">во время еды</string>
     <string name="empty_string"></string>
+    <string name="tracking">Отслеживание</string>
+    <string name="medicine">Прием</string>
+    <string name="add">Добавить</string>
+    <string name="med_name_hint">Название лекарства</string>
+    <string name="add_med_title">Добавить отслеживание</string>
+    <string name="med_daily_dosage_hint">Суточная дозировка</string>
+    <string name="med_comment_hint">Комментарий</string>
+    <string name="dosage_units_hint">Ед. дозировки</string>
+    <string name="default_dosage_unit">Таблетки</string>
+    <string name="current_stock">Текущий запас</string>
+    <string name="spinner_units_hint">Вид</string>
+    <string name="spinner_tracking_hint">Тип отслеживания</string>
+    <string name="default_tracking_type">Не добавлять</string>
+    <string name="add_reminder">Добавить напоминания</string>
+    <string name="title_add_reminder">Время приема</string>
+    <string name="default_reminder_type">В момент события</string>
+    <string name="spinner_reminder_type_hint">Напоминать</string>
+    <string name="spinner_intake_type_hint">Принимать</string>
+    <string name="default_intake_type">Не важно</string>
+    <string name="add_duration">Настроить продолжительность</string>
+    <string name="monday">Пн.</string>
+    <string name="tuesday">Вт.</string>
+    <string name="wednesday">Ср.</string>
+    <string name="thursday">Чт.</string>
+    <string name="friday">Пт.</string>
+    <string name="saturday">Сб.</string>
+    <string name="sunday">Вс.</string>
+    <string name="default_duration_settings">Выбранные дни</string>
+    <string name="spinner_duration_settings_hint">Когда принимать</string>
+    <string name="start_intake_date_hint">Начало приема</string>
+    <string name="end_intake_date_hint">Конец приема</string>
+    <string name="number_meds_hint">Количество лекарств</string>
+    <string name="number_days_hint">Количество дней</string>
+    <string name="single_dosage">Разовая доза</string>
+    <string name="add_med">Добавить отслеживание</string>
+    <string name="select_range_dates">Выберите диапазон дат</string>
+    <string-array name="dosage_array">
+        <item>Мг</item>
+        <item>Капсулы</item>
+        <item>Таблетки</item>
+    </string-array>
+    <string-array name="track_array">
+        <item>Не добавлять</item>
+        <item>Запас лекарств</item>
+        <item>Количество дней</item>
+        <item>Дата</item>
+    </string-array>
+    <string-array name="reminder_array">
+        <item>В момент события</item>
+        <item>За 5 минут</item>
+        <item>За 10 минут</item>
+        <item>За 15 минут</item>
+        <item>За 20 минут</item>
+    </string-array>
+    <string-array name="intake_array">
+        <item>Не важно</item>
+        <item>До еды</item>
+        <item>Во время еды</item>
+        <item>После еды</item>
+    </string-array>
+    <string-array name="duration_settings_array">
+        <item>Выбранные дни</item>
+        <item>Через день</item>
+        <item>Каждый день</item>
+    </string-array>
 </resources>
