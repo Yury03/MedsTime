@@ -24,4 +24,7 @@
     <color name="medication_item_background">#FFFFFF</color>
     <color name="local_transparent">#00000000</color>
     <color name="medication_alert_dialog_background">#F0F1F5</color>
+    <color name="light_grey_text">#666666</color>
+    <color name="light_grey_background">#EBEBEB</color>
+    <color name="blue">#afdafc</color>
 </resources>

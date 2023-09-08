@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-
+    <style name="ModalBottomSheet">
+        parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="behavior_peekHeight">300dp</item>
+        <item name="state_collapsed">true</item>
+        <item name="android:strokeColor">@color/blue</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowSwipeToDismiss">true</item>
+    </style>
 </resources>
