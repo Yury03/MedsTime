@@ -35,7 +35,13 @@
     <string name="sunday">Вс.</string>
     <string name="default_duration_settings">Выбранные дни</string>
     <string name="spinner_duration_settings_hint">Когда принимать</string>
-
+    <string name="start_intake_date_hint">Начало приема</string>
+    <string name="end_intake_date_hint">Конец приема</string>
+    <string name="number_meds_hint">Количество лекарств</string>
+    <string name="number_days_hint">Количество дней</string>
+    <string name="single_dosage">Разовая доза</string>
+    <string name="add_med">Добавить отслеживание</string>
+    <string name="select_range_dates">Выберите диапазон дат</string>
     <string-array name="dosage_array">
         <item>Мг</item>
         <item>Капсулы</item>

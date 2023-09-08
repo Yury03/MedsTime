@@ -1,17 +1,26 @@
 package com.example.medstime.ui.add_med
 
+import android.app.DatePickerDialog
+import android.os.Build
 import android.os.Bundle
+import android.text.Editable.Factory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentAddMedBinding
 import com.google.android.material.chip.Chip
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Locale
 
 
 class AddMedFragment : DialogFragment() {
@@ -25,6 +34,7 @@ class AddMedFragment : DialogFragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setAdapterSpinDosageUnits()
@@ -35,6 +45,7 @@ class AddMedFragment : DialogFragment() {
         initView()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun initView() {
         with(binding) {
             reminderLayoutButton.setOnClickListener {
@@ -55,7 +66,46 @@ class AddMedFragment : DialogFragment() {
                 }
                 picker.show(parentFragmentManager, "TimePicker")
             }
+
+            startIntakeDate.text = Factory.getInstance().newEditable(getCurrentDate())
+            startIntakeDate.setOnClickListener {
+                showDatePickerDialog(startIntakeDate)
+            }
+            endIntakeDate.setOnClickListener {
+                showDatePickerDialog(endIntakeDate)
+            }
         }
+    }
+
+
+    private fun showDatePickerDialog(textView: TextInputEditText) {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val datePickerDialog = DatePickerDialog(
+            requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+                val formattedDate = String.format(
+                    Locale.getDefault(),
+                    "%02d.%02d.%04d",
+                    selectedDay,
+                    selectedMonth + 1,
+                    selectedYear
+                )
+                textView.text = Factory.getInstance().newEditable(formattedDate)
+            },
+            year,
+            month,
+            day
+        )
+        datePickerDialog.show()
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getCurrentDate(): String {
+        val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+        return LocalDate.now().format(formatter)
     }
 
     private fun addChipTime(chipText: String) {
@@ -93,6 +143,36 @@ class AddMedFragment : DialogFragment() {
         val typeArray = resources.getStringArray(R.array.track_array)
         val adapter = ArrayAdapter(requireContext(), R.layout.spin_item, typeArray)
         (binding.textFieldTrackingType.editText as? AutoCompleteTextView)?.setAdapter(adapter)
+        with(binding) {
+            trackingType.setOnItemClickListener { _, _, position, _ ->
+                when (position) {
+                    0 -> {//интерфейс "Не добавлять"
+                        textFieldEndIntakeDate.visibility = View.GONE
+                        textFieldNumberDays.visibility = View.GONE
+                        textFieldNumberMeds.visibility = View.GONE
+                    }
+
+                    1 -> {//интерфейс "Запас лекарств"
+                        textFieldNumberDays.visibility = View.GONE
+                        textFieldEndIntakeDate.visibility = View.GONE
+                        textFieldNumberMeds.visibility = View.VISIBLE
+                    }
+
+                    2 -> {//интерфейс "Количество дней"
+                        textFieldNumberDays.visibility = View.VISIBLE
+                        textFieldEndIntakeDate.visibility = View.GONE
+                        textFieldNumberMeds.visibility = View.GONE
+                    }
+
+                    3 -> {//интерфейс "Дата"
+                        textFieldEndIntakeDate.visibility = View.VISIBLE
+                        textFieldNumberDays.visibility = View.GONE
+                        textFieldNumberMeds.visibility = View.GONE
+                    }
+                }
+            }
+        }
+
     }
 
     private fun setAdapterSpinReminderType() {
@@ -111,5 +191,23 @@ class AddMedFragment : DialogFragment() {
         val durationSettingsArray = resources.getStringArray(R.array.duration_settings_array)
         val adapter = ArrayAdapter(requireContext(), R.layout.spin_item, durationSettingsArray)
         (binding.textFieldDurationSettings.editText as? AutoCompleteTextView)?.setAdapter(adapter)
+        with(binding) {
+            durationSettings.setOnItemClickListener { _, _, position, _ ->
+                when (position) {
+                    0 -> {//интерфейс "выбранные дни"
+                        chipGroupDaysWeek.visibility = View.VISIBLE
+                    }
+
+                    1 -> {//интерфейс "Каждый день"
+                        chipGroupDaysWeek.visibility = View.GONE
+                    }
+
+                    2 -> {//интерфейс "Через день"
+                        chipGroupDaysWeek.visibility = View.GONE
+                    }
+                }
+            }
+        }
     }
+
 }
