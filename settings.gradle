@@ -15,3 +15,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "MedsTime"
 include ':app'
+include ':data'
+include ':domain'

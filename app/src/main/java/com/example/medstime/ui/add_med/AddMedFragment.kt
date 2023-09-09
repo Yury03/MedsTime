@@ -1,7 +1,6 @@
 package com.example.medstime.ui.add_med
 
 import android.app.DatePickerDialog
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable.Factory
 import android.view.LayoutInflater
@@ -9,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentAddMedBinding
@@ -34,7 +32,7 @@ class AddMedFragment : DialogFragment() {
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setAdapterSpinDosageUnits()
@@ -45,7 +43,6 @@ class AddMedFragment : DialogFragment() {
         initView()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun initView() {
         with(binding) {
             reminderLayoutButton.setOnClickListener {
@@ -77,7 +74,6 @@ class AddMedFragment : DialogFragment() {
         }
     }
 
-
     private fun showDatePickerDialog(textView: TextInputEditText) {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -102,7 +98,6 @@ class AddMedFragment : DialogFragment() {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun getCurrentDate(): String {
         val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
         return LocalDate.now().format(formatter)
