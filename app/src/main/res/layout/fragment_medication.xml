@@ -37,6 +37,7 @@
             android:layout_marginTop="15dp"
             android:layout_marginBottom="5dp"
             android:background="@drawable/calendar_top_button_show"
+            android:paddingHorizontal="12dp"
             android:text="@string/date_placeholder"
             android:textColor="@color/selected_bottom_menu_item" />
 

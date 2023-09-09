@@ -1,7 +1,7 @@
 package com.example.medstime.di
 
-import com.example.medstime.data.MedicationContractImpl
-import com.example.medstime.domain.Repository
+import com.example.data.MedicationContractImpl
+import com.example.domain.Repository
 import org.koin.dsl.module
 
 val dataModule = module {

@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.medstime.R
-import com.example.medstime.domain.models.MedicationIntakeModel
+import com.example.domain.models.MedicationIntakeModel
 
 class TimesListAdapter(
     private val dataList: List<Pair<MedicationIntakeModel.Time, List<MedicationIntakeModel>>>,

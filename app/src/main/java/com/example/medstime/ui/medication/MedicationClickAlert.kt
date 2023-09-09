@@ -6,7 +6,7 @@ import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import androidx.appcompat.app.AlertDialog
 import com.example.medstime.databinding.MedicationAlertDialogBinding
-import com.example.medstime.domain.models.MedicationIntakeModel
+import com.example.domain.models.MedicationIntakeModel
 
 
 class MedicationClickAlert(

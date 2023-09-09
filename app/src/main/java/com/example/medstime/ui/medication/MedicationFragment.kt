@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentMedicationBinding
-import com.example.medstime.domain.models.MedicationIntakeModel
 import com.example.medstime.ui.medication.adapters.TimesListAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -34,7 +33,7 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
             hideCalendar.setOnClickListener { changeVisible(true) }
             calendar.setOnDateChangeListener { _, _, month, dayOfMonth ->
                 viewModel.getIntakeListWithDate(
-                    MedicationIntakeModel.Date(
+                    com.example.domain.models.MedicationIntakeModel.Date(
                         dayOfMonth,
                         month + 1
                     )
@@ -48,7 +47,7 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
             calendar.maxDate = (Date().time + maxDate)
         }
 
-        val medicationClick = { model: MedicationIntakeModel,
+        val medicationClick = { model: com.example.domain.models.MedicationIntakeModel,
                                 timeAndDosageText: String ->
 //            showAlertDialog(it, timeAndDosageText)
             MedicationClickAlert(requireContext(), model, timeAndDosageText).show()
@@ -84,7 +83,7 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
 
     @SuppressLint("UseCompatLoadingForDrawables", "InflateParams")//TODO
     private fun showAlertDialog(
-        medicationIntakeModel: MedicationIntakeModel,
+        medicationIntakeModel: com.example.domain.models.MedicationIntakeModel,
         timeAndDosageText: String
     ) {
         val alertDialogBuilder = MaterialAlertDialogBuilder(requireContext())

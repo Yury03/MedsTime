@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.medstime.R
-import com.example.medstime.domain.models.MedicationIntakeModel
+import com.example.domain.models.MedicationIntakeModel
 import java.time.LocalDateTime
 
 class MedicationsListAdapter(
