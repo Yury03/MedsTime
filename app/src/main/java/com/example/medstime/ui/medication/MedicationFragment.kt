@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.domain.models.MedicationIntakeModel
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentMedicationBinding
 import com.example.medstime.ui.medication.adapters.TimesListAdapter
@@ -19,10 +20,8 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
     private val binding get() = _binding!!
     private val viewModel by viewModel<MedicationViewModel>()
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         _binding = FragmentMedicationBinding.bind(view)
         viewModel.setCurrentDate()
         with(binding) {
@@ -33,7 +32,7 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
             hideCalendar.setOnClickListener { changeVisible(true) }
             calendar.setOnDateChangeListener { _, _, month, dayOfMonth ->
                 viewModel.getIntakeListWithDate(
-                    com.example.domain.models.MedicationIntakeModel.Date(
+                    MedicationIntakeModel.Date(
                         dayOfMonth,
                         month + 1
                     )
@@ -47,7 +46,7 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
             calendar.maxDate = (Date().time + maxDate)
         }
 
-        val medicationClick = { model: com.example.domain.models.MedicationIntakeModel,
+        val medicationClick = { model: MedicationIntakeModel,
                                 timeAndDosageText: String ->
 //            showAlertDialog(it, timeAndDosageText)
             MedicationClickAlert(requireContext(), model, timeAndDosageText).show()
@@ -83,7 +82,7 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
 
     @SuppressLint("UseCompatLoadingForDrawables", "InflateParams")//TODO
     private fun showAlertDialog(
-        medicationIntakeModel: com.example.domain.models.MedicationIntakeModel,
+        medicationIntakeModel: MedicationIntakeModel,
         timeAndDosageText: String
     ) {
         val alertDialogBuilder = MaterialAlertDialogBuilder(requireContext())

@@ -63,9 +63,4 @@ object MedicationMapper {
             dateFormatter.format(it)
         }
     }
-    /*private fun generateUniqueId(): String {
-        val timestamp = System.currentTimeMillis()
-        val random = (Math.random() * 1000).toInt()
-        return "$timestamp$random"
-    }*/
 }

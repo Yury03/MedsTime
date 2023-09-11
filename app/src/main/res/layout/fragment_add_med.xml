@@ -32,6 +32,7 @@
             android:hint="@string/med_name_hint">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/medicationName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text" />
@@ -215,19 +216,19 @@
                 android:paddingVertical="4dp">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textFieldDurationSettings"
+                    android:id="@+id/textFieldFrequency"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
-                    android:hint="@string/spinner_duration_settings_hint">
+                    android:hint="@string/spinner_frequency_hint">
 
                     <AutoCompleteTextView
-                        android:id="@+id/durationSettings"
+                        android:id="@+id/frequency"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="none"
-                        android:text="@string/default_duration_settings" />
+                        android:text="@string/default_frequency" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout
