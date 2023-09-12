@@ -1,8 +1,6 @@
 package com.example.medstime.ui.add_med
 
-import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.text.Editable
 import android.text.Editable.Factory
@@ -12,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import androidx.core.view.get
 import androidx.fragment.app.DialogFragment
 import com.example.domain.models.MedicationModel
 import com.example.medstime.R
@@ -115,15 +112,18 @@ class AddMedFragment : DialogFragment() {
         }
     }
 
-    private fun getIntakeTime(): List<MedicationModel.Time> {//todo оптимизировать
+    private fun getIntakeTime(): List<MedicationModel.Time> {
         val intakeTimeArray = mutableListOf<MedicationModel.Time>()
         for (i in 0 until binding.chipGroupTime.childCount) {
             val chip = binding.chipGroupTime.getChildAt(i) as Chip
-            val chipText = chip.text.toString()
-            val pair = chipText.split(':')
-            intakeTimeArray.add(i, MedicationModel.Time(pair[0].toInt(), pair[1].toInt()))
+            intakeTimeArray.add(parseTimeString(chip.text.toString()))
         }
         return intakeTimeArray
+    }
+
+    private fun parseTimeString(chipText: String): MedicationModel.Time {
+        val pair = chipText.split(':')
+        return MedicationModel.Time(pair[0].toInt(), pair[1].toInt())
     }
 
     private fun getTrackingType(): MedicationModel.TrackType {
@@ -215,7 +215,7 @@ class AddMedFragment : DialogFragment() {
     private fun getSelectedDays(): List<Int> {
         val selectedDays = mutableListOf<Int>()
         for (i in 0 until binding.chipGroupDaysWeek.childCount) {
-            if (binding.chipGroupDaysWeek[i].isSelected) selectedDays.add(i + 1)
+            if ((binding.chipGroupDaysWeek.getChildAt(i) as Chip).isChecked) selectedDays.add(i + 1)
         }
         return selectedDays
     }
@@ -227,10 +227,11 @@ class AddMedFragment : DialogFragment() {
     }
 
 
-    @SuppressLint("SimpleDateFormat")//todo
     private fun String.toDate(): Date {
-        val format = SimpleDateFormat("dd.MM.yyyy")
-        return format.parse(this)
+        val format = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+        val localDate = LocalDate.parse(this, format)
+        val instant = localDate.atStartOfDay().toInstant(java.time.ZoneOffset.UTC)
+        return Date.from(instant)
     }
 
     private fun MedicationModel.Frequency.isDefault(): Boolean {
