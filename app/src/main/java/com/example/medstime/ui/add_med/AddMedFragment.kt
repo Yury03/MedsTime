@@ -126,44 +126,91 @@ class AddMedFragment : DialogFragment() {
         return intakeTimeArray
     }
 
+    private fun getTrackingType(): MedicationModel.TrackType {
+        val trackingTypeArray = resources.getStringArray(R.array.track_array)
+        return when (binding.trackingType.text.toString()) {
+            trackingTypeArray[0] -> MedicationModel.TrackType.NONE
+            trackingTypeArray[1] -> MedicationModel.TrackType.STOCK_OF_MEDICINE
+            trackingTypeArray[2] -> MedicationModel.TrackType.NUMBER_OF_DAYS
+            trackingTypeArray[3] -> MedicationModel.TrackType.DATE
+            else -> MedicationModel.TrackType.NONE
+        }
+    }
+
     private fun makeMedicationModel(): MedicationModel? {
         with(binding) {
             val medicationName = medicationName.text.toString()
             val medicationDosageStr = dosage.text.toString()
             val medicationDosageUnit = dosageUnits.text.toString()
-            val medicationIntakeTime = getIntakeTime()
             val medicationReminderTime = extractIntFromString(reminderType.text.toString())
             val medicationFrequency = getFrequency()
             val medicationSelectedDays =
                 if (medicationFrequency.isDefault()) getSelectedDays() else null
             val medicationStartDate = startIntakeDate.text.toString().toDate()
-            val medicationEndDate =
-                if (!medicationFrequency.isDefault()) {
-                    endIntakeDate.text.toString()
-                        .takeIf { it.isNotEmpty() }?.toDate()
+            val medicationComment = medComment.text.toString()
+            val medicationUseBanner = useBannerChBox.isChecked
+            val medicationIntakeTimes = getIntakeTime()
+            if (medicationName.isNotEmpty() && medicationDosageStr.isNotEmpty()
+                && trackingDataIsCorrect() && medicationIntakeTimes.isNotEmpty()
+                && medicationFrequency.isCorrect()
 
-                } else null
-            if (medicationName.isNotEmpty() && medicationDosageStr.isNotEmpty()) {
-
-
+            ) {
                 return MedicationModel(
                     id = generateUniqueId(),
                     name = medicationName,
                     dosage = medicationDosageStr.toDouble(),
                     dosageUnit = medicationDosageUnit,
-                    intakeTimes = medicationIntakeTime,
+                    intakeTimes = medicationIntakeTimes,
                     reminderTime = medicationReminderTime,
                     frequency = medicationFrequency,
                     selectedDays = medicationSelectedDays,
                     startDate = medicationStartDate,
-                    endDate = medicationEndDate,
                     intakeType = getIntakeType(),
+                    comment = medicationComment,
+                    useBanner = medicationUseBanner,
+                    trackType = getTrackingType(),
+                    stockOfMedicine = getTrackingData().first,
+                    numberOfDays = getTrackingData().second,
+                    endDate = getTrackingData().third,
                 )
             } else {
                 return null
             }
         }
     }
+
+    private fun trackingDataIsCorrect(): Boolean {
+        with(binding)
+        {
+            return when (getTrackingType()) {
+                MedicationModel.TrackType.STOCK_OF_MEDICINE -> numberMeds.text.toString()
+                    .isNotEmpty()
+
+                MedicationModel.TrackType.DATE -> endIntakeDate.text.toString().isNotEmpty()
+                MedicationModel.TrackType.NUMBER_OF_DAYS -> numberDays.text.toString().isNotEmpty()
+                MedicationModel.TrackType.NONE -> true
+            }
+        }
+    }
+
+    /**На момент вызова getTrackingData() гарантируется, что соответствующее поле не пустое.
+     *  Метод получает нужные данные, в зависимости от типа отслеживания*/
+    private fun getTrackingData(): Triple<Double?, Double?, Date?> {
+        with(binding) {
+            val numberMedsStr = numberMeds.text.toString()
+            val numberDaysStr = numberDays.text.toString()
+            val endIntakeDateStr = endIntakeDate.text.toString()
+            val trackArray = resources.getStringArray(R.array.track_array)
+            return when (trackingType.text.toString()) {
+                trackArray[0] -> Triple(null, null, null)
+                trackArray[1] -> Triple(numberMedsStr.toDouble(), null, null)
+                trackArray[2] -> Triple(null, numberDaysStr.toDouble(), null)
+                trackArray[3] -> Triple(null, null, endIntakeDateStr.toDate())
+                else -> Triple(null, null, null)
+            }
+        }
+    }
+
 
     private fun getSelectedDays(): List<Int> {
         val selectedDays = mutableListOf<Int>()
@@ -188,6 +235,14 @@ class AddMedFragment : DialogFragment() {
 
     private fun MedicationModel.Frequency.isDefault(): Boolean {
         return this == MedicationModel.Frequency.SELECTED_DAYS
+    }
+
+    private fun MedicationModel.Frequency.isCorrect(): Boolean {
+        return when (this) {
+            MedicationModel.Frequency.DAILY -> true
+            MedicationModel.Frequency.EVERY_OTHER_DAY -> true
+            MedicationModel.Frequency.SELECTED_DAYS -> getSelectedDays().isNotEmpty()
+        }
     }
 
     private fun generateUniqueId(): String {
@@ -249,8 +304,8 @@ class AddMedFragment : DialogFragment() {
     }
 
     private fun setAdapterSpinTrackType() {
-        val typeArray = resources.getStringArray(R.array.track_array)
-        val adapter = ArrayAdapter(requireContext(), R.layout.spin_item, typeArray)
+        val trackArray = resources.getStringArray(R.array.track_array)
+        val adapter = ArrayAdapter(requireContext(), R.layout.spin_item, trackArray)
         (binding.textFieldTrackingType.editText as? AutoCompleteTextView)?.setAdapter(adapter)
         with(binding) {
             trackingType.setOnItemClickListener { _, _, position, _ ->
