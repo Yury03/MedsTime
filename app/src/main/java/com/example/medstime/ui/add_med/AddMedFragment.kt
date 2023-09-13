@@ -78,16 +78,17 @@ class AddMedFragment : DialogFragment() {
             }
             continueButton.setOnClickListener {
                 val medicationModel = makeMedicationModel()
-                medicationModel?.let {
+                medicationModel.first?.let {
                     Log.e(TAG, it.toString())
+                    viewModel.saveNewMedication(it)
                 } ?: run {
-                    showError()
+                    showError(medicationModel.second)
                 }
             }
         }
     }
 
-    private fun showError() {
+    private fun showError(error: Int) {
         Log.e(TAG, "ERROR CONTINUE BUTTON")
     }
 
@@ -137,8 +138,9 @@ class AddMedFragment : DialogFragment() {
         }
     }
 
-    private fun makeMedicationModel(): MedicationModel? {
+    private fun makeMedicationModel(): Pair<MedicationModel?, Int> {
         with(binding) {
+            var error = 0
             val medicationName = medicationName.text.toString()
             val medicationDosageStr = dosage.text.toString()
             val medicationDosageUnit = dosageUnits.text.toString()
@@ -153,28 +155,29 @@ class AddMedFragment : DialogFragment() {
             if (medicationName.isNotEmpty() && medicationDosageStr.isNotEmpty()
                 && trackingDataIsCorrect() && medicationIntakeTimes.isNotEmpty()
                 && medicationFrequency.isCorrect()
-
             ) {
-                return MedicationModel(
-                    id = generateUniqueId(),
-                    name = medicationName,
-                    dosage = medicationDosageStr.toDouble(),
-                    dosageUnit = medicationDosageUnit,
-                    intakeTimes = medicationIntakeTimes,
-                    reminderTime = medicationReminderTime,
-                    frequency = medicationFrequency,
-                    selectedDays = medicationSelectedDays,
-                    startDate = medicationStartDate,
-                    intakeType = getIntakeType(),
-                    comment = medicationComment,
-                    useBanner = medicationUseBanner,
-                    trackType = getTrackingType(),
-                    stockOfMedicine = getTrackingData().first,
-                    numberOfDays = getTrackingData().second,
-                    endDate = getTrackingData().third,
+                return Pair(
+                    MedicationModel(
+                        id = generateUniqueId(),
+                        name = medicationName,
+                        dosage = medicationDosageStr.toDouble(),
+                        dosageUnit = medicationDosageUnit,
+                        intakeTimes = medicationIntakeTimes,
+                        reminderTime = medicationReminderTime,
+                        frequency = medicationFrequency,
+                        selectedDays = medicationSelectedDays,
+                        startDate = medicationStartDate,
+                        intakeType = getIntakeType(),
+                        comment = medicationComment,
+                        useBanner = medicationUseBanner,
+                        trackType = getTrackingType(),
+                        stockOfMedicine = getTrackingData().first,
+                        numberOfDays = getTrackingData().second,
+                        endDate = getTrackingData().third,
+                    ), error
                 )
             } else {
-                return null
+                return Pair(null, error)
             }
         }
     }

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.models.MedicationIntakeModel
 import com.example.domain.usecase.medication.GetIntakeList
 import com.example.domain.usecase.medication.GetMedicationById
 import com.example.domain.usecase.medication.RemoveMedicationItem
@@ -18,25 +19,18 @@ import java.util.Locale
 import java.util.Scanner
 
 class MedicationViewModel(
-    getIntakeList: GetIntakeList,
+    private val getIntakeList: GetIntakeList,
     removeMedicationItemUseCase: RemoveMedicationItem,
     replaceMedicationItemUseCase: ReplaceMedicationItem,
     getMedicationById: GetMedicationById,
     replaceMedicationIntake: ReplaceMedicationIntake,
 ) : ViewModel() {
-    private val _intakeList: MutableLiveData<List<com.example.domain.models.MedicationIntakeModel>> =
-        MutableLiveData()
-    val intakeList: LiveData<List<com.example.domain.models.MedicationIntakeModel>> get() = _intakeList
-
-    init {
-        viewModelScope.launch(Dispatchers.IO) { getIntakeList.invoke() }
-    }
 
 
     /**список пар Время - Список приемов лекарств**/
-    private val _intakeListToday: MutableLiveData<List<Pair<com.example.domain.models.MedicationIntakeModel.Time, List<com.example.domain.models.MedicationIntakeModel>>>> =
+    private val _intakeListToday: MutableLiveData<List<Pair<MedicationIntakeModel.Time, List<MedicationIntakeModel>>>> =
         MutableLiveData()
-    val intakeListToday: LiveData<List<Pair<com.example.domain.models.MedicationIntakeModel.Time, List<com.example.domain.models.MedicationIntakeModel>>>>
+    val intakeListToday: LiveData<List<Pair<MedicationIntakeModel.Time, List<MedicationIntakeModel>>>>
         get() = _intakeListToday
 
     /** фактическая дата: нужна для кнопки и начального displayDate**/
@@ -45,9 +39,8 @@ class MedicationViewModel(
         get() = _currentDate
 
     /**выбранная пользователем дата, по дефолту currentDate (фактическая)**/
-    private val _displayDate =
-        MutableLiveData<com.example.domain.models.MedicationIntakeModel.Date>()
-    val displayDate: LiveData<com.example.domain.models.MedicationIntakeModel.Date>
+    private val _displayDate = MutableLiveData<MedicationIntakeModel.Date>()
+    val displayDate: LiveData<MedicationIntakeModel.Date>
         get() = _displayDate
 
 
@@ -55,9 +48,8 @@ class MedicationViewModel(
         //todo метод устанавливает фактическую дату, необходимо доработать до обновления в риалтайме
         val formatterIntakeDate = DateTimeFormatter.ofPattern("d M")
         val scanner = Scanner(LocalDateTime.now().format(formatterIntakeDate))
-        val intakeDate = com.example.domain.models.MedicationIntakeModel.Date(
-            scanner.nextInt(),
-            scanner.nextInt()
+        val intakeDate = MedicationIntakeModel.Date(
+            scanner.nextInt(), scanner.nextInt()
         )
 
         getIntakeListWithDate(intakeDate)
@@ -65,7 +57,7 @@ class MedicationViewModel(
 
     /**метод устанавливает дату на верхней кнопке, по дефолту это текущая дата**/
 
-    private fun setDisplayDate(date: com.example.domain.models.MedicationIntakeModel.Date) {
+    private fun setDisplayDate(date: MedicationIntakeModel.Date) {
         val formatter = DateTimeFormatter.ofPattern(
             "d MMMM", Locale(
                 "ru", "RU"
@@ -76,20 +68,21 @@ class MedicationViewModel(
     }
 
 
-    fun getIntakeListWithDate(date: com.example.domain.models.MedicationIntakeModel.Date) {
+    fun getIntakeListWithDate(date: MedicationIntakeModel.Date) {
         setDisplayDate(date)
-        val list = _intakeList.value?.filter {
-            it.intakeDate == date
-        }
-        //если в данную дату есть приемы, то делим их на пары типа Время - Список приемов
-        list?.let { notNullList ->
-            val groupedMedications: List<Pair<com.example.domain.models.MedicationIntakeModel.Time, List<com.example.domain.models.MedicationIntakeModel>>> =
-                notNullList.groupBy { it.intakeTime }
-                    .map { (time, medications) ->
-                        time to medications
-                    }
+        viewModelScope.launch(Dispatchers.IO) {
+            val intakeList = getIntakeList.invoke()
+            val list = intakeList.filter {
+                it.intakeDate == date
+            }
+            //если в данную дату есть приемы, то делим их на пары типа Время - Список приемов
+            val groupedMedications: List<Pair<MedicationIntakeModel.Time, List<MedicationIntakeModel>>> =
+                list.groupBy { it.intakeTime }.map { (time, medications) ->
+                    time to medications
+                }
             _intakeListToday.postValue(groupedMedications)
         }
 
     }
+
 }

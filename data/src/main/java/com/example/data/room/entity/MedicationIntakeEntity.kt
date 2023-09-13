@@ -14,7 +14,7 @@ data class MedicationIntakeEntity(
     val dosageUnit: String,
     val isTaken: Boolean,
     val reminderTime: Int,
-    val medicationId: Int,
+    val medicationId: String,
     @TypeConverters(IntPairConverter::class) val intakeTime: Pair<Int, Int>,         //hour, minute
     @TypeConverters(IntPairConverter::class) val intakeDate: Pair<Int, Int>,         //day, month
     @TypeConverters(IntPairConverter::class) val actualIntakeTime: Pair<Int, Int>?,  //hour, minute

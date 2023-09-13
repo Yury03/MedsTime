@@ -12,4 +12,9 @@ interface Repository {
         fun replaceMedicationIntake(medicationIntakeModel: MedicationIntakeModel)
     }
 
+    interface AdditionContract {
+        fun saveNewMedication(medicationModel: MedicationModel)
+    }
+
+
 }

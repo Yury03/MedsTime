@@ -7,7 +7,7 @@ data class MedicationIntakeModel(
     val dosageUnit: String,         // Единица измерения дозы (например, "таблетка")
     val isTaken: Boolean,           // Факт приема (принято или не принято)
     val reminderTime: Int,          // Время за которое напоминать (в минутах)
-    val medicationId: Int,          // id модели приема
+    val medicationId: String,       // id модели приема
     val intakeTime: Time,           // Время приема лекарства
     val intakeDate: Date,           // Дата приема лекарства
     val actualIntakeTime: Time?,    // Время фактического приема лекарства

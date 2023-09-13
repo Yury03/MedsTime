@@ -1,5 +1,6 @@
 package com.example.medstime.di
 
+import com.example.medstime.ui.add_med.AddMedViewModel
 import com.example.medstime.ui.main_activity.MainViewModel
 import com.example.medstime.ui.medication.MedicationViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -17,5 +18,8 @@ val appModule = module {
             getMedicationById = get(),
             replaceMedicationIntake = get(),
         )
+    }
+    viewModel<AddMedViewModel> {
+        AddMedViewModel(saveNewMedication = get())
     }
 }
