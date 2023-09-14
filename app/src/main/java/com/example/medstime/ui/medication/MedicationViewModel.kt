@@ -80,9 +80,9 @@ class MedicationViewModel(
                 list.groupBy { it.intakeTime }.map { (time, medications) ->
                     time to medications
                 }
-            _intakeListToday.postValue(groupedMedications)
+            val sortedList =
+                groupedMedications.sortedWith(compareBy({ it.first.hour }, { it.first.minute }))
+            _intakeListToday.postValue(sortedList)
         }
-
     }
-
 }

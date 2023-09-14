@@ -24,6 +24,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.UUID
 
 
 class AddMedFragment : DialogFragment() {
@@ -250,9 +251,7 @@ class AddMedFragment : DialogFragment() {
     }
 
     private fun generateUniqueId(): String {
-        val timestamp = System.currentTimeMillis()
-        val random = (Math.random() * 1000).toInt()
-        return "$timestamp$random"
+        return UUID.randomUUID().toString()
     }
 
     private fun showDatePickerDialog(textView: TextInputEditText) {
