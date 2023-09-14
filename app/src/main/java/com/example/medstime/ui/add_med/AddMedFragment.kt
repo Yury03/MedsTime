@@ -97,8 +97,8 @@ class AddMedFragment : DialogFragment() {
         val frequencyArray = resources.getStringArray(R.array.frequency_array)
         return when (binding.frequency.text.toString()) {
             frequencyArray[0] -> MedicationModel.Frequency.SELECTED_DAYS
-            frequencyArray[1] -> MedicationModel.Frequency.DAILY
-            frequencyArray[2] -> MedicationModel.Frequency.EVERY_OTHER_DAY
+            frequencyArray[1] -> MedicationModel.Frequency.EVERY_OTHER_DAY
+            frequencyArray[2] -> MedicationModel.Frequency.DAILY
             else -> MedicationModel.Frequency.SELECTED_DAYS
         }
     }
