@@ -1,6 +1,7 @@
 package com.example.data
 
 import android.content.Context
+import android.util.Log
 import com.example.data.mappers.MedicationIntakeMapper
 import com.example.data.mappers.MedicationMapper
 import com.example.data.room.MedicationDatabase
@@ -18,8 +19,9 @@ import java.util.concurrent.TimeUnit
 
 class AdditionalContractImpl(context: Context) : Repository.AdditionContract {
     private companion object {
-        const val DEFAULT_NUMBER_DAYS_GENERATE = 14
         //по дефолту генерируем приемы только на 14 дней
+        const val DEFAULT_NUMBER_DAYS_GENERATE = 14
+        const val LOG_TAG = "Additional contract implementation"
     }
 
     private val medicationDatabase: MedicationDatabase by lazy {
@@ -52,13 +54,20 @@ class AdditionalContractImpl(context: Context) : Repository.AdditionContract {
 
     private fun getNumberDays(model: MedicationModel): Int {
         return when (model.trackType) {
-            MedicationModel.TrackType.STOCK_OF_MEDICINE -> DEFAULT_NUMBER_DAYS_GENERATE //TODO
+            MedicationModel.TrackType.STOCK_OF_MEDICINE -> calculateDaysForStockMedicine(model)
             MedicationModel.TrackType.DATE -> TimeUnit.MILLISECONDS
                 .toDays(model.endDate!!.time - model.startDate.time).toInt()
 
             MedicationModel.TrackType.NUMBER_OF_DAYS -> model.numberOfDays!!.toInt()
             MedicationModel.TrackType.NONE -> DEFAULT_NUMBER_DAYS_GENERATE
         }
+    }
+
+    private fun calculateDaysForStockMedicine(model: MedicationModel): Int {
+        val stock = model.stockOfMedicine!!//todo?
+        val dayDosage = model.dosage * model.intakeTimes.size
+        Log.d(LOG_TAG, "Calculate days for stock medicine: ${(stock / dayDosage).toInt()}")
+        return (stock / dayDosage).toInt()
     }
 
     /**Функция генерирует список приемов на *days* дней с частотой **DAILY**.
@@ -141,6 +150,5 @@ class AdditionalContractImpl(context: Context) : Repository.AdditionContract {
     }
 
     private fun generateUniqueId() = UUID.randomUUID().toString()
-
 
 }
