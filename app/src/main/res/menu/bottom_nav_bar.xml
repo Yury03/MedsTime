@@ -9,10 +9,6 @@
         android:id="@+id/menu_medsTracking"
         android:icon="@drawable/meds_tracking_icon_menu"
         android:title="Лекарства" />
-    <item
-        android:id="@+id/menu_add_item"
-        android:icon="@drawable/add_icon_menu"
-        android:title="Добавить" />
 
     <item
         android:id="@+id/menu_notifications"

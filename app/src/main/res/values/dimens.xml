@@ -8,5 +8,6 @@
     <dimen name="text_5_level">18sp</dimen>
     <dimen name="text_6_level">16sp</dimen>
     <dimen name="text_7_level">14sp</dimen>
+    <dimen name="floating_action_button_margin">30dp</dimen>
 
 </resources>

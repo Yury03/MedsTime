@@ -44,7 +44,6 @@ class AdditionalContractImpl(context: Context) : Repository.AdditionContract {
     private fun generateMedicationIntakeModels(model: MedicationModel):
             List<MedicationIntakeModel> {
         val days = getNumberDays(model)
-
         return when (model.frequency) {
             MedicationModel.Frequency.DAILY -> generateModelsForDaily(model, days)
             MedicationModel.Frequency.EVERY_OTHER_DAY -> generateModelsForEveryOtherDay(model, days)

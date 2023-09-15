@@ -54,6 +54,10 @@
     <string name="add_med">Добавить отслеживание</string>
     <string name="select_range_dates">Выберите диапазон дат</string>
     <string name="use_banner">Использовать баннер</string>
+    <string name="dialog_message_info_about_banner">Активируйте эту функцию, чтобы баннеры с напоминаниями о приеме лекарств появлялись, даже когда вы используете другие приложения</string>
+    <string name="dialog_title_info_about_banner">Использовать баннер</string>
+    <string name="close">Закрыть</string>
+    <string name="positive_button_text">Ок</string>
     <string-array name="dosage_array">
         <item>Мг</item>
         <item>Капсулы</item>

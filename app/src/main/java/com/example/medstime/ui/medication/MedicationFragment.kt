@@ -1,20 +1,24 @@
 package com.example.medstime.ui.medication
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.domain.models.MedicationIntakeModel
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentMedicationBinding
 import com.example.medstime.ui.medication.adapters.TimesListAdapter
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Date
+import java.util.concurrent.TimeUnit
 
 class MedicationFragment : Fragment(R.layout.fragment_medication) {
+    companion object {
+        const val MAX_NUMBER_DAYS: Long = 14
+        const val MIN_NUMBER_DAYS: Long = 14
+    }
 
     private var _binding: FragmentMedicationBinding? = null
     private val binding get() = _binding!!
@@ -32,18 +36,20 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
             hideCalendar.setOnClickListener { changeVisible(true) }
             calendar.setOnDateChangeListener { _, _, month, dayOfMonth ->
                 viewModel.getIntakeListWithDate(
-                    MedicationIntakeModel.Date(
-                        dayOfMonth,
-                        month + 1
-                    )
+                    date = MedicationIntakeModel.Date(dayOfMonth, month + 1)
                 )//todo
-
                 hideCalendar.callOnClick()
             }
-            val maxDate = (1000 * 3600 * 24 * 14)
-            val minDate = (1000 * 3600 * 24 * 14)
+            val maxDate = TimeUnit.DAYS.toMillis(MAX_NUMBER_DAYS)
+            val minDate = TimeUnit.DAYS.toMillis(MIN_NUMBER_DAYS)
 //            calendar.minDate = (Date().time - minDate)
             calendar.maxDate = (Date().time + maxDate)
+            addNewMedication.setOnClickListener {
+                val navHostFragment =
+                    requireActivity().supportFragmentManager
+                        .findFragmentById(R.id.fragmentContainerView) as NavHostFragment
+                navHostFragment.navController.navigate(R.id.addMedFragment)
+            }
         }
 
         val medicationClick = { model: MedicationIntakeModel,
@@ -62,14 +68,16 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
     }
 
     private fun changeVisible(calendarIsVisible: Boolean) {
-        if (calendarIsVisible) {
-            binding.calendar.visibility = View.GONE
-            binding.showCalendar.visibility = View.VISIBLE
-            binding.hideCalendar.visibility = View.GONE
-        } else {
-            binding.calendar.visibility = View.VISIBLE
-            binding.showCalendar.visibility = View.GONE
-            binding.hideCalendar.visibility = View.VISIBLE
+        with(binding) {
+            if (calendarIsVisible) {
+                calendar.visibility = View.GONE
+                showCalendar.visibility = View.VISIBLE
+                hideCalendar.visibility = View.GONE
+            } else {
+                calendar.visibility = View.VISIBLE
+                showCalendar.visibility = View.GONE
+                hideCalendar.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -77,22 +85,6 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
         val layoutParams = binding.medicationsList.layoutParams as FrameLayout.LayoutParams
         layoutParams.setMargins(0, topMargin, 0, 0)
         binding.medicationsList.layoutParams = layoutParams
-    }
-
-
-    @SuppressLint("UseCompatLoadingForDrawables", "InflateParams")//TODO
-    private fun showAlertDialog(
-        medicationIntakeModel: MedicationIntakeModel,
-        timeAndDosageText: String
-    ) {
-        val alertDialogBuilder = MaterialAlertDialogBuilder(requireContext())
-        val customLayout: View = layoutInflater.inflate(R.layout.medication_alert_dialog, null)
-        with(alertDialogBuilder) {
-            setView(customLayout)
-
-        }
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
     }
 
 

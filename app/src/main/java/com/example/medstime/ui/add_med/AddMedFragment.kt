@@ -1,5 +1,6 @@
 package com.example.medstime.ui.add_med
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.Editable
@@ -10,10 +11,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import com.example.domain.models.MedicationModel
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentAddMedBinding
+import com.example.medstime.ui.main_activity.MainActivity
 import com.google.android.material.chip.Chip
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -27,9 +30,10 @@ import java.util.Locale
 import java.util.UUID
 
 
-class AddMedFragment : DialogFragment() {
+class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     companion object Tag {
-        const val TAG: String = "AddMedFragment"
+        const val LOG_TAG = "AddMedFragment"
+        const val TIME_PICKER_TAG = "TimePicker"
     }
 
     private val viewModel by viewModel<AddMedViewModel>()
@@ -38,6 +42,7 @@ class AddMedFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentAddMedBinding.inflate(inflater, container, false)
+        hideBottomNavigationBar()
         return binding.root
     }
 
@@ -50,6 +55,14 @@ class AddMedFragment : DialogFragment() {
         setAdapterSpinIntakeType()
         setAdapterSpinFrequency()
         initView()
+    }
+
+    private fun hideBottomNavigationBar() {
+        (requireActivity() as MainActivity).hideBottomNavigationBar()
+    }
+
+    private fun showBottomNavigationBar() {
+        (requireActivity() as MainActivity).showBottomNavigationBar()
     }
 
     private fun initView() {
@@ -68,7 +81,7 @@ class AddMedFragment : DialogFragment() {
                     if (picker.minute < 10) addChipTime("${picker.hour}:0${picker.minute}")
                     else addChipTime("${picker.hour}:${picker.minute}")
                 }
-                picker.show(parentFragmentManager, "TimePicker")
+                picker.show(parentFragmentManager, TIME_PICKER_TAG)
             }
             startIntakeDate.text = getCurrentDate()
             startIntakeDate.setOnClickListener {
@@ -80,17 +93,33 @@ class AddMedFragment : DialogFragment() {
             continueButton.setOnClickListener {
                 val medicationModel = makeMedicationModel()
                 medicationModel.first?.let {
-                    Log.e(TAG, it.toString())
+                    Log.e(LOG_TAG, it.toString())
                     viewModel.saveNewMedication(it)
+                    requireActivity().findNavController(R.id.fragmentContainerView)
+                        .navigate(R.id.medicationFragment)
                 } ?: run {
                     showError(medicationModel.second)
                 }
             }
+            infoAboutBanner.setOnClickListener {
+                showInfoAboutBannerDialog()
+            }
         }
     }
 
+    private fun showInfoAboutBannerDialog() =
+        AlertDialog.Builder(requireActivity())
+            .setTitle(R.string.dialog_title_info_about_banner)
+            .setMessage(R.string.dialog_message_info_about_banner)
+            .setPositiveButton(getString(R.string.positive_button_text)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+
+
     private fun showError(error: Int) {
-        Log.e(TAG, "ERROR CONTINUE BUTTON")
+        Log.e(LOG_TAG, "ERROR CONTINUE BUTTON")
     }
 
     private fun getFrequency(): MedicationModel.Frequency {
@@ -284,10 +313,6 @@ class AddMedFragment : DialogFragment() {
         val newChip = Chip(binding.chipGroupTime.context)
         newChip.apply {
             text = chipText
-            setStyle(
-                com.google.android.material.R.style.Widget_MaterialComponents_TextInputLayout_OutlinedBox_ExposedDropdownMenu,
-                theme
-            )
             isCloseIconVisible = true
             setOnCloseIconClickListener {
                 binding.chipGroupTime.removeView(newChip)
@@ -375,5 +400,10 @@ class AddMedFragment : DialogFragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        showBottomNavigationBar()
     }
 }

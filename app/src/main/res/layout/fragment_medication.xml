@@ -7,16 +7,26 @@
     android:orientation="vertical"
     tools:context=".ui.medication.MedicationFragment">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addNewMedication"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/floating_action_button_margin"
+        android:layout_marginBottom="@dimen/floating_action_button_margin"
+        android:clickable="true"
+        android:src="@drawable/button_icon_plus" />
+
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/medicationsList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/medicationsList"
         android:layout_marginTop="50dp"
         tools:itemCount="2"
         tools:listitem="@layout/medication_with_time_item" />
 
     <LinearLayout
-        android:id="@+id/frameLayout"
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -25,7 +35,6 @@
             android:id="@+id/calendar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:background="@color/screen_front"
             android:visibility="visible" />
 
@@ -48,9 +57,10 @@
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginBottom="5dp"
             android:background="@drawable/calendar_top_button_hide"
-            android:text="Закрыть"
+            android:text="@string/close"
             android:textColor="@color/selected_bottom_menu_item"
             android:visibility="gone" />
+
     </LinearLayout>
 
 </FrameLayout>
