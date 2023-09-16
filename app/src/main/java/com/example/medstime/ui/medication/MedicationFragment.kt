@@ -1,10 +1,16 @@
 package com.example.medstime.ui.medication
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
+import androidx.viewpager2.widget.ViewPager2
 import com.example.domain.models.MedicationIntakeModel
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentMedicationBinding
@@ -17,6 +23,7 @@ import java.util.Locale
 import java.util.Scanner
 import java.util.concurrent.TimeUnit
 
+
 class MedicationFragment : Fragment(R.layout.fragment_medication) {
     companion object {
         const val MAX_NUMBER_DAYS: Long = 14
@@ -25,6 +32,13 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
 
     private var _binding: FragmentMedicationBinding? = null
     private val binding get() = _binding!!
+    private val currentDate: MedicationIntakeModel.Date
+    private val dateList: List<MedicationIntakeModel.Date>
+
+    init {
+        currentDate = getDate()
+        dateList = generateDateList(currentDate)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,17 +48,28 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
 
     private fun initView() {
         with(binding) {
-            val currentDate = getDate()
-            setPagerAdapter(currentDate)
-            showCalendar.text = getDisplayDate(currentDate)
             calendar.visibility = View.GONE//todo баг calendarView
+            setPagerAdapter(currentDate)
+            showCalendarText.setFactory {
+                TextView(requireContext()).apply {
+                    textSize = 15f
+                    gravity = Gravity.CENTER_HORIZONTAL
+                    setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.selected_bottom_menu_item
+                        )
+                    )
+                }
+            }
+            showCalendarText.setText(getDisplayDate(currentDate))
             showCalendar.post { setTopMargin(binding.showCalendar.height) }
             showCalendar.setOnClickListener { changeVisible(false) }
             hideCalendar.setOnClickListener { changeVisible(true) }
             calendar.setOnDateChangeListener { _, year, month, dayOfMonth ->
                 val date = MedicationIntakeModel.Date(dayOfMonth, month + 1, year)
                 setPagerAdapter(date)
-                showCalendar.text = getDisplayDate(date)
+                showCalendarText.setText(getDisplayDate(date))
                 hideCalendar.callOnClick()
             }
             val maxDate = TimeUnit.DAYS.toMillis(MAX_NUMBER_DAYS)
@@ -56,6 +81,25 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
                     requireActivity().supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
                 navHostFragment.navController.navigate(R.id.addMedFragment)
             }
+            val slideInLeftAnimation: Animation = AnimationUtils.loadAnimation(
+                requireContext(),
+                android.R.anim.slide_in_left
+            )
+            val slideOutRightAnimation: Animation = AnimationUtils.loadAnimation(
+                requireContext(),
+                android.R.anim.slide_out_right
+            )
+            showCalendarText.inAnimation = slideInLeftAnimation
+            showCalendarText.outAnimation = slideOutRightAnimation
+
+
+            viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    val displayDate = getDisplayDate(dateList[position])
+                    showCalendarText.setText(displayDate)
+                }
+            })
         }
     }
 
@@ -105,11 +149,11 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
         with(binding) {
             if (calendarIsVisible) {
                 calendar.visibility = View.GONE
-                showCalendar.visibility = View.VISIBLE
+                showCalendarLayout.visibility = View.VISIBLE
                 hideCalendar.visibility = View.GONE
             } else {
                 calendar.visibility = View.VISIBLE
-                showCalendar.visibility = View.GONE
+                showCalendarLayout.visibility = View.GONE
                 hideCalendar.visibility = View.VISIBLE
             }
         }
