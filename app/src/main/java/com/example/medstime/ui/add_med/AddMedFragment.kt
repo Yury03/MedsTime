@@ -46,7 +46,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setAdapterSpinDosageUnits()

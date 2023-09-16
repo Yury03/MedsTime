@@ -19,9 +19,11 @@ data class MedicationIntakeModel(
         val minute: Int,// Минуты
     )
 
+
     data class Date(
         val day: Int,   // День
         val month: Int, // Месяц
+        val year: Int,  // Год
     )
 
     enum class IntakeType {

@@ -15,10 +15,10 @@ data class MedicationIntakeEntity(
     val isTaken: Boolean,
     val reminderTime: Int,
     val medicationId: String,
-    @TypeConverters(IntPairConverter::class) val intakeTime: Pair<Int, Int>,         //hour, minute
-    @TypeConverters(IntPairConverter::class) val intakeDate: Pair<Int, Int>,         //day, month
-    @TypeConverters(IntPairConverter::class) val actualIntakeTime: Pair<Int, Int>?,  //hour, minute
-    @TypeConverters(IntPairConverter::class) val actualIntakeDate: Pair<Int, Int>?,  //day, month
+    @TypeConverters(IntPairConverter::class) val intakeTime: Pair<Int, Int>, //hour, minute
+    @TypeConverters(IntTripleConverter::class) val intakeDate: Triple<Int, Int, Int>, //day, month, year
+    @TypeConverters(IntPairConverter::class) val actualIntakeTime: Pair<Int, Int>?, //hour, minute
+    @TypeConverters(IntTripleConverter::class) val actualIntakeDate: Triple<Int, Int, Int>?, //day, month, year
     val intakeType: String,
 ) {
     class IntPairConverter {
@@ -31,6 +31,20 @@ data class MedicationIntakeEntity(
         fun toIntPair(value: String?): Pair<Int, Int>? {
             return value?.split(",")?.let {
                 Pair(it[0].toInt(), it[1].toInt())
+            }
+        }
+    }
+
+    class IntTripleConverter {
+        @TypeConverter
+        fun fromIntTriple(value: Triple<Int, Int, Int>?): String? {
+            return value?.let { "${it.first},${it.second},${it.third}" }
+        }
+
+        @TypeConverter
+        fun toTriplePair(value: String?): Triple<Int, Int, Int>? {
+            return value?.split(",")?.let {
+                Triple(it[0].toInt(), it[1].toInt(), it[2].toInt())
             }
         }
     }

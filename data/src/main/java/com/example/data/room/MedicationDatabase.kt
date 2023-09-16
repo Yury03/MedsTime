@@ -11,6 +11,7 @@ import com.example.data.room.entity.MedicationEntity
 @TypeConverters(
     MedicationEntity.IntPairListConverter::class,
     MedicationEntity.IntListConverter::class
+
 )
 @Database(entities = [MedicationEntity::class], version = 1)
 abstract class MedicationDatabase : RoomDatabase() {

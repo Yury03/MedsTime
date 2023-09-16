@@ -138,7 +138,11 @@ class AdditionalContractImpl(context: Context) : Repository.AdditionContract {
             reminderTime = model.reminderTime,
             medicationId = model.id,
             intakeTime = MedicationIntakeModel.Time(intakeTime.hour, intakeTime.minute),
-            intakeDate = MedicationIntakeModel.Date(localDate.dayOfMonth, localDate.monthValue),
+            intakeDate = MedicationIntakeModel.Date(
+                localDate.dayOfMonth,
+                localDate.monthValue,
+                localDate.year
+            ),
             intakeType = when (model.intakeType) {
                 MedicationModel.IntakeType.NONE -> MedicationIntakeModel.IntakeType.NONE
                 MedicationModel.IntakeType.AFTER_MEAL -> MedicationIntakeModel.IntakeType.AFTER_MEAL
