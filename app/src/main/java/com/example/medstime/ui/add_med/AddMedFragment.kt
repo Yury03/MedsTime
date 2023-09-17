@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.domain.models.MedicationModel
@@ -53,12 +54,12 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         setAdapterSpinReminderType()
         setAdapterSpinIntakeType()
         setAdapterSpinFrequency()
-        setListenerForClearFocus()
+        setListenerForRemoveFocus()
         initView()
     }
 
-    private fun setListenerForClearFocus() {
-
+    private fun setListenerForRemoveFocus() {
+        //TODO добавить слушатель для удаления фокуса
     }
 
 
@@ -114,6 +115,58 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         }
     }
 
+    private fun makeMedicationModel(): Pair<MedicationModel?, Int> {
+        with(binding) {
+            var errorCode = 0
+            val medicationName = medicationName.text.toString()
+            val medicationDosageStr = dosage.text.toString()
+            val medicationDosageUnit = dosageUnits.text.toString()
+            val medicationReminderTime = extractIntFromString(reminderType.text.toString())
+            val medicationFrequency = getFrequency()
+            val medicationSelectedDays =
+                if (medicationFrequency.isDefault()) getSelectedDays() else null
+            val medicationStartDate = startIntakeDate.text.toString().toDate()
+            val medicationComment = medComment.text.toString()
+            val medicationUseBanner = useBannerChBox.isChecked
+            val medicationIntakeTimes = getIntakeTime()
+            if (!trackingDataIsCorrect()) errorCode = 5
+            if (!medicationFrequency.isCorrect()) errorCode = 4
+            if (medicationIntakeTimes.isEmpty()) errorCode = 3
+            if (medicationDosageStr.isEmpty()) errorCode = 2
+            if (medicationName.isEmpty()) errorCode = 1
+            if (errorCode == 0) {
+                return Pair(
+                    MedicationModel(
+                        id = generateUniqueId(),
+                        name = medicationName,
+                        dosage = medicationDosageStr.toDouble(),
+                        dosageUnit = medicationDosageUnit,
+                        intakeTimes = medicationIntakeTimes,
+                        reminderTime = medicationReminderTime,
+                        frequency = medicationFrequency,
+                        selectedDays = medicationSelectedDays,
+                        startDate = medicationStartDate,
+                        intakeType = getIntakeType(),
+                        comment = medicationComment,
+                        useBanner = medicationUseBanner,
+                        trackType = getTrackingType(),
+                        stockOfMedicine = getTrackingData().first,
+                        numberOfDays = getTrackingData().second,
+                        endDate = getTrackingData().third,
+                    ), errorCode
+                )
+            } else {
+                return Pair(null, errorCode)
+            }
+        }
+    }
+
+    private fun extractIntFromString(input: String): Int {
+        val regex = Regex("\\d+")
+        val matchResult = regex.find(input)
+        return matchResult?.value?.toIntOrNull() ?: 0
+    }
+
     private fun closeFragment() {
         requireActivity().findNavController(R.id.fragmentContainerView)
             .navigate(R.id.medicationFragment)
@@ -131,8 +184,37 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
 
 
     private fun showError(error: Int) {
+        //todo добавить фронтенд: фокус на поле ввода, нужный цвет, подсказка
         Log.e(LOG_TAG, "ERROR CONTINUE BUTTON")
+        val errorStr = when (error) {
+            1 -> {
+                getText(R.string.add_med_error_no_name).toString()
+            }
+
+            2 -> {
+                getText(R.string.add_med_error_no_dosage).toString()
+            }
+
+            3 -> {
+                getText(R.string.add_med_error_intake_time).toString()
+            }
+
+            4 -> {
+                getText(R.string.add_med_error_selected_days).toString()
+
+            }
+
+            5 -> {
+                getText(R.string.add_med_error_tracking).toString()
+            }
+
+            else -> getText(R.string.unknown_error).toString()
+
+        }
+        Toast.makeText(requireContext(), errorStr, Toast.LENGTH_SHORT).show()
+
     }
+
 
     private fun getFrequency(): MedicationModel.Frequency {
         val frequencyArray = resources.getStringArray(R.array.frequency_array)
@@ -180,49 +262,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         }
     }
 
-    private fun makeMedicationModel(): Pair<MedicationModel?, Int> {
-        with(binding) {
-            var error = 0
-            val medicationName = medicationName.text.toString()
-            val medicationDosageStr = dosage.text.toString()
-            val medicationDosageUnit = dosageUnits.text.toString()
-            val medicationReminderTime = extractIntFromString(reminderType.text.toString())
-            val medicationFrequency = getFrequency()
-            val medicationSelectedDays =
-                if (medicationFrequency.isDefault()) getSelectedDays() else null
-            val medicationStartDate = startIntakeDate.text.toString().toDate()
-            val medicationComment = medComment.text.toString()
-            val medicationUseBanner = useBannerChBox.isChecked
-            val medicationIntakeTimes = getIntakeTime()
-            if (medicationName.isNotEmpty() && medicationDosageStr.isNotEmpty()
-                && trackingDataIsCorrect() && medicationIntakeTimes.isNotEmpty()
-                && medicationFrequency.isCorrect()
-            ) {
-                return Pair(
-                    MedicationModel(
-                        id = generateUniqueId(),
-                        name = medicationName,
-                        dosage = medicationDosageStr.toDouble(),
-                        dosageUnit = medicationDosageUnit,
-                        intakeTimes = medicationIntakeTimes,
-                        reminderTime = medicationReminderTime,
-                        frequency = medicationFrequency,
-                        selectedDays = medicationSelectedDays,
-                        startDate = medicationStartDate,
-                        intakeType = getIntakeType(),
-                        comment = medicationComment,
-                        useBanner = medicationUseBanner,
-                        trackType = getTrackingType(),
-                        stockOfMedicine = getTrackingData().first,
-                        numberOfDays = getTrackingData().second,
-                        endDate = getTrackingData().third,
-                    ), error
-                )
-            } else {
-                return Pair(null, error)
-            }
-        }
-    }
 
     private fun trackingDataIsCorrect(): Boolean {
         with(binding)
@@ -263,12 +302,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             if ((binding.chipGroupDaysWeek.getChildAt(i) as Chip).isChecked) selectedDays.add(i + 1)
         }
         return selectedDays
-    }
-
-    private fun extractIntFromString(input: String): Int {
-        val regex = Regex("\\d+")
-        val matchResult = regex.find(input)
-        return matchResult?.value?.toIntOrNull() ?: 0
     }
 
 
