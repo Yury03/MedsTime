@@ -53,8 +53,14 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         setAdapterSpinReminderType()
         setAdapterSpinIntakeType()
         setAdapterSpinFrequency()
+        setListenerForClearFocus()
         initView()
     }
+
+    private fun setListenerForClearFocus() {
+
+    }
+
 
     private fun hideBottomNavigationBar() {
         (requireActivity() as MainActivity).hideBottomNavigationBar()
@@ -94,8 +100,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                 medicationModel.first?.let {
                     Log.e(LOG_TAG, it.toString())
                     viewModel.saveNewMedication(it)
-                    requireActivity().findNavController(R.id.fragmentContainerView)
-                        .navigate(R.id.medicationFragment)
+                    closeFragment()
                 } ?: run {
                     showError(medicationModel.second)
                 }
@@ -103,7 +108,15 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             infoAboutBanner.setOnClickListener {
                 showInfoAboutBannerDialog()
             }
+            backButton.setOnClickListener {
+                closeFragment()
+            }
         }
+    }
+
+    private fun closeFragment() {
+        requireActivity().findNavController(R.id.fragmentContainerView)
+            .navigate(R.id.medicationFragment)
     }
 
     private fun showInfoAboutBannerDialog() =

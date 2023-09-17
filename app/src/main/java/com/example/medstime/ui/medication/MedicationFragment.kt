@@ -1,10 +1,11 @@
 package com.example.medstime.ui.medication
 
+import android.content.Context
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -33,7 +34,7 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
     private var _binding: FragmentMedicationBinding? = null
     private val binding get() = _binding!!
     private val currentDate: MedicationIntakeModel.Date
-    private val dateList: List<MedicationIntakeModel.Date>
+    private var dateList: List<MedicationIntakeModel.Date>
 
     init {
         currentDate = getDate()
@@ -54,6 +55,7 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
                 TextView(requireContext()).apply {
                     textSize = 15f
                     gravity = Gravity.CENTER_HORIZONTAL
+                    typeface = resources.getFont(R.font.roboto_regular)
                     setTextColor(
                         ContextCompat.getColor(
                             requireContext(),
@@ -81,30 +83,33 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
                     requireActivity().supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
                 navHostFragment.navController.navigate(R.id.addMedFragment)
             }
-            val slideInLeftAnimation: Animation = AnimationUtils.loadAnimation(
-                requireContext(),
-                android.R.anim.slide_in_left
-            )
-            val slideOutRightAnimation: Animation = AnimationUtils.loadAnimation(
-                requireContext(),
-                android.R.anim.slide_out_right
-            )
-            showCalendarText.inAnimation = slideInLeftAnimation
-            showCalendarText.outAnimation = slideOutRightAnimation
 
+            /*todo
+                           val slideInLeftAnimation: Animation = AnimationUtils.loadAnimation(
+                            requireContext(),
+                            android.R.anim.slide_in_left
+                        )
+                        val slideOutRightAnimation: Animation = AnimationUtils.loadAnimation(
+                            requireContext(),
+                            android.R.anim.slide_out_right
+                        )
+                        showCalendarText.inAnimation = slideInLeftAnimation
+                        showCalendarText.outAnimation = slideOutRightAnimation*/
 
             viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                //todo                private var lastPosition = 0
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     val displayDate = getDisplayDate(dateList[position])
                     showCalendarText.setText(displayDate)
                 }
             })
+
         }
     }
 
     private fun setPagerAdapter(date: MedicationIntakeModel.Date) {
-        val dateList = generateDateList(date)
+        dateList = generateDateList(date)
         binding.viewPager.adapter = MedicationListPagerAdapter(this, dateList)
         binding.viewPager.setCurrentItem(MIN_NUMBER_DAYS.toInt(), false)
     }
