@@ -2,26 +2,28 @@ package com.example.domain.models
 
 data class MedicationIntakeModel(
     val id: String,
-    val name: String,               // Название лекарства (например, "Депакин")
-    val dosage: Double,             // Разовая доза (например, 0.5)
-    val dosageUnit: String,         // Единица измерения дозы (например, "таблетка")
-    val isTaken: Boolean,           // Факт приема (принято или не принято)
-    val reminderTime: Int,          // Время за которое напоминать (в минутах)
-    val medicationId: Int,          // id модели приема
-    val intakeTime: Time,           // Время приема лекарства
-    val intakeDate: Date,           // Дата приема лекарства
-    val actualIntakeTime: Time?,    // Время фактического приема лекарства
-    val actualIntakeDate: Date?,    // Дата фактического приема лекарства
-    val intakeType: IntakeType,     // Тип приема
+    val name: String,                   // Название лекарства
+    val dosage: Double,                 // Разовая доза
+    val dosageUnit: String,             // Единица измерения дозы (например, "таблетка")
+    val isTaken: Boolean,               // Факт приема (принято или не принято)
+    val reminderTime: Int,              // Время за которое напоминать (в минутах)
+    val medicationId: String,           // id модели приема
+    val intakeTime: Time,               // Время приема лекарства
+    val intakeDate: Date,               // Дата приема лекарства
+    val actualIntakeTime: Time? = null, // Время фактического приема лекарства
+    val actualIntakeDate: Date? = null, // Дата фактического приема лекарства
+    val intakeType: IntakeType,         // Тип приема
 ) {
     data class Time(
         val hour: Int,  // Час
         val minute: Int,// Минуты
     )
 
+
     data class Date(
         val day: Int,   // День
         val month: Int, // Месяц
+        val year: Int,  // Год
     )
 
     enum class IntakeType {

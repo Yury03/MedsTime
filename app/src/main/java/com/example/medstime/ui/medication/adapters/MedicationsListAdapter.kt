@@ -31,7 +31,6 @@ class MedicationsListAdapter(
         return ViewHolder(itemView)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)//TODO
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val dataItem = dataList[position]
         holder.name.text = dataItem.name
@@ -61,8 +60,6 @@ class MedicationsListAdapter(
         return dataList.size
     }
 
-
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun timeHasCome(model: MedicationIntakeModel): Boolean {
         val currentDateTime = LocalDateTime.now()
         val intakeDateTime = LocalDateTime.of(

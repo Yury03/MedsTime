@@ -11,7 +11,7 @@ object MedicationIntakeMapper {
             Pair(it.hour, it.minute)
         }
         val actualIntakeDate = model.actualIntakeDate?.let {
-            Pair(it.day, it.month)
+            Triple(it.day, it.month, it.year)
         }
         return MedicationIntakeEntity(
             id = model.id,
@@ -23,7 +23,11 @@ object MedicationIntakeMapper {
             medicationId = model.medicationId,
             intakeType = model.intakeType.name,
             intakeTime = Pair(model.intakeTime.hour, model.intakeTime.minute),
-            intakeDate = Pair(model.intakeDate.day, model.intakeDate.month),
+            intakeDate = Triple(
+                model.intakeDate.day,
+                model.intakeDate.month,
+                model.intakeDate.year
+            ),
             actualIntakeTime = actualIntakeTime,
             actualIntakeDate = actualIntakeDate,
         )
@@ -34,7 +38,7 @@ object MedicationIntakeMapper {
             MedicationIntakeModel.Time(it.first, it.second)
         }
         val actualIntakeDate = entity.actualIntakeDate?.let {
-            MedicationIntakeModel.Date(it.first, it.second)
+            MedicationIntakeModel.Date(it.first, it.second, it.third)
         }
         return MedicationIntakeModel(
             id = entity.id,
@@ -54,6 +58,7 @@ object MedicationIntakeMapper {
             intakeDate = MedicationIntakeModel.Date(
                 entity.intakeDate.first,
                 entity.intakeDate.second,
+                entity.intakeDate.third,
             ),
         )
     }
