@@ -8,7 +8,10 @@ import androidx.room.TypeConverters
 import com.example.data.room.dao.MedicationIntakeDao
 import com.example.data.room.entity.MedicationIntakeEntity
 
-@TypeConverters(MedicationIntakeEntity.IntPairConverter::class)
+@TypeConverters(
+    MedicationIntakeEntity.IntPairConverter::class,
+    MedicationIntakeEntity.IntTripleConverter::class
+)
 
 @Database(entities = [MedicationIntakeEntity::class], version = 1)
 abstract class MedicationIntakeDatabase : RoomDatabase() {
