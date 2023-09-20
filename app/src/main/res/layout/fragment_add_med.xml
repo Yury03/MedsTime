@@ -56,19 +56,52 @@
                     app:fontFamily="@font/roboto_regular" />
             </LinearLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:layout_weight="1"
+                    android:hint="@string/med_name_hint">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/medicationName"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <ImageButton
+                    android:id="@+id/scanBarcode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0"
+                    android:background="@color/local_transparent"
+                    android:minWidth="64dp"
+                    android:minHeight="48dp"
+                    android:src="@drawable/button_icon_barcode"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+
+            <net.cachapa.expandablelayout.ExpandableLayout
+                android:id="@+id/scanBarcodeLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:hint="@string/med_name_hint">
+                android:layout_marginHorizontal="4dp"
+                app:el_expanded="false">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/medicationName"
+                <androidx.camera.view.PreviewView
+                    android:id="@+id/previewView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="150dp" />
+            </net.cachapa.expandablelayout.ExpandableLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

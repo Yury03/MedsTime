@@ -64,6 +64,8 @@
     <string name="add_med_error_intake_time">Введите время хотя бы одного приема</string>
     <string name="add_med_error_selected_days">Выберите дни приема</string>
     <string name="add_med_error_tracking">Заполните поле отслеживания</string>
+    <string name="sp_key_camera_beta">activate_camera</string>
+    <string name="beta_mode_activated">Beta mode переключен</string>
     <string-array name="dosage_array">
         <item>Мг</item>
         <item>Капсулы</item>

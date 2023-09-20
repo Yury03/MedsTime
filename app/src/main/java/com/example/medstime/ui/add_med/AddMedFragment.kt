@@ -1,7 +1,10 @@
 package com.example.medstime.ui.add_med
 
+import android.Manifest
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.Editable.Factory
@@ -12,7 +15,13 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
 import com.example.domain.models.MedicationModel
 import com.example.medstime.R
@@ -22,6 +31,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import com.google.common.util.concurrent.ListenableFuture
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -32,19 +42,27 @@ import java.util.UUID
 
 
 class AddMedFragment : Fragment(R.layout.fragment_add_med) {
-    companion object Tag {
+    companion object {
         const val LOG_TAG = "AddMedFragment"
         const val TIME_PICKER_TAG = "TimePicker"
+        private const val CAMERA_PERMISSION_CODE = 100
     }
 
     private val viewModel by viewModel<AddMedViewModel>()
     private lateinit var binding: FragmentAddMedBinding
+    private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentAddMedBinding.inflate(inflater, container, false)
         hideBottomNavigationBar()
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        cameraProviderFuture =
+            ProcessCameraProvider.getInstance(requireContext())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,20 +73,41 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         setAdapterSpinIntakeType()
         setAdapterSpinFrequency()
         setListenerForRemoveFocus()
+        betaFunctions()
         initView()
+
+    }
+
+    private fun betaFunctions() {
+        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
+        val defaultValue = resources.getBoolean(R.bool.sp_camera_beta_default)
+        val cameraBeta = sharedPref.getBoolean(getString(R.string.sp_key_camera_beta), defaultValue)
+        if (cameraBeta) {
+            activateCamera()
+            binding.scanBarcode.visibility = View.VISIBLE
+        }
+    }
+
+    private fun activateCamera() {
+        cameraProviderFuture.addListener({
+            val cameraProvider = cameraProviderFuture.get()
+            bindPreview(cameraProvider)
+        }, ContextCompat.getMainExecutor(requireContext()))
+    }
+
+    private fun bindPreview(cameraProvider: ProcessCameraProvider) {
+        val preview: Preview = Preview.Builder()
+            .build()
+
+        val cameraSelector: CameraSelector = CameraSelector.Builder()
+            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+            .build()
+        preview.setSurfaceProvider(binding.previewView.surfaceProvider)
+        cameraProvider.bindToLifecycle(this as LifecycleOwner, cameraSelector, preview)
     }
 
     private fun setListenerForRemoveFocus() {
         //TODO добавить слушатель для удаления фокуса
-    }
-
-
-    private fun hideBottomNavigationBar() {
-        (requireActivity() as MainActivity).hideBottomNavigationBar()
-    }
-
-    private fun showBottomNavigationBar() {
-        (requireActivity() as MainActivity).showBottomNavigationBar()
     }
 
     private fun initView() {
@@ -112,8 +151,27 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             backButton.setOnClickListener {
                 closeFragment()
             }
+            scanBarcode.setOnClickListener {
+                checkPermission()
+
+                if (scanBarcodeLayout.isExpanded) scanBarcodeLayout.collapse()
+                else scanBarcodeLayout.expand()
+            }
         }
     }
+
+    private fun checkPermission() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+            == PackageManager.PERMISSION_DENIED
+        ) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.CAMERA),
+                CAMERA_PERMISSION_CODE
+            )
+        }
+    }
+
 
     private fun makeMedicationModel(): Pair<MedicationModel?, Int> {
         with(binding) {
@@ -172,6 +230,14 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             .navigate(R.id.medicationFragment)
     }
 
+    private fun hideBottomNavigationBar() {
+        (requireActivity() as MainActivity).hideBottomNavigationBar()
+    }
+
+    private fun showBottomNavigationBar() {
+        (requireActivity() as MainActivity).showBottomNavigationBar()
+    }
+
     private fun showInfoAboutBannerDialog() =
         AlertDialog.Builder(requireActivity())
             .setTitle(R.string.dialog_title_info_about_banner)
@@ -181,7 +247,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             }
             .create()
             .show()
-
 
     private fun showError(error: Int) {
         //todo добавить фронтенд: фокус на поле ввода, нужный цвет, подсказка
@@ -348,7 +413,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         datePickerDialog.show()
     }
 
-
     private fun getCurrentDate(): Editable {
         val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
         return Factory.getInstance().newEditable(LocalDate.now().format(formatter))
@@ -447,8 +511,8 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         showBottomNavigationBar()
     }
 }
