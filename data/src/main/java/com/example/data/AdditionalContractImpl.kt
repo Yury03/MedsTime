@@ -17,7 +17,9 @@ import java.util.Date
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-class AdditionalContractImpl(context: Context) : Repository.AdditionContract {
+/**Класс добавляет модель Medication в базу данных и генерирует модели MedicationIntake на **DEFAULT_NUMBER_DAYS_GENERATE**
+ * дней, а затем добавляет их в базу данных **medicationIntakeDatabase** */
+class AdditionalContractImpl(private val context: Context) : Repository.AdditionContract {
     private companion object {
         //по дефолту генерируем приемы только на 14 дней
         const val DEFAULT_NUMBER_DAYS_GENERATE = 14
@@ -35,11 +37,11 @@ class AdditionalContractImpl(context: Context) : Repository.AdditionContract {
     override fun saveNewMedication(medicationModel: MedicationModel) {
         val entity = MedicationMapper.mapToEntity(medicationModel)
         medicationDao.insert(entity)
-        generateMedicationIntakeModels(medicationModel).map {
+        val medicationIntakeList = generateMedicationIntakeModels(medicationModel)
+        medicationIntakeList.map {
             medicationIntakeDao.insert(MedicationIntakeMapper.mapToEntity(it))
         }
     }
-
 
     private fun generateMedicationIntakeModels(model: MedicationModel):
             List<MedicationIntakeModel> {

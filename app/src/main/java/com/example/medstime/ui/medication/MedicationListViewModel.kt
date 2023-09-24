@@ -1,5 +1,6 @@
 package com.example.medstime.ui.medication
 
+import android.app.AlarmManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,10 +16,10 @@ import kotlinx.coroutines.launch
 
 class MedicationListViewModel(
     private val getIntakeList: GetIntakeList,
-    removeMedicationItemUseCase: RemoveMedicationItem,
-    replaceMedicationItemUseCase: ReplaceMedicationItem,
-    getMedicationById: GetMedicationById,
-    replaceMedicationIntake: ReplaceMedicationIntake,
+    private val removeMedicationItemUseCase: RemoveMedicationItem,
+    private val replaceMedicationItemUseCase: ReplaceMedicationItem,
+    private val getMedicationById: GetMedicationById,
+    private val replaceMedicationIntake: ReplaceMedicationIntake,
 ) : ViewModel() {
     /**список пар Время - Список приемов лекарств**/
     private val _intakeListToday: MutableLiveData<List<Pair<MedicationIntakeModel.Time, List<MedicationIntakeModel>>>> =
@@ -42,4 +43,6 @@ class MedicationListViewModel(
             _intakeListToday.postValue(sortedList)
         }
     }
+
+
 }

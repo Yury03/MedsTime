@@ -42,11 +42,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             Toast.makeText(applicationContext, R.string.beta_mode_activated, Toast.LENGTH_SHORT)
-            .show()
+                .show()
             true
         }
         bottomNavigationView.findViewById<View>(R.id.menu_notifications)
             .setOnLongClickListener(listenerForBeta)
+
     }
 
     fun hideBottomNavigationBar() {
