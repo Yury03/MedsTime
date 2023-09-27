@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.example.medstime.R
-import com.example.medstime.databinding.MedicationAlertDialogBinding
 
 
 class MedicationClickAlert(
@@ -15,29 +14,28 @@ class MedicationClickAlert(
     medicationIntakeModelID: String,
     timeAndDosageText: String,
 ) : DialogFragment() {
-    init {
-        val inflater = LayoutInflater.from(context)
-        val binding = MedicationAlertDialogBinding.inflate(inflater)
-//        setView(binding.root)
-//        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        with(binding) {
-//            ADMedicationName.text = medicationIntakeModel.name
-            ADTimeAndDosage.text = timeAndDosageText
-            ADEditButton.setOnClickListener {
-                dismiss()
-            }
-            ADRemindFiveMinButton.setOnClickListener {
-                dismiss()
-            }
-            ADSkipButton.setOnClickListener {
-                dismiss()
-            }
-            ADTakenButton.setOnClickListener {
-                dismiss()
-            }
-        }
-    }
-
+    //    init {
+//        val inflater = LayoutInflater.from(context)
+//        val binding = MedicationAlertDialogBinding.inflate(inflater)
+////        setView(binding.root)
+////        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+//        with(binding) {
+////            ADMedicationName.text = medicationIntakeModel.name
+////            ADTimeAndDosage.text = timeAndDosageText
+////            ADEditButton.setOnClickListener {
+////                dismiss()
+////            }
+////            ADRemindFiveMinButton.setOnClickListener {
+////                dismiss()
+////            }
+////            ADSkipButton.setOnClickListener {
+////                dismiss()
+////            }
+////            ADTakenButton.setOnClickListener {
+////                dismiss()
+////            }
+//        }
+//}
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

@@ -2,6 +2,7 @@ package com.example.domain
 
 import com.example.domain.models.MedicationIntakeModel
 import com.example.domain.models.MedicationModel
+import com.example.domain.models.ReminderModel
 
 interface Repository {
     interface MedicationContract {
@@ -16,5 +17,9 @@ interface Repository {
         fun saveNewMedication(medicationModel: MedicationModel)
     }
 
+    interface BannerContract {
+        fun changeNotificationStatus(status: ReminderModel.ReminderStatus)
+        fun changeMedicationIsTaken(isTaken: Boolean)
+    }
 
 }

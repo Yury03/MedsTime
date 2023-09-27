@@ -1,7 +1,6 @@
 package com.example.medstime.ui.medication
 
 import android.app.AlarmManager
-import android.app.Notification
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
@@ -34,11 +33,10 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
 //            MedicationClickAlert(requireContext(), model, timeAndDosageText).show()
         }
         viewModel.intakeListToday.observe(viewLifecycleOwner) {
-            it.map {
-                it.second.map {
-                    if (it.intakeDate.day == 25) {//todo
-                        generateBanners(intakeModel = it)
-                    }
+            it.map { timeListPair ->
+                timeListPair.second.map { model ->
+                    generateBanners(intakeModel = model)
+
                 }
             }
             binding.medicationsList.adapter = TimesListAdapter(
@@ -61,10 +59,14 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
         intent.putExtra("medicationModelID", intakeModel.id)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            0,
+            intakeModel.hashCode(),
             intent,
             PendingIntent.FLAG_MUTABLE
         )
+
+        // Отменяем предыдущий PendingIntent, если он существует
+//        alarmManager.cancel(pendingIntent)
+
         val intakeTime = intakeModel.intakeTime
         val intakeDate = intakeModel.intakeDate
         val calendar = Calendar.getInstance()
@@ -74,9 +76,11 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
         calendar.set(Calendar.HOUR_OF_DAY, intakeTime.hour)
         calendar.set(Calendar.MINUTE, intakeTime.minute)
         calendar.set(Calendar.SECOND, 0)
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)//todo
-//        }
+//      }
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
