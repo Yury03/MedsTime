@@ -12,7 +12,7 @@ interface ReminderDao {
     fun getAll(): List<ReminderEntity>
 
     @Insert
-    fun insert(medicationIntake: ReminderEntity)
+    fun insert(reminder: ReminderEntity)
 
     @Query("DELETE FROM medication_reminder_database WHERE medicationId = :id")
     fun deleteById(id: String)
