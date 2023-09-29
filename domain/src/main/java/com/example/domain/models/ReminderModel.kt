@@ -3,16 +3,16 @@ package com.example.domain.models
 data class ReminderModel(
     val id: String,
     val medicationIntakeId: String,
-    val type: ReminderType,
-    val status: ReminderStatus,
+    val type: Type,
+    val status: Status,
     val timeShow: Long,
 ) {
-    enum class ReminderType {
+    enum class Type {
         BANNER,
         PUSH_NOTIFICATION,
     }
 
-    enum class ReminderStatus {
+    enum class Status {
         SKIP,
         TAKEN,
         REMIND_LATER,

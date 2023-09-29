@@ -142,9 +142,9 @@ class AdditionalContractImpl(private val context: Context) : Repository.Addition
         val reminderList = mutableListOf<ReminderModel>()
         val type =
             if (medicationModel.useBanner) {
-                ReminderModel.ReminderType.BANNER
+                ReminderModel.Type.BANNER
             } else {
-                ReminderModel.ReminderType.PUSH_NOTIFICATION
+                ReminderModel.Type.PUSH_NOTIFICATION
             }
         for (intake in intakeList) {
             reminderList.add(
@@ -152,7 +152,7 @@ class AdditionalContractImpl(private val context: Context) : Repository.Addition
                     id = generateUniqueId(),
                     medicationIntakeId = intake.id,
                     type = type,
-                    status = ReminderModel.ReminderStatus.NONE,
+                    status = ReminderModel.Status.NONE,
                     timeShow = getTime(intake.intakeTime, intake.intakeDate)
                 )
             )

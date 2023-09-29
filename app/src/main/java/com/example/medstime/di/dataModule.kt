@@ -1,7 +1,9 @@
 package com.example.medstime.di
 
 import com.example.data.AdditionalContractImpl
+import com.example.data.BannerContractImpl
 import com.example.data.MedicationContractImpl
+import com.example.data.ReminderContractImpl
 import com.example.domain.Repository
 import org.koin.dsl.module
 
@@ -9,7 +11,13 @@ val dataModule = module {
     single<Repository.MedicationContract> {
         MedicationContractImpl(context = get())
     }
-    single <Repository.AdditionContract>{
+    single<Repository.AdditionContract> {
         AdditionalContractImpl(context = get())
+    }
+    single<Repository.BannerContract> {
+        BannerContractImpl(context = get())
+    }
+    single<Repository.ReminderContract> {
+        ReminderContractImpl(context = get())
     }
 }

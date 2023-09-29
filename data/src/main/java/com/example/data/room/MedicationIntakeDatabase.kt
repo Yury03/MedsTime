@@ -12,7 +12,6 @@ import com.example.data.room.entity.MedicationIntakeEntity
     MedicationIntakeEntity.IntPairConverter::class,
     MedicationIntakeEntity.IntTripleConverter::class
 )
-
 @Database(entities = [MedicationIntakeEntity::class], version = 1)
 abstract class MedicationIntakeDatabase : RoomDatabase() {
     abstract fun medicationIntakeDao(): MedicationIntakeDao

@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.Editable
@@ -26,6 +27,7 @@ import androidx.navigation.findNavController
 import com.example.domain.models.MedicationModel
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentAddMedBinding
+import com.example.medstime.services.ReminderService
 import com.example.medstime.ui.main_activity.MainActivity
 import com.google.android.material.chip.Chip
 import com.google.android.material.textfield.TextInputEditText
@@ -75,7 +77,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         setListenerForRemoveFocus()
         betaFunctions()
         initView()
-
     }
 
     private fun betaFunctions() {
@@ -140,6 +141,8 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                 medicationModel.first?.let {
                     Log.e(LOG_TAG, it.toString())
                     viewModel.saveNewMedication(it)
+                    val serviceIntent = Intent(requireContext(), ReminderService::class.java)
+                    requireContext().startService(serviceIntent)
                     closeFragment()
                 } ?: run {
                     showError(medicationModel.second)

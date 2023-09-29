@@ -18,8 +18,13 @@ interface Repository {
     }
 
     interface BannerContract {
-        fun changeNotificationStatus(status: ReminderModel.ReminderStatus)
-        fun changeMedicationIsTaken(isTaken: Boolean)
+        fun changeNotificationStatus(reminderId: String, newStatus: ReminderModel.Status)
+        fun changeMedicationIntakeIsTaken(medicationIntakeId: String, newIsTaken: Boolean)
+    }
+
+    interface ReminderContract {
+        fun getRemindersWithStatus(reminderStatus: ReminderModel.Status): List<ReminderModel>
+        fun getMedicationIntakeModel(medicationIntakeId: String): MedicationIntakeModel
     }
 
 }

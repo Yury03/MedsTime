@@ -5,10 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.data.room.dao.ReminderDao
-import com.example.data.room.entity.MedicationIntakeEntity
+import com.example.data.room.entity.ReminderEntity
 
 
-@Database(entities = [MedicationIntakeEntity::class], version = 1)
+@Database(entities = [ReminderEntity::class], version = 1)
 abstract class ReminderDatabase : RoomDatabase() {
     abstract fun reminderDao(): ReminderDao
 

@@ -11,12 +11,18 @@ interface ReminderDao {
     @Query("SELECT * FROM medication_reminder_database")
     fun getAll(): List<ReminderEntity>
 
+    @Query("SELECT * FROM medication_reminder_database WHERE id = :id")
+    fun getById(id: String): ReminderEntity
+
+    @Query("DELETE FROM medication_reminder_database WHERE id = :id")
+    fun deleteById(id: String)
+
     @Insert
     fun insert(reminder: ReminderEntity)
 
-    @Query("DELETE FROM medication_reminder_database WHERE medicationId = :id")
-    fun deleteById(id: String)
-
     @Query("DELETE FROM medication_reminder_database WHERE medicationIntakeId = :medicationIntakeModelId")
-    fun deleteByMedicationModelId(medicationIntakeModelId: String)
+    fun deleteByMedicationIntakeModelId(medicationIntakeModelId: String)
+
+    @Query("SELECT * FROM medication_reminder_database WHERE status = :status")
+    fun getWithStatus(status: String): List<ReminderEntity>
 }

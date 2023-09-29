@@ -10,7 +10,7 @@ object ReminderMapper {
             medicationIntakeId = model.medicationIntakeId,
             type = model.type.toString(),
             status = model.status.toString(),
-            timeShow = model.timeShow,
+            timeShow = model.timeShow.toString(),
         )
     }
 
@@ -18,9 +18,9 @@ object ReminderMapper {
         return ReminderModel(
             id = entity.id,
             medicationIntakeId = entity.medicationIntakeId,
-            type = ReminderModel.ReminderType.valueOf(entity.type),
-            status = ReminderModel.ReminderStatus.valueOf(entity.status),
-            timeShow = entity.timeShow
+            type = ReminderModel.Type.valueOf(entity.type),
+            status = ReminderModel.Status.valueOf(entity.status),
+            timeShow = entity.timeShow.toLong()
         )
     }
 }

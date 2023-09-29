@@ -9,5 +9,5 @@ data class ReminderEntity(
     val medicationIntakeId: String,
     val type: String,
     val status: String,
-    val timeShow: Long,
+    val timeShow: String,
 )
