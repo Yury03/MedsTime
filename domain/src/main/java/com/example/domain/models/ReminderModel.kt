@@ -17,6 +17,7 @@ data class ReminderModel(
         TAKEN,
         REMIND_LATER,
         NONE,
+        SHOWN,
     }
 }
 

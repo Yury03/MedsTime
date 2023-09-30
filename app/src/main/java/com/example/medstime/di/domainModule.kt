@@ -1,13 +1,13 @@
 package com.example.medstime.di
 
 import com.example.domain.usecase.addition.SaveNewMedication
-import com.example.domain.usecase.banner.ChangeMedicationIntakeIsTaken
-import com.example.domain.usecase.banner.ChangeNotificationStatus
 import com.example.domain.usecase.medication.GetIntakeList
 import com.example.domain.usecase.medication.GetMedicationById
 import com.example.domain.usecase.medication.RemoveMedicationItem
 import com.example.domain.usecase.medication.ReplaceMedicationIntake
 import com.example.domain.usecase.medication.ReplaceMedicationItem
+import com.example.domain.usecase.reminder.ChangeMedicationIntakeIsTaken
+import com.example.domain.usecase.reminder.ChangeNotificationStatus
 import com.example.domain.usecase.reminder.GetMedicationIntakeModel
 import com.example.domain.usecase.reminder.GetRemindersWithStatus
 import org.koin.dsl.module
@@ -33,14 +33,13 @@ val domainModule = module {
     factory<SaveNewMedication> {
         SaveNewMedication(repository = get())
     }
-    /**Banner contract*/
+    /**Reminder contract*/
     factory<ChangeNotificationStatus> {
         ChangeNotificationStatus(repository = get())
     }
     factory<ChangeMedicationIntakeIsTaken> {
         ChangeMedicationIntakeIsTaken(repository = get())
     }
-    /**Reminder service contract*/
     factory<GetRemindersWithStatus> {
         GetRemindersWithStatus(repository = get())
     }

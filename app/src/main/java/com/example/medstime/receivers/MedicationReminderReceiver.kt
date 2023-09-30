@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.example.domain.models.ReminderModel
+import com.example.domain.usecase.reminder.ChangeNotificationStatus
 import com.example.domain.usecase.reminder.GetMedicationIntakeModel
 import com.example.medstime.R
 import com.example.medstime.services.BannerDisplayService
@@ -20,19 +21,27 @@ class MedicationReminderReceiver : BroadcastReceiver() {
     private val getMedicationIntakeModel: GetMedicationIntakeModel by KoinJavaComponent.inject(
         GetMedicationIntakeModel::class.java
     )
+    private val changeNotificationStatus: ChangeNotificationStatus by KoinJavaComponent.inject(
+        ChangeNotificationStatus::class.java
+    )
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        val medicationModelId = intent?.getStringExtra("intakeModelId")
-        val type = intent?.getStringExtra("type")!!
+        val medicationModelId = intent?.getStringExtra("intakeModelId")!!//todo
+        val reminderModelId = intent.getStringExtra("reminderModelId")!!//todo
+        val type = intent.getStringExtra("type")!!
+        CoroutineScope(Dispatchers.IO).launch {
+            changeNotificationStatus.invoke(reminderModelId, ReminderModel.Status.SHOWN)
+        }
         when (type) {
-            ReminderModel.Type.BANNER.toString() -> sendNotification(
+            ReminderModel.Type.PUSH_NOTIFICATION.toString() -> sendNotification(
                 context = context!!,
-                medicationModelID = medicationModelId!!
-            )//todo
-            ReminderModel.Type.PUSH_NOTIFICATION.toString() -> startBannerService(
+                medicationModelID = medicationModelId
+            )
+
+            ReminderModel.Type.BANNER.toString() -> startBannerService(
                 context = context!!,
-                medicationIntakeModelId = medicationModelId!!
-            )//todo
+                medicationIntakeModelId = medicationModelId
+            )
         }
     }
 

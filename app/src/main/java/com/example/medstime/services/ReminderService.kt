@@ -39,7 +39,8 @@ class ReminderService : Service() {
         for (reminder in reminders) {
             val intent = Intent(this, MedicationReminderReceiver::class.java)
             intent.putExtra("intakeModelId", reminder.medicationIntakeId)
-            intent.putExtra("type", reminder.type.toString())//todo
+            intent.putExtra("reminderModelId", reminder.id)
+            intent.putExtra("type", reminder.type.toString())
             val pendingIntent = PendingIntent.getBroadcast(
                 this,
                 reminder.hashCode(),
