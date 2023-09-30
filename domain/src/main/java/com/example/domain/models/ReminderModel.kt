@@ -5,7 +5,7 @@ data class ReminderModel(
     val medicationIntakeId: String,
     val type: Type,
     val status: Status,
-    val timeShow: Long,
+    var timeShow: Long,
 ) {
     enum class Type {
         BANNER,

@@ -26,12 +26,12 @@ class ReminderService : Service() {
         val scope = CoroutineScope(coroutineDispatcher)
         scope.launch {
             val reminders = getRemindersWithStatus.invoke(ReminderModel.Status.NONE)
-            generateBanners(reminders)
+            generateAlarms(reminders)
         }
         return START_NOT_STICKY
     }
 
-    private fun generateBanners(reminders: List<ReminderModel>) {
+    private fun generateAlarms(reminders: List<ReminderModel>) {
         val alarmManager = ContextCompat.getSystemService(
             this,
             AlarmManager::class.java

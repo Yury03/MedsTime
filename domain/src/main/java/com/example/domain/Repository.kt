@@ -26,6 +26,8 @@ interface Repository {
             newIsTaken: Boolean,
             actualIntakeTime: MedicationIntakeModel.Time?
         )
+
+        fun getReminderModelById(reminderId: String): ReminderModel
     }
 
 }

@@ -40,14 +40,20 @@ class MedicationReminderReceiver : BroadcastReceiver() {
 
             ReminderModel.Type.BANNER.toString() -> startBannerService(
                 context = context!!,
-                medicationIntakeModelId = medicationModelId
+                medicationIntakeModelId = medicationModelId,
+                reminderModelId = reminderModelId,
             )
         }
     }
 
-    private fun startBannerService(context: Context, medicationIntakeModelId: String) {
+    private fun startBannerService(
+        context: Context,
+        medicationIntakeModelId: String,
+        reminderModelId: String
+    ) {
         val serviceIntent = Intent(context, BannerDisplayService::class.java)
         serviceIntent.putExtra("intakeModelId", medicationIntakeModelId)
+        serviceIntent.putExtra("reminderModelId", reminderModelId)
         context.startService(serviceIntent)
     }
 
@@ -58,7 +64,7 @@ class MedicationReminderReceiver : BroadcastReceiver() {
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val channel = NotificationChannel(
                 "medication_channel",
-                "Medication Channel",
+                "Напоминания о приеме лекарств",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
             notificationManager.createNotificationChannel(channel)

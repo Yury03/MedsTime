@@ -82,4 +82,8 @@ class ReminderContractImpl(private val context: Context) : Repository.ReminderCo
             )
         }
     }
+
+    override fun getReminderModelById(reminderId: String): ReminderModel {
+        return ReminderMapper.mapToModel(reminderDao.getById(reminderId))
+    }
 }

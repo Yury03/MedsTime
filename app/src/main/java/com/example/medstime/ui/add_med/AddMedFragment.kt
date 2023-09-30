@@ -155,15 +155,14 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                 closeFragment()
             }
             scanBarcode.setOnClickListener {
-                checkPermission()
-
+                checkCameraPermission()
                 if (scanBarcodeLayout.isExpanded) scanBarcodeLayout.collapse()
                 else scanBarcodeLayout.expand()
             }
         }
     }
 
-    private fun checkPermission() {
+    private fun checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
             == PackageManager.PERMISSION_DENIED
         ) {
