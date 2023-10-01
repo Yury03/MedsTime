@@ -26,6 +26,10 @@
         <receiver
             android:name=".receivers.MedicationReminderReceiver"
             android:exported="false" />
+        <receiver
+            android:name=".receivers.ChangeIsTakenStatusReceiver"
+            android:exported="false" />
+
         <activity
             android:name=".ui.main_activity.MainActivity"
             android:exported="true">
