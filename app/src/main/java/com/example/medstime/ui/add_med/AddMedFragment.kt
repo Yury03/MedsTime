@@ -6,7 +6,9 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.text.Editable
 import android.text.Editable.Factory
 import android.util.Log
@@ -15,6 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.CheckBox
 import android.widget.Toast
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
@@ -44,10 +47,11 @@ import java.util.UUID
 
 
 class AddMedFragment : Fragment(R.layout.fragment_add_med) {
-    companion object {
+    private companion object {
         const val LOG_TAG = "AddMedFragment"
         const val TIME_PICKER_TAG = "TimePicker"
-        private const val CAMERA_PERMISSION_CODE = 100
+        const val CAMERA_PERMISSION_CODE = 300
+        const val SYSTEM_ALERT_WINDOW_CODE = 400
     }
 
     private val viewModel by viewModel<AddMedViewModel>()
@@ -63,8 +67,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        cameraProviderFuture =
-            ProcessCameraProvider.getInstance(requireContext())
+        cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -97,12 +100,9 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     }
 
     private fun bindPreview(cameraProvider: ProcessCameraProvider) {
-        val preview: Preview = Preview.Builder()
-            .build()
-
-        val cameraSelector: CameraSelector = CameraSelector.Builder()
-            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-            .build()
+        val preview: Preview = Preview.Builder().build()
+        val cameraSelector: CameraSelector =
+            CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
         preview.setSurfaceProvider(binding.previewView.surfaceProvider)
         cameraProvider.bindToLifecycle(this as LifecycleOwner, cameraSelector, preview)
     }
@@ -110,6 +110,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     private fun setListenerForRemoveFocus() {
         //TODO добавить слушатель для удаления фокуса
     }
+
 
     private fun initView() {
         with(binding) {
@@ -154,6 +155,11 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             backButton.setOnClickListener {
                 closeFragment()
             }
+            useBannerChBox.setOnClickListener {
+                if (!checkSystemAlertWindowPermission()) {
+                    (it as CheckBox).isChecked = false
+                }
+            }
             scanBarcode.setOnClickListener {
                 checkCameraPermission()
                 if (scanBarcodeLayout.isExpanded) scanBarcodeLayout.collapse()
@@ -162,14 +168,36 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         }
     }
 
-    private fun checkCameraPermission() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
-            == PackageManager.PERMISSION_DENIED
-        ) {
+    private fun checkSystemAlertWindowPermission(): Boolean {
+        val systemAlertWindowIsGranted = ContextCompat.checkSelfPermission(
+            requireContext(), Manifest.permission.SYSTEM_ALERT_WINDOW
+        ) == PackageManager.PERMISSION_DENIED
+        if (systemAlertWindowIsGranted) {
             ActivityCompat.requestPermissions(
                 requireActivity(),
-                arrayOf(Manifest.permission.CAMERA),
-                CAMERA_PERMISSION_CODE
+                arrayOf(Manifest.permission.SYSTEM_ALERT_WINDOW),
+                SYSTEM_ALERT_WINDOW_CODE
+            )
+        }
+        if (!Settings.canDrawOverlays(requireContext())) {
+            val settingsIntent = Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:${requireContext().packageName}")
+            )
+            //TODO:3 Dialog
+            startActivity(settingsIntent)
+        }
+        return Settings.canDrawOverlays(requireContext()) && systemAlertWindowIsGranted
+    }
+
+
+    private fun checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_DENIED
+        ) {
+            ActivityCompat.requestPermissions(
+                requireActivity(), arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE
             )
         }
     }
@@ -241,14 +269,11 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     }
 
     private fun showInfoAboutBannerDialog() =
-        AlertDialog.Builder(requireActivity())
-            .setTitle(R.string.dialog_title_info_about_banner)
+        AlertDialog.Builder(requireActivity()).setTitle(R.string.dialog_title_info_about_banner)
             .setMessage(R.string.dialog_message_info_about_banner)
             .setPositiveButton(getString(R.string.positive_button_text)) { dialog, _ ->
                 dialog.dismiss()
-            }
-            .create()
-            .show()
+            }.create().show()
 
     private fun showError(error: Int) {
         //todo добавить фронтенд: фокус на поле ввода, нужный цвет, подсказка
@@ -329,10 +354,8 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         }
     }
 
-
     private fun trackingDataIsCorrect(): Boolean {
-        with(binding)
-        {
+        with(binding) {
             return when (getTrackingType()) {
                 MedicationModel.TrackType.STOCK_OF_MEDICINE -> numberMeds.text.toString()
                     .isNotEmpty()
@@ -362,7 +385,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         }
     }
 
-
     private fun getSelectedDays(): List<Int> {
         val selectedDays = mutableListOf<Int>()
         for (i in 0 until binding.chipGroupDaysWeek.childCount) {
@@ -370,7 +392,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         }
         return selectedDays
     }
-
 
     private fun String.toDate(): Date {
         val format = DateTimeFormatter.ofPattern("dd.MM.yyyy")

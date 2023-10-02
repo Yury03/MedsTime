@@ -107,7 +107,7 @@ class MedicationReminderReceiver : BroadcastReceiver() {
             context,
             isTaken.hashCode(),//TODO
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE
         )
     }
 
