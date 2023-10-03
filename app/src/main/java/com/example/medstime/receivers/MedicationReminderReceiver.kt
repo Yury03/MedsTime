@@ -29,7 +29,7 @@ class MedicationReminderReceiver : BroadcastReceiver() {
     )
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        val medicationModelId = intent?.getStringExtra("intakeModelId")!!//todo
+        val medicationIntakeId = intent?.getStringExtra("intakeModelId")!!//todo
         val reminderModelId = intent.getStringExtra("reminderModelId")!!//todo
         val type = intent.getStringExtra("type")!!
         CoroutineScope(Dispatchers.IO).launch {
@@ -38,12 +38,12 @@ class MedicationReminderReceiver : BroadcastReceiver() {
         when (type) {
             ReminderModel.Type.PUSH_NOTIFICATION.toString() -> sendNotification(
                 context = context!!,
-                medicationIntakeId = medicationModelId
+                medicationIntakeId = medicationIntakeId
             )
 
             ReminderModel.Type.BANNER.toString() -> startBannerService(
                 context = context!!,
-                medicationIntakeModelId = medicationModelId,
+                medicationIntakeModelId = medicationIntakeId,
                 reminderModelId = reminderModelId,
             )
         }
@@ -74,7 +74,7 @@ class MedicationReminderReceiver : BroadcastReceiver() {
             val builder = NotificationCompat.Builder(context, "medication_channel")
                 .setSmallIcon(R.drawable.medication_icon_menu)
                 .setContentTitle("Напоминание о приеме лекарства ${intake.name}")
-                .setContentText("Прием назначен на ${intake.intakeTime.hour}:${intake.intakeTime.minute}")
+                .setContentText("Прием назначен на ${intake.intakeTime.toDisplayString()}")
                 .addAction(
                     R.drawable.button_icon_check,
                     context.getString(R.string.taken),
@@ -89,6 +89,11 @@ class MedicationReminderReceiver : BroadcastReceiver() {
             notificationManager.notify(medicationIntakeId.hashCode(), builder.build())
         }
     }
+
+    private fun MedicationIntakeModel.Time.toDisplayString() =
+        if (minute < 10) "${hour}:0${minute}"
+        else "${hour}:${minute}"
+
 
     private fun getPendingIntent(
         context: Context?,

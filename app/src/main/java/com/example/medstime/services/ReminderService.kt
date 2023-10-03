@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import android.util.Log
 import androidx.core.content.ContextCompat
 import com.example.domain.models.ReminderModel
 import com.example.domain.usecase.reminder.GetRemindersWithStatus
@@ -16,6 +17,10 @@ import org.koin.android.ext.android.inject
 
 
 class ReminderService : Service() {
+    companion object {
+        private const val TAG = "ReminderService"
+    }
+
     private val getRemindersWithStatus: GetRemindersWithStatus by inject()
     private val coroutineDispatcher: CoroutineDispatcher by inject()
     override fun onBind(p0: Intent?): IBinder? {
@@ -26,6 +31,7 @@ class ReminderService : Service() {
         val scope = CoroutineScope(coroutineDispatcher)
         scope.launch {
             val reminders = getRemindersWithStatus.invoke(ReminderModel.Status.NONE)
+            Log.d(TAG, reminders.toString())
             generateAlarms(reminders)
         }
         return START_NOT_STICKY
