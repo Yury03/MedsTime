@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.domain.models.MedicationIntakeModel
 import com.example.domain.models.ReminderModel
@@ -21,6 +22,10 @@ import java.util.Calendar
 
 
 class MedicationReminderReceiver : BroadcastReceiver() {
+    companion object {
+        private const val TAG = "MedicationReminderReceiver"
+    }
+
     private val getMedicationIntakeModel: GetMedicationIntakeModel by KoinJavaComponent.inject(
         GetMedicationIntakeModel::class.java
     )
@@ -108,9 +113,10 @@ class MedicationReminderReceiver : BroadcastReceiver() {
             putExtra("actualIntakeHour", actualTime.hour)
             putExtra("actualIntakeMinute", actualTime.minute)
         }
+        Log.d(TAG, medicationIntakeId.hashCode().toString())
         return PendingIntent.getBroadcast(
             context,
-            isTaken.hashCode(),//TODO
+            medicationIntakeId.hashCode(),//TODO
             intent,
             PendingIntent.FLAG_IMMUTABLE
         )

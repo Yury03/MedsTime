@@ -50,11 +50,11 @@ class AdditionalContractImpl(private val context: Context) : Repository.Addition
         medicationDao.insert(entity)
         val medicationIntakeList = generateMedicationIntakeModels(medicationModel)
         val reminderList = generateReminderModels(medicationIntakeList, medicationModel)
-        medicationIntakeList.map {
-            medicationIntakeDao.insert(MedicationIntakeMapper.mapToEntity(it))
-        }
         reminderList.map {
             reminderDao.insert(ReminderMapper.mapToEntity(it))
+        }
+        medicationIntakeList.map {
+            medicationIntakeDao.insert(MedicationIntakeMapper.mapToEntity(it))
         }
     }
 

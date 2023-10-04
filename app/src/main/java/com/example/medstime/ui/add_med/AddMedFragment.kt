@@ -79,7 +79,16 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         setAdapterSpinFrequency()
         setListenerForRemoveFocus()
         betaFunctions()
+        observeOnViewModelData()
         initView()
+    }
+
+    private fun observeOnViewModelData() {
+        viewModel.isSavedNewMedication.observe(viewLifecycleOwner) {
+            val serviceIntent = Intent(requireContext(), ReminderService::class.java)
+            requireContext().startService(serviceIntent)
+            closeFragment()
+        }
     }
 
     private fun betaFunctions() {
@@ -142,9 +151,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                 medicationModel.first?.let {
                     Log.e(LOG_TAG, it.toString())
                     viewModel.saveNewMedication(it)
-                    val serviceIntent = Intent(requireContext(), ReminderService::class.java)
-                    requireContext().startService(serviceIntent)
-                    closeFragment()
                 } ?: run {
                     showError(medicationModel.second)
                 }
@@ -165,6 +171,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                 if (scanBarcodeLayout.isExpanded) scanBarcodeLayout.collapse()
                 else scanBarcodeLayout.expand()
             }
+
         }
     }
 

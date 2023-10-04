@@ -17,6 +17,9 @@ interface ReminderDao {
     @Query("DELETE FROM medication_reminder_database WHERE id = :id")
     fun deleteById(id: String)
 
+    @Query("UPDATE medication_reminder_database SET status = :status WHERE id = :id")
+    fun updateStatusById(id: String, status: String)
+
     @Insert
     fun insert(reminder: ReminderEntity)
 

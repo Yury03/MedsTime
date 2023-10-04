@@ -19,6 +19,8 @@ interface MedicationIntakeDao {
     @Insert
     fun insert(medicationIntake: MedicationIntakeEntity)
 
+    @Query("UPDATE medication_intake_database SET isTaken = :isTaken, actualIntakeTime = :actualIntakeTime WHERE id = :id")
+    fun updateIsTakenById(id: String, isTaken: Boolean, actualIntakeTime: String?)
 
     @Query("DELETE FROM medication_intake_database WHERE medicationId = :medicationModelId")
     fun deleteByMedicationModelId(medicationModelId: String)
