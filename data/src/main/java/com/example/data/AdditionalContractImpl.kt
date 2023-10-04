@@ -21,6 +21,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.UUID
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.minutes
 
 /**Класс добавляет модель Medication в базу данных и генерирует модели MedicationIntake и Reminder на **DEFAULT_NUMBER_DAYS_GENERATE**
  * дней, а затем добавляет их в базу данных **MedicationIntakeDatabase** и **ReminderDatabase**. */
@@ -153,22 +154,27 @@ class AdditionalContractImpl(private val context: Context) : Repository.Addition
                     medicationIntakeId = intake.id,
                     type = type,
                     status = ReminderModel.Status.NONE,
-                    timeShow = getTime(intake.intakeTime, intake.intakeDate)
+                    timeShow = getTime(intake.intakeTime, intake.intakeDate, intake.reminderTime)
                 )
             )
         }
         return reminderList
     }
 
-    private fun getTime(time: MedicationIntakeModel.Time, date: MedicationIntakeModel.Date): Long =
-        Calendar.getInstance().apply {
+    private fun getTime(
+        time: MedicationIntakeModel.Time,
+        date: MedicationIntakeModel.Date,
+        reminderTime: Int
+    ): Long {
+        return Calendar.getInstance().apply {
             set(Calendar.YEAR, date.year)
             set(Calendar.MONTH, date.month - 1)
             set(Calendar.DAY_OF_MONTH, date.day)
             set(Calendar.HOUR_OF_DAY, time.hour)
             set(Calendar.MINUTE, time.minute)
             set(Calendar.SECOND, 0)
-        }.timeInMillis
+        }.timeInMillis - reminderTime.minutes.inWholeMilliseconds
+    }
 
 
     private fun getDateForDay(startDate: Date, dayIndex: Int): LocalDate {

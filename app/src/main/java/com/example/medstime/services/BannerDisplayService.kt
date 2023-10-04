@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import java.util.Calendar
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration.Companion.minutes
 
 
 class BannerDisplayService : Service() {
@@ -84,8 +84,7 @@ class BannerDisplayService : Service() {
 
     private fun callPendingReceiver(reminderModelId: String) {
         val reminder = getReminderModel.invoke(reminderModelId)
-//        reminder.timeShow += 5.minutes.inWholeMilliseconds
-        reminder.timeShow += 30.seconds.inWholeMilliseconds
+        reminder.timeShow = Calendar.getInstance().timeInMillis + 5.minutes.inWholeMilliseconds
         val alarmManager = ContextCompat.getSystemService(
             this,
             AlarmManager::class.java
@@ -101,7 +100,6 @@ class BannerDisplayService : Service() {
             PendingIntent.FLAG_MUTABLE
         )
         alarmManager.set(AlarmManager.RTC_WAKEUP, reminder.timeShow, pendingIntent)
-
     }
 
     private fun getActualTime(): MedicationIntakeModel.Time {
