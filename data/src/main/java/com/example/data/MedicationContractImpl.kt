@@ -20,12 +20,11 @@ class MedicationContractImpl(context: Context) : Repository.MedicationContract {
     }
 
     private val medicationDao: MedicationDao by lazy { medicationDatabase.medicationDao() }
-    private val medicationIntakeDao: MedicationIntakeDao by lazy { medicationIntakeDatabase.medicationIntake() }
+    private val medicationIntakeDao: MedicationIntakeDao by lazy { medicationIntakeDatabase.medicationIntakeDao() }
 
     override fun getIntakeList(): List<MedicationIntakeModel> {
         val medicationIntakeList = medicationIntakeDao.getAll()
         return medicationIntakeList.map { MedicationIntakeMapper.mapToModel(it) }
-
     }
 
     override fun replaceMedicationItem(medicationModel: MedicationModel) {

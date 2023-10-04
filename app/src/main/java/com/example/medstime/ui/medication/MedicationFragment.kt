@@ -1,11 +1,8 @@
 package com.example.medstime.ui.medication
 
-import android.content.Context
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -45,6 +42,7 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMedicationBinding.bind(view)
         initView()
+
     }
 
     private fun initView() {
@@ -75,15 +73,12 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
                 hideCalendar.callOnClick()
             }
             val maxDate = TimeUnit.DAYS.toMillis(MAX_NUMBER_DAYS)
-//            val minDate = TimeUnit.DAYS.toMillis(MIN_NUMBER_DAYS)
-//            calendar.minDate = (Date().time - minDate)
             calendar.maxDate = (Date().time + maxDate)
             addNewMedication.setOnClickListener {
                 val navHostFragment =
                     requireActivity().supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
                 navHostFragment.navController.navigate(R.id.addMedFragment)
             }
-
             /*todo
                            val slideInLeftAnimation: Animation = AnimationUtils.loadAnimation(
                             requireContext(),
@@ -95,7 +90,6 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
                         )
                         showCalendarText.inAnimation = slideInLeftAnimation
                         showCalendarText.outAnimation = slideOutRightAnimation*/
-
             viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 //todo                private var lastPosition = 0
                 override fun onPageSelected(position: Int) {
@@ -105,8 +99,10 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
                 }
             })
 
+
         }
     }
+
 
     private fun setPagerAdapter(date: MedicationIntakeModel.Date) {
         dateList = generateDateList(date)

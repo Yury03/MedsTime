@@ -10,11 +10,18 @@ interface MedicationIntakeDao {
     @Query("SELECT * FROM medication_intake_database")
     fun getAll(): List<MedicationIntakeEntity>
 
+    @Query("SELECT * FROM medication_intake_database WHERE id = :id")
+    fun getById(id: String): MedicationIntakeEntity
+
+    @Query("DELETE FROM medication_intake_database WHERE id = :id")
+    fun deleteById(id: String)
+
     @Insert
     fun insert(medicationIntake: MedicationIntakeEntity)
 
-    @Query("DELETE FROM medication_intake_database WHERE medicationId = :id")
-    fun deleteById(id: String)
+    @Query("UPDATE medication_intake_database SET isTaken = :isTaken, actualIntakeTime = :actualIntakeTime WHERE id = :id")
+    fun updateIsTakenById(id: String, isTaken: Boolean, actualIntakeTime: String?)
+
     @Query("DELETE FROM medication_intake_database WHERE medicationId = :medicationModelId")
     fun deleteByMedicationModelId(medicationModelId: String)
 }
