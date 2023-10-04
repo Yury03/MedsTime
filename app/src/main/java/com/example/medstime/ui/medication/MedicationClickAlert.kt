@@ -1,39 +1,47 @@
 package com.example.medstime.ui.medication
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
+import android.os.Bundle
 import android.view.LayoutInflater
-import androidx.appcompat.app.AlertDialog
-import com.example.medstime.databinding.MedicationAlertDialogBinding
-import com.example.domain.models.MedicationIntakeModel
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
+import com.example.medstime.R
 
 
 class MedicationClickAlert(
     context: Context,
-    medicationIntakeModel: MedicationIntakeModel,
+    medicationIntakeModelID: String,
     timeAndDosageText: String,
-) : AlertDialog(context) {
-    init {
-        val inflater = LayoutInflater.from(context)
-        val binding = MedicationAlertDialogBinding.inflate(inflater)
-        setView(binding.root)
-        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        with(binding) {
-            ADMedicationName.text = medicationIntakeModel.name
-            ADTimeAndDosage.text = timeAndDosageText
-            ADEditButton.setOnClickListener {
-                dismiss()
-            }
-            ADRemindFiveMinButton.setOnClickListener {
-                dismiss()
-            }
-            ADSkipButton.setOnClickListener {
-                dismiss()
-            }
-            ADTakenButton.setOnClickListener {
-                dismiss()
-            }
-        }
+) : DialogFragment() {
+    //    init {
+//        val inflater = LayoutInflater.from(context)
+//        val binding = MedicationAlertDialogBinding.inflate(inflater)
+////        setView(binding.root)
+////        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+//        with(binding) {
+////            ADMedicationName.text = medicationIntakeModel.name
+////            ADTimeAndDosage.text = timeAndDosageText
+////            ADEditButton.setOnClickListener {
+////                dismiss()
+////            }
+////            ADRemindFiveMinButton.setOnClickListener {
+////                dismiss()
+////            }
+////            ADSkipButton.setOnClickListener {
+////                dismiss()
+////            }
+////            ADTakenButton.setOnClickListener {
+////                dismiss()
+////            }
+//        }
+//}
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.medication_alert_dialog, container, false)
+        return view
     }
 }

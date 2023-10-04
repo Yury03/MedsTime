@@ -24,7 +24,7 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
         val year = arguments?.getInt("year")!!
         val medicationClick = { model: MedicationIntakeModel,
                                 timeAndDosageText: String ->
-            MedicationClickAlert(requireContext(), model, timeAndDosageText).show()
+//            MedicationClickAlert(requireContext(), model, timeAndDosageText).show()
         }
         viewModel.intakeListToday.observe(viewLifecycleOwner) {
             binding.medicationsList.adapter = TimesListAdapter(

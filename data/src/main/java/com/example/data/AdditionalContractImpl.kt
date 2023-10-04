@@ -4,20 +4,28 @@ import android.content.Context
 import android.util.Log
 import com.example.data.mappers.MedicationIntakeMapper
 import com.example.data.mappers.MedicationMapper
+import com.example.data.mappers.ReminderMapper
 import com.example.data.room.MedicationDatabase
 import com.example.data.room.MedicationIntakeDatabase
+import com.example.data.room.ReminderDatabase
 import com.example.data.room.dao.MedicationDao
 import com.example.data.room.dao.MedicationIntakeDao
+import com.example.data.room.dao.ReminderDao
 import com.example.domain.Repository
 import com.example.domain.models.MedicationIntakeModel
 import com.example.domain.models.MedicationModel
+import com.example.domain.models.ReminderModel
 import java.time.LocalDate
 import java.time.ZoneId
+import java.util.Calendar
 import java.util.Date
 import java.util.UUID
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.minutes
 
-class AdditionalContractImpl(context: Context) : Repository.AdditionContract {
+/**Класс добавляет модель Medication в базу данных и генерирует модели MedicationIntake и Reminder на **DEFAULT_NUMBER_DAYS_GENERATE**
+ * дней, а затем добавляет их в базу данных **MedicationIntakeDatabase** и **ReminderDatabase**. */
+class AdditionalContractImpl(private val context: Context) : Repository.AdditionContract {
     private companion object {
         //по дефолту генерируем приемы только на 14 дней
         const val DEFAULT_NUMBER_DAYS_GENERATE = 14
@@ -30,19 +38,28 @@ class AdditionalContractImpl(context: Context) : Repository.AdditionContract {
     private val medicationIntakeDatabase: MedicationIntakeDatabase by lazy {
         MedicationIntakeDatabase.getDatabase(context)
     }
+    private val reminderDatabase: ReminderDatabase by lazy {
+        ReminderDatabase.getDatabase(context)
+    }
     private val medicationDao: MedicationDao by lazy { medicationDatabase.medicationDao() }
-    private val medicationIntakeDao: MedicationIntakeDao by lazy { medicationIntakeDatabase.medicationIntake() }
+    private val medicationIntakeDao: MedicationIntakeDao by lazy { medicationIntakeDatabase.medicationIntakeDao() }
+    private val reminderDao: ReminderDao by lazy { reminderDatabase.reminderDao() }
+
+    /**Функция сохраняет новую модель medication, а затем получает и сохраняет сгенерированные модели приемов и уведомлений*/
     override fun saveNewMedication(medicationModel: MedicationModel) {
         val entity = MedicationMapper.mapToEntity(medicationModel)
         medicationDao.insert(entity)
-        generateMedicationIntakeModels(medicationModel).map {
+        val medicationIntakeList = generateMedicationIntakeModels(medicationModel)
+        val reminderList = generateReminderModels(medicationIntakeList, medicationModel)
+        reminderList.map {
+            reminderDao.insert(ReminderMapper.mapToEntity(it))
+        }
+        medicationIntakeList.map {
             medicationIntakeDao.insert(MedicationIntakeMapper.mapToEntity(it))
         }
     }
 
-
-    private fun generateMedicationIntakeModels(model: MedicationModel):
-            List<MedicationIntakeModel> {
+    private fun generateMedicationIntakeModels(model: MedicationModel): List<MedicationIntakeModel> {
         val days = getNumberDays(model)
         return when (model.frequency) {
             MedicationModel.Frequency.DAILY -> generateModelsForDaily(model, days)
@@ -118,6 +135,47 @@ class AdditionalContractImpl(context: Context) : Repository.AdditionContract {
             }
         }
     }
+
+    private fun generateReminderModels(
+        intakeList: List<MedicationIntakeModel>,
+        medicationModel: MedicationModel
+    ): List<ReminderModel> {
+        val reminderList = mutableListOf<ReminderModel>()
+        val type =
+            if (medicationModel.useBanner) {
+                ReminderModel.Type.BANNER
+            } else {
+                ReminderModel.Type.PUSH_NOTIFICATION
+            }
+        for (intake in intakeList) {
+            reminderList.add(
+                ReminderModel(
+                    id = generateUniqueId(),
+                    medicationIntakeId = intake.id,
+                    type = type,
+                    status = ReminderModel.Status.NONE,
+                    timeShow = getTime(intake.intakeTime, intake.intakeDate, intake.reminderTime)
+                )
+            )
+        }
+        return reminderList
+    }
+
+    private fun getTime(
+        time: MedicationIntakeModel.Time,
+        date: MedicationIntakeModel.Date,
+        reminderTime: Int
+    ): Long {
+        return Calendar.getInstance().apply {
+            set(Calendar.YEAR, date.year)
+            set(Calendar.MONTH, date.month - 1)
+            set(Calendar.DAY_OF_MONTH, date.day)
+            set(Calendar.HOUR_OF_DAY, time.hour)
+            set(Calendar.MINUTE, time.minute)
+            set(Calendar.SECOND, 0)
+        }.timeInMillis - reminderTime.minutes.inWholeMilliseconds
+    }
+
 
     private fun getDateForDay(startDate: Date, dayIndex: Int): LocalDate {
         val dateIntake = Date(startDate.time + TimeUnit.DAYS.toMillis(dayIndex.toLong()))

@@ -1,16 +1,15 @@
 package com.example.medstime.ui.medication.adapters
 
 import android.content.Context
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
-import com.example.medstime.R
 import com.example.domain.models.MedicationIntakeModel
-import java.time.LocalDateTime
+import com.example.medstime.R
+import java.util.Calendar
+import kotlin.time.Duration.Companion.minutes
 
 class MedicationsListAdapter(
     private val dataList: List<MedicationIntakeModel>,
@@ -61,15 +60,15 @@ class MedicationsListAdapter(
     }
 
     private fun timeHasCome(model: MedicationIntakeModel): Boolean {
-        val currentDateTime = LocalDateTime.now()
-        val intakeDateTime = LocalDateTime.of(
-            currentDateTime.year,
-            model.intakeDate.month,
-            model.intakeDate.day,
-            model.intakeTime.hour,
-            model.intakeTime.minute
-        )
-        return currentDateTime.isEqual(intakeDateTime) || currentDateTime.isAfter(intakeDateTime)
+        val currentDateTime = Calendar.getInstance().timeInMillis
+        val intakeDateTime = Calendar.getInstance().apply {
+            set(Calendar.YEAR, model.intakeDate.year)
+            set(Calendar.MONTH, model.intakeDate.month-1)
+            set(Calendar.DAY_OF_MONTH, model.intakeDate.day)
+            set(Calendar.HOUR_OF_DAY, model.intakeTime.hour)
+            set(Calendar.MINUTE, model.intakeTime.minute)
+        }.timeInMillis - model.reminderTime.minutes.inWholeMilliseconds
+        return currentDateTime >= intakeDateTime
     }
 
 
