@@ -3,16 +3,16 @@
 
     <item
         android:id="@+id/menu_medication"
-        android:icon="@drawable/medication_icon_menu"
+        android:icon="@drawable/menu_icon_medication"
         android:title="Прием" />
     <item
         android:id="@+id/menu_medsTracking"
-        android:icon="@drawable/meds_tracking_icon_menu"
+        android:icon="@drawable/menu_icon_meds_tracking"
         android:title="Лекарства" />
 
     <item
         android:id="@+id/menu_notifications"
-        android:icon="@drawable/notifications_icon_menu"
+        android:icon="@drawable/menu_icon_notifications"
         android:title="Уведомления" />
 
     <!--    <item-->

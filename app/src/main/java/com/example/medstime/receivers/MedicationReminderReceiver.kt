@@ -77,7 +77,7 @@ class MedicationReminderReceiver : BroadcastReceiver() {
             )
             notificationManager.createNotificationChannel(channel)
             val builder = NotificationCompat.Builder(context, "medication_channel")
-                .setSmallIcon(R.drawable.medication_icon_menu)
+                .setSmallIcon(R.drawable.menu_icon_medication)
                 .setContentTitle("Напоминание о приеме лекарства ${intake.name}")
                 .setContentText("Прием назначен на ${intake.intakeTime.toDisplayString()}")
                 .addAction(

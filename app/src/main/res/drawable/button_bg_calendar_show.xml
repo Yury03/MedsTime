@@ -3,11 +3,11 @@
 
     android:shape="rectangle">
 
-    <solid android:color="@color/medication_item_background" />
+    <solid android:color="@color/screen_front" />
     <corners
         android:bottomLeftRadius="25dp"
         android:bottomRightRadius="25dp"
-        android:topLeftRadius="0dp"
-        android:topRightRadius="0dp" />
+        android:topLeftRadius="25dp"
+        android:topRightRadius="25dp" />
 
 </shape>

@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:padding="2dp"
             android:text="@string/medication_name_placeholder"
-            android:textColor="@color/default_text"
+            android:textColor="@color/secondary_black_and_white"
             android:textSize="@dimen/text_4_level" />
 
         <ImageButton
@@ -31,7 +31,7 @@
             android:layout_gravity="center"
             android:layout_marginHorizontal="10dp"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/edit_icon" />
+            app:srcCompat="@drawable/button_icon_edit" />
     </LinearLayout>
 
     <TextView
@@ -42,7 +42,7 @@
         android:gravity="center_horizontal|top"
         android:minHeight="50dp"
         android:text="@string/medication_dosage_placeholder"
-        android:textColor="@color/default_text"
+        android:textColor="@color/secondary_black_and_white"
         android:textSize="@dimen/text_4_level" />
 
     <androidx.appcompat.widget.AppCompatButton
@@ -52,11 +52,11 @@
         android:layout_marginStart="1dp"
         android:layout_marginEnd="1dp"
         android:layout_weight="0"
-        android:background="@drawable/no_radius"
+        android:background="@drawable/custom_button_no_radius"
         android:backgroundTint="#A4D9DC"
         android:gravity="center"
         android:text="@string/remind_five_minute"
-        android:textColor="@color/default_text" />
+        android:textColor="@color/secondary_black_and_white" />
 
     <ImageView
         android:id="@+id/imageView2"
@@ -80,11 +80,11 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/bottom_left_radius"
+            android:background="@drawable/custom_button_bottom_left_radius"
             android:backgroundTint="#EB4D4F"
             android:gravity="center"
             android:text="@string/skipped"
-            android:textColor="@color/default_text" />
+            android:textColor="@color/secondary_black_and_white" />
 
         <ImageView
             android:id="@+id/imageView3"
@@ -99,10 +99,10 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/bottom_right_radius"
+            android:background="@drawable/button_bg_bottom_right_radius"
             android:backgroundTint="#A5F87F"
             android:gravity="center"
             android:text="@string/taken"
-            android:textColor="@color/default_text" />
+            android:textColor="@color/secondary_black_and_white" />
     </LinearLayout>
 </LinearLayout>

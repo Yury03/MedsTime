@@ -15,8 +15,10 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/floating_action_button_margin"
         android:layout_marginBottom="@dimen/floating_action_button_margin"
+        android:backgroundTint="@color/selected_bottom_menu_item2"
         android:clickable="true"
-        android:src="@drawable/button_icon_plus" />
+        android:src="@drawable/button_icon_plus"
+        android:tint="@color/main_black_and_white" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
@@ -46,7 +48,7 @@
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="5dp"
-            android:background="@drawable/calendar_top_button_show">
+            android:background="@drawable/button_bg_calendar_show">
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/showCalendar"
@@ -54,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:paddingHorizontal="12dp"
-                android:textColor="@color/selected_bottom_menu_item"
+                android:textColor="@color/selected_bottom_menu_item2"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -79,9 +81,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginBottom="5dp"
-            android:background="@drawable/calendar_top_button_hide"
+            android:background="@drawable/button_bg_calendar_hide"
             android:text="@string/close"
-            android:textColor="@color/selected_bottom_menu_item"
+            android:textColor="@color/selected_bottom_menu_item2"
             android:visibility="gone" />
 
     </LinearLayout>

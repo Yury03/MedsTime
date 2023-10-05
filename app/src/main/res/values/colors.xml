@@ -10,18 +10,24 @@
     <color name="white">#FFFFFFFF</color>
 
     <!--menu colors-->
-    <color name="selected_bottom_menu_item">#FF4376FE</color>
-    <color name="bottom_menu_item">#000000</color>
+    <color name="bottom_menu_background">#FFFFFFFF</color>
+    <color name="bottom_menu_item">#FF000000</color>
+    <!--todo naming-->
+    <color name="selected_bottom_menu_item2">#87CEEB</color>
+    <color name="selected_bottom_menu_item">#04A1F4</color>
 
     <!--general colors-->
     <color name="screen_back">#FFF0F1F5</color>
-    <color name="screen_front">#FFFFFF</color>
-    <color name="default_text">#000000</color>
+    <color name="screen_front">#FFFFFFFF</color>
+    <color name="main_black_and_white">#FF000000</color>
+    <color name="secondary_black_and_white">#FF464646</color>
+    <color name="main_text">#FF44484B</color>
+    <color name="secondary_text">#FF646464</color>
+
 
     <!--medication fragment colors-->
     <color name="medication_item_text_meds_taken">#56C2A3</color>
     <color name="medication_item_text_meds_missed">#C25656</color>
-    <color name="medication_item_background">#FFFFFF</color>
     <color name="local_transparent">#00000000</color>
     <color name="medication_alert_dialog_background">#F0F1F5</color>
     <color name="light_grey_text">#666666</color>

@@ -1,15 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="ModalBottomSheet">
-        parent="Theme.Design.Light.BottomSheetDialog">
+
+    <style name="ModalBottomSheet" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="behavior_peekHeight">300dp</item>
         <item name="state_collapsed">true</item>
         <item name="android:strokeColor">@color/blue</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowSwipeToDismiss">true</item>
     </style>
+
     <style name="MedicationBanner" parent="Theme.AppCompat.Light.Dialog.Alert">
 
+    </style>
+
+    <style name="AddMedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:backgroundTint">@color/selected_bottom_menu_item2</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="iconGravity">end</item>
+        <item name="iconTint">@color/black</item>
+        <item name="strokeColor">@color/black</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.App.SmallComponent</item>
+    </style>
+
+    <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.MaterialComponents">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
     </style>
 
 </resources>

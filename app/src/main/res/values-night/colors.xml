@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="selected_bottom_menu_item">#FF00B670</color>
+    <!--menu colors-->
+    <color name="bottom_menu_background">#303134</color>
     <color name="bottom_menu_item">#FFB0B0B0</color>
-    <color name="screen_back">#000000</color>
-    <color name="screen_front">#C2C2C2</color>
-    <color name="default_text">#FFB0B0B0</color>
-    <color name="medication_item_text_meds_taken">#00B670</color>
-    <color name="medication_item_text_meds_missed">#F32B2B</color>
-    <color name="medication_item_background">#333333</color>
-    <color name="medication_alert_dialog_background">#000000</color>
+    <!--    todo naming-->
+    <color name="selected_bottom_menu_item2">#FF87CEEB</color>
+    <color name="selected_bottom_menu_item">#FF59B85D</color>
+    <!--general colors-->
+    <color name="screen_back">#FF202124</color>
+    <color name="screen_front">#FF333333</color>
+    <color name="main_black_and_white">#FFFFFFFF</color>
+    <color name="secondary_black_and_white">#FFE6E8E9</color>
+    <color name="main_text">#FFDDDFE2</color>
+    <color name="secondary_text">#FF646464</color>
+
+
+    <color name="medication_item_text_meds_taken">#FF00B670</color>
+    <color name="medication_item_text_meds_missed">#FFF32B2B</color>
+    <color name="medication_alert_dialog_background">#FF000000</color>
 
 </resources>

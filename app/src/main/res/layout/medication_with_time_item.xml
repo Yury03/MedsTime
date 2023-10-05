@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/time_placeholder"
-        android:textColor="@color/default_text"
+        android:textColor="@color/secondary_black_and_white"
         android:textSize="@dimen/text_1_level" />
 
     <androidx.recyclerview.widget.RecyclerView

@@ -50,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
                     android:text="@string/add_med_title"
-                    android:textColor="@color/default_text"
+                    android:textColor="@color/main_text"
                     android:textSize="@dimen/text_3_level"
                     android:textStyle="bold"
                     app:fontFamily="@font/roboto_regular" />
@@ -200,18 +200,12 @@
 
             <Button
                 android:id="@+id/reminderLayoutButton"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/AddMedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
                 android:text="@string/add_reminder"
-                android:textAlignment="textStart"
-                android:textAllCaps="false"
-                android:textColor="@color/default_text"
-                app:icon="@drawable/button_icon_open_curtain"
-                app:iconGravity="end"
-                app:iconTint="@color/black"
-                app:strokeColor="@color/black" />
+                app:icon="@drawable/button_icon_open_curtain" />
 
             <net.cachapa.expandablelayout.ExpandableLayout
                 android:id="@+id/reminderLayout"
@@ -281,18 +275,12 @@
 
             <Button
                 android:id="@+id/durationLayoutButton"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/AddMedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
                 android:text="@string/add_duration"
-                android:textAlignment="textStart"
-                android:textAllCaps="false"
-                android:textColor="@color/default_text"
-                app:icon="@drawable/button_icon_open_curtain"
-                app:iconGravity="end"
-                app:iconTint="@color/black"
-                app:strokeColor="@color/black" />
+                app:icon="@drawable/button_icon_open_curtain" />
 
 
             <net.cachapa.expandablelayout.ExpandableLayout
@@ -342,7 +330,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/monday"
-                            android:textAlignment="center" />
+                            android:textAlignment="center"
+                            app:checkedIconTint="@color/selected_bottom_menu_item2" />
 
                         <com.google.android.material.chip.Chip
                             style="@style/Widget.MaterialComponents.Chip.Choice"
@@ -350,7 +339,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/tuesday"
-                            android:textAlignment="center" />
+                            android:textAlignment="center"
+                            app:checkedIconTint="@color/selected_bottom_menu_item2" />
 
                         <com.google.android.material.chip.Chip
                             style="@style/Widget.MaterialComponents.Chip.Choice"
@@ -358,7 +348,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/wednesday"
-                            android:textAlignment="center" />
+                            android:textAlignment="center"
+                            app:checkedIconTint="@color/selected_bottom_menu_item2" />
 
                         <com.google.android.material.chip.Chip
                             style="@style/Widget.MaterialComponents.Chip.Choice"
@@ -366,7 +357,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/thursday"
-                            android:textAlignment="center" />
+                            android:textAlignment="center"
+                            app:checkedIconTint="@color/selected_bottom_menu_item2" />
 
                         <com.google.android.material.chip.Chip
                             style="@style/Widget.MaterialComponents.Chip.Choice"
@@ -374,7 +366,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/friday"
-                            android:textAlignment="center" />
+                            android:textAlignment="center"
+                            app:checkedIconTint="@color/selected_bottom_menu_item2" />
 
                         <com.google.android.material.chip.Chip
                             style="@style/Widget.MaterialComponents.Chip.Choice"
@@ -382,7 +375,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/saturday"
-                            android:textAlignment="center" />
+                            android:textAlignment="center"
+                            app:checkedIconTint="@color/selected_bottom_menu_item2" />
 
                         <com.google.android.material.chip.Chip
                             style="@style/Widget.MaterialComponents.Chip.Choice"
@@ -390,7 +384,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/sunday"
-                            android:textAlignment="center" />
+                            android:textAlignment="center"
+                            app:checkedIconTint="@color/selected_bottom_menu_item2" />
                     </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -474,23 +469,15 @@
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </net.cachapa.expandablelayout.ExpandableLayout>
-
-
         </LinearLayout>
     </ScrollView>
 
     <Button
         android:id="@+id/continueButton"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        style="@style/AddMedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:text="@string/add_med"
-        android:textAlignment="textStart"
-        android:textAllCaps="false"
-        android:textColor="@color/default_text"
-        app:icon="@drawable/button_icon_arrow_to_right"
-        app:iconGravity="end"
-        app:iconTint="@color/black"
-        app:strokeColor="@color/black" />
+        app:icon="@drawable/button_icon_arrow_to_right" />
 </LinearLayout>
