@@ -22,6 +22,7 @@
         <item name="iconTint">@color/black</item>
         <item name="strokeColor">@color/black</item>
         <item name="shapeAppearance">@style/ShapeAppearance.App.SmallComponent</item>
+
     </style>
 
     <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.MaterialComponents">
@@ -29,4 +30,31 @@
         <item name="cornerSize">16dp</item>
     </style>
 
+    <style name="TimePickerDialog" parent="@style/ThemeOverlay.MaterialComponents.TimePicker">
+        <item name="colorPrimary">@color/selected_bottom_menu_item2</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+
+    <style name="AddMedTextInputLayout" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextColor">@color/selected_bottom_menu_item2</item>
+        <item name="boxStrokeColor">@color/color_outlined_stroke</item>
+
+
+    </style>
+
+    <style name="AddMedTextInputLayout.ExposedDropdownMenu" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="hintTextColor">@color/selected_bottom_menu_item2</item>
+        <item name="boxStrokeColor">@color/color_outlined_stroke</item>
+
+
+    </style>
+
+    <style name="AddMedTextInputEditText" parent="ThemeOverlay.Design.TextInputEditText">
+        <item name="android:colorControlActivated">@color/black</item>
+
+    </style>
+
+
+
+    <color name="light_secondary_black_and_white">#858585</color>
 </resources>

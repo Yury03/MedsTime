@@ -46,6 +46,7 @@
                     android:src="@drawable/button_icon_arrow_to_left" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/Widget.AppCompat.TextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
@@ -62,7 +63,7 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/AddMedTextInputLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
@@ -71,6 +72,7 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/medicationName"
+                        style="@style/AddMedTextInputEditText"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:inputType="text" />
@@ -111,8 +113,7 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
-
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/AddMedTextInputLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
@@ -128,8 +129,9 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/textFieldUnits"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    style="@style/AddMedTextInputLayout.ExposedDropdownMenu"
                     android:layout_width="0dp"
+
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
                     android:layout_weight="3"
@@ -146,9 +148,10 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textFieldStartIntakeDate"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/AddMedTextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 android:layout_margin="4dp"
                 android:hint="@string/start_intake_date_hint">
                 <!--todo заменить android:editable="false"-->
@@ -162,7 +165,7 @@
 
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/AddMedTextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
@@ -233,7 +236,7 @@
 
                     <com.google.android.material.chip.ChipGroup
                         android:id="@+id/chipGroupTime"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/AddMedTextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="4dp" />
@@ -331,7 +334,8 @@
                             android:layout_weight="1"
                             android:text="@string/monday"
                             android:textAlignment="center"
-                            app:checkedIconTint="@color/selected_bottom_menu_item2" />
+                            android:textColor="@color/color_text_chip_state_list"
+                            app:chipBackgroundColor="@color/bg_chip_state_list" />
 
                         <com.google.android.material.chip.Chip
                             style="@style/Widget.MaterialComponents.Chip.Choice"
@@ -340,7 +344,8 @@
                             android:layout_weight="1"
                             android:text="@string/tuesday"
                             android:textAlignment="center"
-                            app:checkedIconTint="@color/selected_bottom_menu_item2" />
+                            android:textColor="@color/color_text_chip_state_list"
+                            app:chipBackgroundColor="@color/bg_chip_state_list" />
 
                         <com.google.android.material.chip.Chip
                             style="@style/Widget.MaterialComponents.Chip.Choice"
@@ -349,7 +354,8 @@
                             android:layout_weight="1"
                             android:text="@string/wednesday"
                             android:textAlignment="center"
-                            app:checkedIconTint="@color/selected_bottom_menu_item2" />
+                            android:textColor="@color/color_text_chip_state_list"
+                            app:chipBackgroundColor="@color/bg_chip_state_list" />
 
                         <com.google.android.material.chip.Chip
                             style="@style/Widget.MaterialComponents.Chip.Choice"
@@ -358,7 +364,8 @@
                             android:layout_weight="1"
                             android:text="@string/thursday"
                             android:textAlignment="center"
-                            app:checkedIconTint="@color/selected_bottom_menu_item2" />
+                            android:textColor="@color/color_text_chip_state_list"
+                            app:chipBackgroundColor="@color/bg_chip_state_list" />
 
                         <com.google.android.material.chip.Chip
                             style="@style/Widget.MaterialComponents.Chip.Choice"
@@ -367,7 +374,8 @@
                             android:layout_weight="1"
                             android:text="@string/friday"
                             android:textAlignment="center"
-                            app:checkedIconTint="@color/selected_bottom_menu_item2" />
+                            android:textColor="@color/color_text_chip_state_list"
+                            app:chipBackgroundColor="@color/bg_chip_state_list" />
 
                         <com.google.android.material.chip.Chip
                             style="@style/Widget.MaterialComponents.Chip.Choice"
@@ -376,7 +384,8 @@
                             android:layout_weight="1"
                             android:text="@string/saturday"
                             android:textAlignment="center"
-                            app:checkedIconTint="@color/selected_bottom_menu_item2" />
+                            android:textColor="@color/color_text_chip_state_list"
+                            app:chipBackgroundColor="@color/bg_chip_state_list" />
 
                         <com.google.android.material.chip.Chip
                             style="@style/Widget.MaterialComponents.Chip.Choice"
@@ -385,7 +394,8 @@
                             android:layout_weight="1"
                             android:text="@string/sunday"
                             android:textAlignment="center"
-                            app:checkedIconTint="@color/selected_bottom_menu_item2" />
+                            android:textColor="@color/color_text_chip_state_list"
+                            app:chipBackgroundColor="@color/bg_chip_state_list" />
                     </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -406,7 +416,7 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textFieldEndIntakeDate"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/AddMedTextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="4dp"
@@ -424,7 +434,7 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textFieldNumberMeds"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/AddMedTextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="4dp"
@@ -440,7 +450,7 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textFieldNumberDays"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/AddMedTextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="4dp"
@@ -455,7 +465,7 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/AddMedTextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="4dp"

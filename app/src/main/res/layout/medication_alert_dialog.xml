@@ -56,7 +56,7 @@
         android:backgroundTint="#A4D9DC"
         android:gravity="center"
         android:text="@string/remind_five_minute"
-        android:textColor="@color/secondary_black_and_white" />
+        android:textColor="@color/black" />
 
     <ImageView
         android:id="@+id/imageView2"
@@ -84,7 +84,7 @@
             android:backgroundTint="#EB4D4F"
             android:gravity="center"
             android:text="@string/skipped"
-            android:textColor="@color/secondary_black_and_white" />
+            android:textColor="@color/black" />
 
         <ImageView
             android:id="@+id/imageView3"
@@ -103,6 +103,6 @@
             android:backgroundTint="#A5F87F"
             android:gravity="center"
             android:text="@string/taken"
-            android:textColor="@color/secondary_black_and_white" />
+            android:textColor="@color/black" />
     </LinearLayout>
 </LinearLayout>

@@ -452,17 +452,21 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         val newChip = Chip(binding.chipGroupTime.context)
         newChip.apply {
             text = chipText
+            setTextColor(ContextCompat.getColorStateList(context, R.color.black))
             isCloseIconVisible = true
             setOnCloseIconClickListener {
                 binding.chipGroupTime.removeView(newChip)
             }
+            chipBackgroundColor =
+                ContextCompat.getColorStateList(context, R.color.selected_bottom_menu_item2)
+            closeIconTint = ContextCompat.getColorStateList(context, R.color.chip_close_icon_tint)
         }
         binding.chipGroupTime.addView(newChip, binding.chipGroupTime.childCount)
     }
 
     private fun callTimePicker(textId: Int) =
         MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_24H).setHour(12).setMinute(0)
-            .setTitleText(textId).build()
+            .setTitleText(textId).setTheme(R.style.TimePickerDialog).build()
 
     private fun setAdapterSpinDosageUnits() {
         val dosageArray = resources.getStringArray(R.array.dosage_array)

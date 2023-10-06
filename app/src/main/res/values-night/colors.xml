@@ -18,5 +18,6 @@
     <color name="medication_item_text_meds_taken">#FF00B670</color>
     <color name="medication_item_text_meds_missed">#FFF32B2B</color>
     <color name="medication_alert_dialog_background">#FF000000</color>
+    <color name="chips_bg_color">#FF424242</color>
 
 </resources>

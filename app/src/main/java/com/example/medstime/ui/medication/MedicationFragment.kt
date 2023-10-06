@@ -57,7 +57,7 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
                     setTextColor(
                         ContextCompat.getColor(
                             requireContext(),
-                            R.color.selected_bottom_menu_item2
+                            R.color.selected_bottom_menu_item
                         )
                     )
                 }

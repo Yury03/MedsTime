@@ -33,4 +33,8 @@
     <color name="light_grey_text">#666666</color>
     <color name="light_grey_background">#EBEBEB</color>
     <color name="blue">#afdafc</color>
+    <color name="chips_bg_color">#DCDCDC</color>
+
+
+    <color name="chip_close_icon_tint">#202020</color>
 </resources>
