@@ -27,6 +27,11 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
 //            MedicationClickAlert(requireContext(), model, timeAndDosageText).show()
         }
         viewModel.intakeListToday.observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {
+                binding.placeholder.visibility = View.GONE
+                binding.medicationsList.visibility = View.VISIBLE
+            }
+
             binding.medicationsList.adapter = TimesListAdapter(
                 dataList = it,
                 context = requireContext(),

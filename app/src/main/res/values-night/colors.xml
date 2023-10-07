@@ -20,4 +20,16 @@
     <color name="medication_alert_dialog_background">#FF000000</color>
     <color name="chips_bg_color">#FF424242</color>
 
+    <!--capybara image colors-->
+    <color name="capybara_color">#FF87CEEB</color>
+    <color name="capybara_color_90">#E683D8FB</color>
+    <color name="capybara_color_80">#8083D8FB</color>
+    <color name="capybara_color_70">#8083D8FB</color>
+    <color name="capybara_color_60">#8083D8FB</color>
+    <color name="capybara_color_50">#8083D8FB</color>
+    <color name="capybara_color_40">#6683D8FB</color>
+    <color name="capybara_color_30">#4D83D8FB</color>
+    <color name="capybara_color_20">#3383D8FB</color>
+    <color name="capybara_color_10">#1A83D8FB</color>
+
 </resources>

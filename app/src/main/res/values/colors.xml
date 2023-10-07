@@ -35,6 +35,18 @@
     <color name="blue">#afdafc</color>
     <color name="chips_bg_color">#DCDCDC</color>
 
-
     <color name="chip_close_icon_tint">#202020</color>
+
+    <!--capybara image colors-->
+    <color name="capybara_color">#FF04A1F4</color>
+    <color name="capybara_color_90">#E604A1F4</color>
+    <color name="capybara_color_80">#CC04A1F4</color>
+    <color name="capybara_color_70">#B304A1F4</color>
+    <color name="capybara_color_60">#9904A1F4</color>
+    <color name="capybara_color_50">#8004A1F4</color>
+    <color name="capybara_color_40">#6604A1F4</color>
+    <color name="capybara_color_30">#4D04A1F4</color>
+    <color name="capybara_color_20">#3304A1F4</color>
+    <color name="capybara_color_10">#1A04A1F4</color>
+
 </resources>

@@ -24,7 +24,8 @@
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="50dp">
+        android:layout_marginTop="50dp"
+        android:visibility="visible">
 
     </androidx.viewpager2.widget.ViewPager2>
 
@@ -32,14 +33,14 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="visible">
 
         <CalendarView
             android:id="@+id/calendar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/screen_front"
-            android:visibility="visible" />
+            android:background="@color/screen_front" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/showCalendarLayout"
@@ -48,7 +49,8 @@
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="5dp"
-            android:background="@drawable/button_bg_calendar_show">
+            android:background="@drawable/button_bg_calendar_show"
+            android:visibility="visible">
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/showCalendar"

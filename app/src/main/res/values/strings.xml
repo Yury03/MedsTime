@@ -66,6 +66,7 @@
     <string name="add_med_error_tracking">Заполните поле отслеживания</string>
     <string name="sp_key_camera_beta">activate_camera</string>
     <string name="beta_mode_activated">Beta mode переключен</string>
+    <string name="placeholder_medication_fragment">Здесь будут показаны\nваши приемы лекарств.</string>
     <string-array name="dosage_array">
         <item>Мг</item>
         <item>Капсулы</item>
