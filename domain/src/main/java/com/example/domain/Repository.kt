@@ -20,14 +20,17 @@ interface Repository {
     interface ReminderContract {
         fun getRemindersWithStatus(reminderStatus: ReminderModel.Status): List<ReminderModel>
         fun getMedicationIntakeModel(medicationIntakeId: String): MedicationIntakeModel
-        fun changeNotificationStatus(reminderId: String, newStatus: ReminderModel.Status)
+        fun getReminderModelById(reminderId: String): ReminderModel
+    }
+
+    interface CommonContract {
         fun changeMedicationIntakeIsTaken(
             medicationIntakeId: String,
             newIsTaken: Boolean,
             actualIntakeTime: MedicationIntakeModel.Time?
         )
 
-        fun getReminderModelById(reminderId: String): ReminderModel
+        fun changeNotificationStatus(reminderId: String, newStatus: ReminderModel.Status)
     }
 
 }

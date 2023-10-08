@@ -67,6 +67,9 @@
     <string name="sp_key_camera_beta">activate_camera</string>
     <string name="beta_mode_activated">Beta mode переключен</string>
     <string name="placeholder_medication_fragment">Здесь будут показаны\nваши приемы лекарств.</string>
+    <string name="to_edit">Редактировать</string>
+    <string name="remove_medication_tracking">Удалить отслеживание</string>
+    <string name="change_time_take">Изменить время приема</string>
     <string-array name="dosage_array">
         <item>Мг</item>
         <item>Капсулы</item>

@@ -16,6 +16,7 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
     private var _binding: FragmentMedicationListBinding? = null
     private val binding get() = _binding!!
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMedicationListBinding.bind(view)
@@ -23,9 +24,11 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
         val month = arguments?.getInt("month")!!
         val year = arguments?.getInt("year")!!
         val medicationClick = { model: MedicationIntakeModel,
-                                timeAndDosageText: String ->
-//            MedicationClickAlert(requireContext(), model, timeAndDosageText).show()
+                                timeAndDosageText: String, itemHolder: View ->
+            createItemButtonClickMap(model)
+
         }
+
         viewModel.intakeListToday.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 binding.placeholder.visibility = View.GONE
@@ -40,6 +43,28 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
         }
         binding.medicationsList.layoutManager = LinearLayoutManager(context)
         viewModel.getIntakeListWithDate(MedicationIntakeModel.Date(day, month, year))
+    }
+
+    private fun createItemButtonClickMap(model: MedicationIntakeModel): Map<Int, View.OnClickListener> {
+        val result = mutableMapOf<Int, View.OnClickListener>()
+        with(result) {
+            put(R.id.itemChangeTimeTakeButton) {
+
+            }
+            put(R.id.itemTakenButton) {
+                viewModel.changeIsTakenStatus(model.id, true)
+            }
+            put(R.id.itemSkippedButton) {
+                viewModel.changeIsTakenStatus(model.id, false)
+            }
+            put(R.id.itemEditButton) {
+
+            }
+            put(R.id.itemRemoveButton) {
+
+            }
+        }
+        return result
     }
 
     override fun onDestroy() {

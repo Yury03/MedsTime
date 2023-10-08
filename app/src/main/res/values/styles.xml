@@ -54,6 +54,15 @@
 
     </style>
 
+    <style name="MedicationItemButton" parent="@style/Widget.MaterialComponents.Button.TextButton">
+        <item name="textOutlineColor">@color/local_transparent</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textSize">@dimen/text_6_level</item>
+        <item name="android:textColor">@color/main_text</item>
+        <item name="iconTint">@color/main_black_and_white</item>
+        <item name="marginHorizontal">8dp</item>
+    </style>
 
 
     <color name="light_secondary_black_and_white">#858585</color>

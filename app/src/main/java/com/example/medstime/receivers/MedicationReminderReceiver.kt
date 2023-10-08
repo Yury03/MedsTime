@@ -10,7 +10,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.domain.models.MedicationIntakeModel
 import com.example.domain.models.ReminderModel
-import com.example.domain.usecase.reminder.ChangeNotificationStatus
+import com.example.domain.usecase.common.ChangeNotificationStatus
 import com.example.domain.usecase.reminder.GetMedicationIntakeModel
 import com.example.medstime.R
 import com.example.medstime.services.BannerDisplayService

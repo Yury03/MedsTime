@@ -20,6 +20,8 @@ val appModule = module {
             replaceMedicationItemUseCase = get(),
             getMedicationById = get(),
             replaceMedicationIntake = get(),
+            changeMedicationIntakeIsTaken = get(),
+            changeNotificationStatus = get(),
         )
     }
     viewModel<AddMedViewModel> {

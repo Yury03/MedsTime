@@ -7,13 +7,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.medstime.R
 import com.example.domain.models.MedicationIntakeModel
+import com.example.medstime.R
 
 class TimesListAdapter(
     private val dataList: List<Pair<MedicationIntakeModel.Time, List<MedicationIntakeModel>>>,
     private val context: Context,
-    private val medicationClick: (MedicationIntakeModel, String) -> Unit,
+    private val medicationClick: (MedicationIntakeModel, String, View) -> Map<Int, View.OnClickListener>,
 ) :
     RecyclerView.Adapter<TimesListAdapter.ViewHolder>() {
 

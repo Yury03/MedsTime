@@ -1,11 +1,13 @@
 package com.example.medstime.ui.medication
 
-import android.app.AlarmManager
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.models.MedicationIntakeModel
+import com.example.domain.usecase.common.ChangeMedicationIntakeIsTaken
+import com.example.domain.usecase.common.ChangeNotificationStatus
 import com.example.domain.usecase.medication.GetIntakeList
 import com.example.domain.usecase.medication.GetMedicationById
 import com.example.domain.usecase.medication.RemoveMedicationItem
@@ -13,6 +15,7 @@ import com.example.domain.usecase.medication.ReplaceMedicationIntake
 import com.example.domain.usecase.medication.ReplaceMedicationItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class MedicationListViewModel(
     private val getIntakeList: GetIntakeList,
@@ -20,6 +23,8 @@ class MedicationListViewModel(
     private val replaceMedicationItemUseCase: ReplaceMedicationItem,
     private val getMedicationById: GetMedicationById,
     private val replaceMedicationIntake: ReplaceMedicationIntake,
+    private val changeMedicationIntakeIsTaken: ChangeMedicationIntakeIsTaken,
+    private val changeNotificationStatus: ChangeNotificationStatus,
 ) : ViewModel() {
     /**список пар Время - Список приемов лекарств**/
     private val _intakeListToday: MutableLiveData<List<Pair<MedicationIntakeModel.Time, List<MedicationIntakeModel>>>> =
@@ -44,5 +49,21 @@ class MedicationListViewModel(
         }
     }
 
+    fun changeIsTakenStatus(medicationIntakeId: String, isTaken: Boolean) {
+        val time = if (isTaken) {
+            getActualTime()
+        } else {
+            null
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            changeMedicationIntakeIsTaken.invoke(medicationIntakeId, isTaken, time)
+            Log.e("DEBUG", "OK")
+        }
+    }
 
+    private fun getActualTime(): MedicationIntakeModel.Time {
+        with(Calendar.getInstance()) {
+            return MedicationIntakeModel.Time(get(Calendar.HOUR_OF_DAY), get(Calendar.MINUTE))
+        }
+    }
 }
