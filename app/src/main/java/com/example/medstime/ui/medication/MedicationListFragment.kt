@@ -23,16 +23,15 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
         val day = arguments?.getInt("day")!!                //todo обработка ошибок
         val month = arguments?.getInt("month")!!
         val year = arguments?.getInt("year")!!
-        val medicationClick = { model: MedicationIntakeModel,
-                                timeAndDosageText: String, itemHolder: View ->
+        viewModel.setDate(MedicationIntakeModel.Date(day, month, year))
+        val medicationClick = { model: MedicationIntakeModel ->
             createItemButtonClickMap(model)
-
         }
 
         viewModel.intakeListToday.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                binding.placeholder.visibility = View.GONE
-                binding.medicationsList.visibility = View.VISIBLE
+            if (it.isEmpty()) {
+                binding.placeholder.visibility = View.VISIBLE
+                binding.medicationsList.visibility = View.GONE
             }
 
             binding.medicationsList.adapter = TimesListAdapter(
@@ -42,14 +41,14 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
             )
         }
         binding.medicationsList.layoutManager = LinearLayoutManager(context)
-        viewModel.getIntakeListWithDate(MedicationIntakeModel.Date(day, month, year))
+        viewModel.getIntakeList()
     }
 
     private fun createItemButtonClickMap(model: MedicationIntakeModel): Map<Int, View.OnClickListener> {
         val result = mutableMapOf<Int, View.OnClickListener>()
         with(result) {
             put(R.id.itemChangeTimeTakeButton) {
-
+                viewModel.changeActualTime(model.id, MedicationIntakeModel.Time(12, 0))
             }
             put(R.id.itemTakenButton) {
                 viewModel.changeIsTakenStatus(model.id, true)
@@ -58,10 +57,10 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
                 viewModel.changeIsTakenStatus(model.id, false)
             }
             put(R.id.itemEditButton) {
-
+//                viewModel.editMedicationModel(medicationModel)
             }
             put(R.id.itemRemoveButton) {
-
+                viewModel.removeMedicationModel(model.medicationId)
             }
         }
         return result

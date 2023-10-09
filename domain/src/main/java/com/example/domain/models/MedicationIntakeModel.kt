@@ -17,7 +17,19 @@ data class MedicationIntakeModel(
     data class Time(
         val hour: Int,  // Час
         val minute: Int,// Минуты
-    )
+    ) {
+        fun toEntityString(): String {
+            return "${hour},${minute}"
+        }
+
+        fun toDisplayString(): String {
+            return if (minute < 10) {
+                "${hour}:0${minute}"
+            } else {
+                "${hour}:${minute}"
+            }
+        }
+    }
 
 
     data class Date(

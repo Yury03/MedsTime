@@ -13,7 +13,7 @@ import net.cachapa.expandablelayout.ExpandableLayout
 
 class MedicationsListAdapter(
     private val dataList: List<MedicationIntakeModel>,
-    private val medicationClick: (MedicationIntakeModel, String, View) -> Map<Int, View.OnClickListener>,
+    private val medicationClick: (MedicationIntakeModel) -> Map<Int, View.OnClickListener>,
     private val context: Context,
 ) :
     RecyclerView.Adapter<MedicationsListAdapter.ViewHolder>() {
@@ -31,7 +31,6 @@ class MedicationsListAdapter(
         val changeTimeButton: Button = itemView.findViewById(R.id.itemChangeTimeTakeButton)
         val skippedButton: Button = itemView.findViewById(R.id.itemSkippedButton)
         val editButton: Button = itemView.findViewById(R.id.itemEditButton)
-        val remove: Button = itemView.findViewById(R.id.itemRemoveButton)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -76,7 +75,7 @@ class MedicationsListAdapter(
                 expandableLayout.expand()
             }
             val itemClickMap =
-                medicationClick(dataItem, buildTimeAndDosageText(dataItem), holder.itemView)
+                medicationClick(dataItem)
             setButtonClick(itemClickMap, holder)
         }
     }
@@ -118,13 +117,6 @@ class MedicationsListAdapter(
 
     override fun getItemCount(): Int {
         return dataList.size
-    }
-
-
-    private fun buildTimeAndDosageText(medicationIntakeModel: MedicationIntakeModel): String {
-        val time = buildTimeString(medicationIntakeModel.intakeTime)
-        val dosage = buildDosageString(medicationIntakeModel)
-        return "$time $dosage"
     }
 
     private fun buildTimeString(time: MedicationIntakeModel.Time): String =

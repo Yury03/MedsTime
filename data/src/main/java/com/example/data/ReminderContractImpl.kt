@@ -28,7 +28,6 @@ class ReminderContractImpl(private val context: Context) : Repository.ReminderCo
     override fun getMedicationIntakeModel(medicationIntakeId: String) =
         MedicationIntakeMapper.mapToModel(medicationIntakeDao.getById(medicationIntakeId))
 
-
     override fun getReminderModelById(reminderId: String): ReminderModel {
         return ReminderMapper.mapToModel(reminderDao.getById(reminderId))
     }

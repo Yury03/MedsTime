@@ -7,4 +7,8 @@ class ChangeNotificationStatus(private val repository: Repository.CommonContract
     fun invoke(reminderId: String, newStatus: ReminderModel.Status) {
         repository.changeNotificationStatus(reminderId, newStatus)
     }
+
+    fun invoke(newStatus: ReminderModel.Status, medicationIntakeId: String) {
+        repository.changeNotificationStatus(newStatus, medicationIntakeId)
+    }
 }

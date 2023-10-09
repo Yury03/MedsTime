@@ -15,13 +15,13 @@ val appModule = module {
     }
     viewModel<MedicationListViewModel> {
         MedicationListViewModel(
-            getIntakeList = get(),
-            removeMedicationItemUseCase = get(),
-            replaceMedicationItemUseCase = get(),
-            getMedicationById = get(),
-            replaceMedicationIntake = get(),
-            changeMedicationIntakeIsTaken = get(),
-            changeNotificationStatus = get(),
+            getIntakeListUseCase = get(),
+            removeMedicationModelUseCase = get(),
+            getMedicationByIdUseCase = get(),
+            changeMedicationIntakeIsTakenUseCase = get(),
+            changeNotificationStatusUseCase = get(),
+            changeActualTimeIntakeUseCase = get(),
+            saveNewMedicationUseCase = get(),
         )
     }
     viewModel<AddMedViewModel> {

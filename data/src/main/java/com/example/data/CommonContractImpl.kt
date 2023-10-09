@@ -18,25 +18,31 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
     }
     private val reminderDao: ReminderDao by lazy { reminderDatabase.reminderDao() }
     private val medicationIntakeDao: MedicationIntakeDao by lazy { medicationIntakeDatabase.medicationIntakeDao() }
+
+    //TODO вынести в два разных usecase
     override fun changeNotificationStatus(
         reminderId: String, newStatus: ReminderModel.Status
     ) {
         reminderDao.updateStatusById(reminderId, newStatus.toString())
     }
 
+    //TODO вынести в два разных usecase
+    override fun changeNotificationStatus(
+        newStatus: ReminderModel.Status,
+        medicationIntakeId: String
+    ) {
+        reminderDao.updateStatusByMedicationIntakeId(medicationIntakeId, newStatus.toString())
+    }
 
     override fun changeMedicationIntakeIsTaken(
         medicationIntakeId: String,
         newIsTaken: Boolean,
         actualIntakeTime: MedicationIntakeModel.Time?
     ) {
-        val actualIntakeTimeString = actualIntakeTime?.let {
-            "${it.hour},${it.minute}"
-        }
         medicationIntakeDao.updateIsTakenById(
             medicationIntakeId,
             newIsTaken,
-            actualIntakeTimeString
+            actualIntakeTime?.toEntityString()
         )
     }
 }
