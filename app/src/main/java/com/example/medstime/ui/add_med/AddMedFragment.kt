@@ -9,7 +9,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.text.Editable
 import android.text.Editable.Factory
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.CheckBox
+import android.widget.TextView
 import android.widget.Toast
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
@@ -30,7 +30,6 @@ import androidx.navigation.findNavController
 import com.example.domain.models.MedicationModel
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentAddMedBinding
-import com.example.medstime.services.ReminderService
 import com.example.medstime.ui.main_activity.MainActivity
 import com.google.android.material.chip.Chip
 import com.google.android.material.textfield.TextInputEditText
@@ -49,7 +48,7 @@ import java.util.UUID
 class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     private companion object {
         const val LOG_TAG = "AddMedFragment"
-        const val TIME_PICKER_TAG = "TimePicker"
+        const val TIME_PICKER_TAG = "TimePickerAddMedFragment"
         const val CAMERA_PERMISSION_CODE = 300
         const val SYSTEM_ALERT_WINDOW_CODE = 400
     }
@@ -57,6 +56,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     private val viewModel by viewModel<AddMedViewModel>()
     private lateinit var binding: FragmentAddMedBinding
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
+    private lateinit var _previousState: AddMedState
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -72,23 +72,47 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        handleArguments()
+        observeFullData()
+
         setAdapterSpinDosageUnits()
         setAdapterSpinTrackType()
         setAdapterSpinReminderType()
         setAdapterSpinIntakeType()
         setAdapterSpinFrequency()
-        setListenerForRemoveFocus()
+
+//        setListenerForRemoveFocus()
         betaFunctions()
-        observeOnViewModelData()
+//        observeOnViewModelData()
         initView()
+
+    }
+
+    private fun handleArguments() {
+        arguments?.let {
+            if (it.getString("mode").equals("EditMode")) {
+                val id = it.getString("medicationModelId")!!
+                viewModel.send(AddMedEvent.Mode(AddMedState.EDIT_MODE, id))
+                changeViewText()
+            }
+        }
+    }
+
+    private fun changeViewText() {
+        with(binding) {
+            title.setText(R.string.edit_med)
+            reminderLayoutButton.setText(R.string.edit_reminder)
+            continueButton.setText(R.string.edit_med)
+        }
     }
 
     private fun observeOnViewModelData() {
-        viewModel.isSavedNewMedication.observe(viewLifecycleOwner) {
-            val serviceIntent = Intent(requireContext(), ReminderService::class.java)
-            requireContext().startService(serviceIntent)
-            closeFragment()
-        }
+//        viewModel.isSavedNewMedication.observe(viewLifecycleOwner) {
+//            //todo if
+//            val serviceIntent = Intent(requireContext(), ReminderService::class.java)
+//            requireContext().startService(serviceIntent)
+//            closeFragment()
+//        }
     }
 
     private fun betaFunctions() {
@@ -120,7 +144,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         //TODO добавить слушатель для удаления фокуса
     }
 
-
     private fun initView() {
         with(binding) {
             reminderLayoutButton.setOnClickListener {
@@ -132,14 +155,14 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                 else durationLayout.expand()
             }
             addIntakeTime.setOnClickListener {
-                val picker = callTimePicker(R.string.title_add_reminder)
+                val picker = callTimePicker()
                 picker.addOnPositiveButtonClickListener {
                     if (picker.minute < 10) addChipTime("${picker.hour}:0${picker.minute}")
                     else addChipTime("${picker.hour}:${picker.minute}")
                 }
                 picker.show(parentFragmentManager, TIME_PICKER_TAG)
             }
-            startIntakeDate.text = getCurrentDate()
+//            startIntakeDate.text = getCurrentDate()
             startIntakeDate.setOnClickListener {
                 showDatePickerDialog(startIntakeDate)
             }
@@ -147,10 +170,11 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                 showDatePickerDialog(endIntakeDate)
             }
             continueButton.setOnClickListener {
+                viewModel.load()
                 val medicationModel = makeMedicationModel()
                 medicationModel.first?.let {
                     Log.e(LOG_TAG, it.toString())
-                    viewModel.saveNewMedication(it)
+//                    viewModel.load(it)
                 } ?: run {
                     showError(medicationModel.second)
                 }
@@ -171,7 +195,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                 if (scanBarcodeLayout.isExpanded) scanBarcodeLayout.collapse()
                 else scanBarcodeLayout.expand()
             }
-
         }
     }
 
@@ -197,7 +220,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         return Settings.canDrawOverlays(requireContext()) && systemAlertWindowIsGranted
     }
 
-
     private fun checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(), Manifest.permission.CAMERA
@@ -208,7 +230,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             )
         }
     }
-
 
     private fun makeMedicationModel(): Pair<MedicationModel?, Int> {
         with(binding) {
@@ -313,7 +334,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         Toast.makeText(requireContext(), errorStr, Toast.LENGTH_SHORT).show()
 
     }
-
 
     private fun getFrequency(): MedicationModel.Frequency {
         val frequencyArray = resources.getStringArray(R.array.frequency_array)
@@ -443,10 +463,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         datePickerDialog.show()
     }
 
-    private fun getCurrentDate(): Editable {
-        val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-        return Factory.getInstance().newEditable(LocalDate.now().format(formatter))
-    }
+
 
     private fun addChipTime(chipText: String) {
         val newChip = Chip(binding.chipGroupTime.context)
@@ -464,9 +481,9 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         binding.chipGroupTime.addView(newChip, binding.chipGroupTime.childCount)
     }
 
-    private fun callTimePicker(textId: Int) =
+    private fun callTimePicker() =
         MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_24H).setHour(12).setMinute(0)
-            .setTitleText(textId).setTheme(R.style.TimePickerDialog).build()
+            .setTitleText(R.string.title_add_reminder).setTheme(R.style.TimePickerDialog).build()
 
     private fun setAdapterSpinDosageUnits() {
         val dosageArray = resources.getStringArray(R.array.dosage_array)
@@ -549,4 +566,68 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         super.onDestroyView()
         showBottomNavigationBar()
     }
+
+    private fun observeFullData() {
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            with(binding) {
+                when (state.mode) {
+                    AddMedState.ADD_MODE -> {
+                        startIntakeDate.updateText(state.startIntakeDate)
+                    }
+
+                    AddMedState.EDIT_MODE -> {
+                        medicationName.updateText(state.medicationName)
+                        startIntakeDate.updateText(state.startIntakeDate)
+                        dosage.updateText(state.dosage)
+                        dosageUnits.updateText(state.dosageUnits)
+                        medComment.updateText(state.medComment)
+                        useBannerChBox.updateIsChecked(state.useBannerChBox)
+                        updateIntakeTimeChips(state.intakeTime)
+                        reminderType.updateText(state.medicationReminderTime)
+                        intakeType.updateText(state.intakeType)
+                        frequency.updateText(state.frequency)
+                        updateSelectedDays(state.selectedDays)
+                        trackingType.updateText(state.trackType)
+                        numberMeds.updateText(state.stockOfMedicine)
+                        numberDays.updateText(state.numberOfDays)
+                        endIntakeDate.updateText(state.endDate)
+                    }
+                }
+            }
+
+//todo            _previousState = state
+        }
+    }
+
+    private fun updateSelectedDays(selectedDays: List<Int>) {
+
+        for (i in selectedDays.indices) {
+            val chip = binding.chipGroupDaysWeek.getChildAt(i) as Chip
+            if (!chip.isChecked) {
+                chip.isChecked = true
+            }
+        }
+
+
+    }
+
+    private fun updateIntakeTimeChips(intakeTime: List<MedicationModel.Time>) {
+        intakeTime.forEach {
+            addChipTime("${it.hour}:${it.minute}")
+        }
+    }
+
+    private fun CheckBox.updateIsChecked(isChecked: Boolean) {
+        if (this.isChecked != isChecked) {
+            this.isChecked = isChecked
+        }
+    }
+
+    private fun TextView.updateText(text: String) {
+        if (this.text.toString() != text) {
+            this.text = text
+        }
+    }
 }
+
+

@@ -5,14 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.models.MedicationIntakeModel
-import com.example.domain.models.MedicationModel
 import com.example.domain.models.ReminderModel
 import com.example.domain.usecase.addition.SaveNewMedication
 import com.example.domain.usecase.common.ChangeMedicationIntakeIsTaken
 import com.example.domain.usecase.common.ChangeNotificationStatus
 import com.example.domain.usecase.medication.ChangeActualTimeIntake
 import com.example.domain.usecase.medication.GetIntakeList
-import com.example.domain.usecase.medication.GetMedicationById
 import com.example.domain.usecase.medication.RemoveMedicationModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,7 +19,6 @@ import java.util.Calendar
 class MedicationListViewModel(
     private val getIntakeListUseCase: GetIntakeList,
     private val removeMedicationModelUseCase: RemoveMedicationModel,
-    private val getMedicationByIdUseCase: GetMedicationById,
     private val changeMedicationIntakeIsTakenUseCase: ChangeMedicationIntakeIsTaken,
     private val changeNotificationStatusUseCase: ChangeNotificationStatus,
     private val changeActualTimeIntakeUseCase: ChangeActualTimeIntake,
@@ -87,13 +84,7 @@ class MedicationListViewModel(
     fun removeMedicationModel(medicationModelId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             callRemoveMedication(medicationModelId)
-        }
-    }
-
-    fun editMedicationModel(medicationModel: MedicationModel) {
-        viewModelScope.launch(Dispatchers.IO) {
-            callRemoveMedication(medicationModel.id)
-            saveNewMedicationUseCase.invoke(medicationModel)
+            callGetIntakeList()
         }
     }
 
@@ -105,6 +96,7 @@ class MedicationListViewModel(
     fun changeActualTime(medicationIntakeId: String, time: MedicationIntakeModel.Time) {
         viewModelScope.launch(Dispatchers.IO) {
             changeActualTimeIntakeUseCase.invoke(medicationIntakeId, time)
+            callGetIntakeList()
         }
     }
 }

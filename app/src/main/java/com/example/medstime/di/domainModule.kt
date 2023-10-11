@@ -17,9 +17,6 @@ val domainModule = module {
     factory<GetIntakeList> {
         GetIntakeList(repository = get())
     }
-    factory<ReplaceMedicationModel> {
-        ReplaceMedicationModel(repository = get())
-    }
     factory<RemoveMedicationModel> {
         RemoveMedicationModel(repository = get())
     }

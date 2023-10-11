@@ -17,7 +17,6 @@ val appModule = module {
         MedicationListViewModel(
             getIntakeListUseCase = get(),
             removeMedicationModelUseCase = get(),
-            getMedicationByIdUseCase = get(),
             changeMedicationIntakeIsTakenUseCase = get(),
             changeNotificationStatusUseCase = get(),
             changeActualTimeIntakeUseCase = get(),
@@ -25,7 +24,7 @@ val appModule = module {
         )
     }
     viewModel<AddMedViewModel> {
-        AddMedViewModel(saveNewMedication = get())
+        AddMedViewModel(saveNewMedicationUseCase = get(), getMedicationModelUseCase = get())
     }
     single<GetRemindersWithStatus> {
         GetRemindersWithStatus(get())

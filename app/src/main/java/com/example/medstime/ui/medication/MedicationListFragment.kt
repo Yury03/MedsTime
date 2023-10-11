@@ -3,11 +3,15 @@ package com.example.medstime.ui.medication
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.domain.models.MedicationIntakeModel
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentMedicationListBinding
 import com.example.medstime.ui.medication.adapters.TimesListAdapter
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -16,6 +20,9 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
     private var _binding: FragmentMedicationListBinding? = null
     private val binding get() = _binding!!
 
+    companion object {
+        private const val TIME_PICKER_TAG = "TimePickerMedicationListFragment"
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -27,7 +34,6 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
         val medicationClick = { model: MedicationIntakeModel ->
             createItemButtonClickMap(model)
         }
-
         viewModel.intakeListToday.observe(viewLifecycleOwner) {
             if (it.isEmpty()) {
                 binding.placeholder.visibility = View.VISIBLE
@@ -44,27 +50,54 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
         viewModel.getIntakeList()
     }
 
-    private fun createItemButtonClickMap(model: MedicationIntakeModel): Map<Int, View.OnClickListener> {
+    private fun createItemButtonClickMap(intake: MedicationIntakeModel): Map<Int, View.OnClickListener> {
         val result = mutableMapOf<Int, View.OnClickListener>()
         with(result) {
             put(R.id.itemChangeTimeTakeButton) {
-                viewModel.changeActualTime(model.id, MedicationIntakeModel.Time(12, 0))
+                val picker = callTimePicker(
+                    intake.actualIntakeTime ?: intake.intakeTime
+                )//todo  model.intakeTime: является ошибкой, защита от NPE, убрать
+                picker.show(parentFragmentManager, TIME_PICKER_TAG)
+                picker.addOnPositiveButtonClickListener {
+                    viewModel.changeActualTime(
+                        intake.id, MedicationIntakeModel.Time(picker.hour, picker.minute)
+                    )
+                }
             }
             put(R.id.itemTakenButton) {
-                viewModel.changeIsTakenStatus(model.id, true)
+                viewModel.changeIsTakenStatus(intake.id, true)
             }
             put(R.id.itemSkippedButton) {
-                viewModel.changeIsTakenStatus(model.id, false)
+                viewModel.changeIsTakenStatus(intake.id, false)
             }
             put(R.id.itemEditButton) {
-//                viewModel.editMedicationModel(medicationModel)
+                val args = Bundle()
+                args.putString("mode", "EditMode")//TODO
+                args.putString("medicationModelId", intake.medicationId)
+                val navController = findNavController(requireActivity(), R.id.fragmentContainerView)
+                navController.navigate(
+                    resId = R.id.addMedFragment,
+                    args = args,
+                    navOptions = NavOptions.Builder()
+                        .setEnterAnim(R.anim.slide_in_right)
+                        .setExitAnim(R.anim.slide_out_left)
+                        .setPopEnterAnim(R.anim.slide_in_right)
+                        .setPopExitAnim(R.anim.slide_out_left)
+                        .build()
+                )
             }
             put(R.id.itemRemoveButton) {
-                viewModel.removeMedicationModel(model.medicationId)
+                viewModel.removeMedicationModel(intake.medicationId)
             }
         }
         return result
     }
+
+    private fun callTimePicker(oldTime: MedicationIntakeModel.Time) =
+        MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_24H).setHour(oldTime.hour)
+            .setMinute(oldTime.minute).setTitleText(R.string.title_add_reminder)
+            .setTheme(R.style.TimePickerDialog).build()
+
 
     override fun onDestroy() {
         super.onDestroy()
