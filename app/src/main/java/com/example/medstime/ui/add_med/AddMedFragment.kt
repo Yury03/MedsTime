@@ -464,7 +464,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     }
 
 
-
     private fun addChipTime(chipText: String) {
         val newChip = Chip(binding.chipGroupTime.context)
         newChip.apply {
@@ -579,15 +578,15 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                         medicationName.updateText(state.medicationName)
                         startIntakeDate.updateText(state.startIntakeDate)
                         dosage.updateText(state.dosage)
-                        dosageUnits.updateText(state.dosageUnits)
+                        dosageUnits.updateAutoCompleteText(state.dosageUnits)
                         medComment.updateText(state.medComment)
                         useBannerChBox.updateIsChecked(state.useBannerChBox)
                         updateIntakeTimeChips(state.intakeTime)
-                        reminderType.updateText(state.medicationReminderTime)
-                        intakeType.updateText(state.intakeType)
-                        frequency.updateText(state.frequency)
+                        reminderType.updateAutoCompleteText(state.medicationReminderTime)
+                        intakeType.updateAutoCompleteText(state.intakeType)
+                        frequency.updateAutoCompleteText(state.frequency)
                         updateSelectedDays(state.selectedDays)
-                        trackingType.updateText(state.trackType)
+                        trackingType.updateAutoCompleteText(state.trackType)
                         numberMeds.updateText(state.stockOfMedicine)
                         numberDays.updateText(state.numberOfDays)
                         endIntakeDate.updateText(state.endDate)
@@ -599,21 +598,23 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         }
     }
 
-    private fun updateSelectedDays(selectedDays: List<Int>) {
+    private fun AutoCompleteTextView.updateAutoCompleteText(text: String) =
+        setText(text, false)
 
+
+    private fun updateSelectedDays(selectedDays: List<Int>) {
         for (i in selectedDays.indices) {
             val chip = binding.chipGroupDaysWeek.getChildAt(i) as Chip
             if (!chip.isChecked) {
                 chip.isChecked = true
             }
         }
-
-
     }
 
     private fun updateIntakeTimeChips(intakeTime: List<MedicationModel.Time>) {
         intakeTime.forEach {
-            addChipTime("${it.hour}:${it.minute}")
+            if (it.minute < 10) addChipTime("${it.hour}:0${it.minute}")
+            else addChipTime("${it.hour}:${it.minute}")
         }
     }
 
