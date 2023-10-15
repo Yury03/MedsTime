@@ -28,7 +28,7 @@ data class MedicationModel(
     enum class Frequency {
         DAILY, // Прием каждый день
         EVERY_OTHER_DAY, // Прием через день
-        SELECTED_DAYS, // Прием в выбранные дни
+        SELECTED_DAYS, // Прием в выбранные дни;;
     }
 
     enum class IntakeType {

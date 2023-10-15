@@ -23,13 +23,18 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.minutes
 
-/**Класс добавляет модель Medication в базу данных и генерирует модели MedicationIntake и Reminder на **DEFAULT_NUMBER_DAYS_GENERATE**
- * дней, а затем добавляет их в базу данных **MedicationIntakeDatabase** и **ReminderDatabase**. */
-class AdditionalContractImpl(private val context: Context) : Repository.AdditionContract {
+/**Класс реализует общие юзкейсы.
+ * - **change medication intake is taken** обновляет меняет статус приема, в случае, если лекарство принято обновляет время приема;
+ * - **change notification status by reminderId** меняет статус уведомления по reminderId;
+ * - **change notification status by intakeId** меняет статус уведомления по intakeId;
+ * - **save new medication** добавляет модель Medication в базу данных и генерирует модели MedicationIntake и Reminder на **DEFAULT_NUMBER_DAYS_GENERATE** дней, а затем добавляет их в базу данных **MedicationIntakeDatabase** и **ReminderDatabase**;
+ * - **replace medication model** заменяет medication model, использует удаление по id, и сохраненение новой модели Medication.
+ * */
+class CommonContractImpl(private val context: Context) : Repository.CommonContract {
     private companion object {
         //по дефолту генерируем приемы только на 14 дней
         const val DEFAULT_NUMBER_DAYS_GENERATE = 14
-        const val LOG_TAG = "Additional contract implementation"
+        const val LOG_TAG = "Common contract implementation"
     }
 
     private val medicationDatabase: MedicationDatabase by lazy {
@@ -192,7 +197,6 @@ class AdditionalContractImpl(private val context: Context) : Repository.Addition
             name = model.name,
             dosage = model.dosage,
             dosageUnit = model.dosageUnit,
-            isTaken = false,
             reminderTime = model.reminderTime,
             medicationId = model.id,
             intakeTime = MedicationIntakeModel.Time(intakeTime.hour, intakeTime.minute),
@@ -212,4 +216,48 @@ class AdditionalContractImpl(private val context: Context) : Repository.Addition
 
     private fun generateUniqueId() = UUID.randomUUID().toString()
 
+    //TODO вынести в два разных usecase
+    override fun changeNotificationStatus(
+        reminderId: String, newStatus: ReminderModel.Status
+    ) {
+        reminderDao.updateStatusById(reminderId, newStatus.toString())
+    }
+
+    //TODO вынести в два разных usecase
+    override fun changeNotificationStatus(
+        newStatus: ReminderModel.Status,
+        medicationIntakeId: String
+    ) {
+        reminderDao.updateStatusByMedicationIntakeId(medicationIntakeId, newStatus.toString())
+    }
+
+    override fun replaceMedicationModel(medicationModel: MedicationModel) {
+        removeMedicationModel(medicationModel.id)
+        saveNewMedication(medicationModel)
+    }
+
+    override fun changeMedicationIntakeIsTaken(
+        medicationIntakeId: String,
+        newIsTaken: Boolean,
+        actualIntakeTime: MedicationIntakeModel.Time?
+    ) {
+        medicationIntakeDao.updateIsTakenById(
+            medicationIntakeId,
+            newIsTaken,
+            actualIntakeTime?.toEntityString()
+        )
+    }
+
+    /**Метод **removeMedicationModel**
+     * - получает все *приемы лекарств*
+     * - удаляет все напоминания по *id приема лекарств*
+     * - удаляет все *приемы лекарств по id модели Medication*
+     * - удаляет модель Medication*/
+    override fun removeMedicationModel(medicationModelId: String) {
+        medicationIntakeDao.getByMedicationModelId(medicationModelId).forEach {
+            reminderDao.deleteByMedicationIntakeModelId(it.id)
+        }
+        medicationIntakeDao.deleteByMedicationModelId(medicationModelId)
+        medicationDao.deleteById(medicationModelId)
+    }
 }

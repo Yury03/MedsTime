@@ -4,29 +4,39 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.domain.models.MedicationIntakeModel
 import com.example.medstime.R
-import java.util.Calendar
-import kotlin.time.Duration.Companion.minutes
+import net.cachapa.expandablelayout.ExpandableLayout
 
 class MedicationsListAdapter(
     private val dataList: List<MedicationIntakeModel>,
-    private val medicationClick: (MedicationIntakeModel, String) -> Unit,
+    private val medicationClick: (MedicationIntakeModel) -> Map<Int, View.OnClickListener>,
     private val context: Context,
 ) :
     RecyclerView.Adapter<MedicationsListAdapter.ViewHolder>() {
+    enum class Status { NONE, IS_TAKEN, IS_NOT_TAKEN }
+
+    private var status = Status.NONE
+
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.medName)
         val dosage: TextView = itemView.findViewById(R.id.medDosage)
         val timeMedication: TextView = itemView.findViewById(R.id.timeMedication)
+        val removeButton: Button = itemView.findViewById(R.id.itemRemoveButton)
+        val takenButton: Button = itemView.findViewById(R.id.itemTakenButton)
+        val changeTimeButton: Button = itemView.findViewById(R.id.itemChangeTimeTakeButton)
+        val skippedButton: Button = itemView.findViewById(R.id.itemSkippedButton)
+        val editButton: Button = itemView.findViewById(R.id.itemEditButton)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.medication_item, parent, false)
+
         return ViewHolder(itemView)
     }
 
@@ -34,48 +44,79 @@ class MedicationsListAdapter(
         val dataItem = dataList[position]
         holder.name.text = dataItem.name
         holder.dosage.text = buildDosageString(dataItem)
+
         with(holder.timeMedication) {
-            //если время приема не настало, текста не будет
-            if (timeHasCome(dataItem)) {
-                if (dataItem.isTaken) {
-                    text = buildString {
-                        append(context.getString(R.string.medication_taken))
-                        append(buildTimeString(dataItem.actualIntakeTime!!))
+            when (dataItem.isTaken) {
+                true -> {
+                    if (dataItem.actualIntakeTime != null) {
+                        status = Status.IS_TAKEN
+                        text = buildString {
+                            append(context.getString(R.string.medication_taken))
+                            append(buildTimeString(dataItem.actualIntakeTime!!))
+                        }
+                        setTextColor(context.getColor(R.color.medication_item_text_meds_taken))
                     }
-                    setTextColor(context.getColor(R.color.medication_item_text_meds_taken))
-                } else {
+                }
+
+                false -> {
+                    status = Status.IS_NOT_TAKEN
                     text = context.getString(R.string.medication_missed)
                     setTextColor(context.getColor(R.color.medication_item_text_meds_missed))
                 }
             }
         }
+        setVisibility(holder, status)
+
         holder.itemView.setOnClickListener {
-            medicationClick(dataItem, buildTimeAndDosageText(dataItem))
+            val expandableLayout = it.findViewById<ExpandableLayout>(R.id.buttonLayer)
+            if (expandableLayout.isExpanded) {
+                expandableLayout.collapse()
+            } else {
+                expandableLayout.expand()
+            }
+            val itemClickMap =
+                medicationClick(dataItem)
+            setButtonClick(itemClickMap, holder)
+        }
+    }
+
+    private fun setButtonClick(itemClickMap: Map<Int, View.OnClickListener>, holder: ViewHolder) {
+        with(holder) {
+            changeTimeButton.setOnClickListener(itemClickMap[changeTimeButton.id])
+            takenButton.setOnClickListener(itemClickMap[takenButton.id])
+            skippedButton.setOnClickListener(itemClickMap[skippedButton.id])
+            editButton.setOnClickListener(itemClickMap[editButton.id])
+            removeButton.setOnClickListener(itemClickMap[removeButton.id])
+        }
+    }
+
+    private fun setVisibility(holder: ViewHolder, status: Status) {
+        with(holder) {
+            when (status) {
+                Status.NONE -> {
+                    changeTimeButton.visibility = View.GONE
+                    takenButton.visibility = View.VISIBLE
+                    skippedButton.visibility = View.VISIBLE
+                }
+
+                Status.IS_TAKEN -> {
+                    changeTimeButton.visibility = View.VISIBLE
+                    takenButton.visibility = View.GONE
+                    skippedButton.visibility = View.VISIBLE
+                }
+
+                Status.IS_NOT_TAKEN -> {
+                    changeTimeButton.visibility = View.GONE
+                    takenButton.visibility = View.VISIBLE
+                    skippedButton.visibility = View.GONE
+                }
+            }
         }
 
     }
 
     override fun getItemCount(): Int {
         return dataList.size
-    }
-
-    private fun timeHasCome(model: MedicationIntakeModel): Boolean {
-        val currentDateTime = Calendar.getInstance().timeInMillis
-        val intakeDateTime = Calendar.getInstance().apply {
-            set(Calendar.YEAR, model.intakeDate.year)
-            set(Calendar.MONTH, model.intakeDate.month-1)
-            set(Calendar.DAY_OF_MONTH, model.intakeDate.day)
-            set(Calendar.HOUR_OF_DAY, model.intakeTime.hour)
-            set(Calendar.MINUTE, model.intakeTime.minute)
-        }.timeInMillis - model.reminderTime.minutes.inWholeMilliseconds
-        return currentDateTime >= intakeDateTime
-    }
-
-
-    private fun buildTimeAndDosageText(medicationIntakeModel: MedicationIntakeModel): String {
-        val time = buildTimeString(medicationIntakeModel.intakeTime)
-        val dosage = buildDosageString(medicationIntakeModel)
-        return "$time $dosage"
     }
 
     private fun buildTimeString(time: MedicationIntakeModel.Time): String =

@@ -20,6 +20,9 @@ interface ReminderDao {
     @Query("UPDATE medication_reminder_database SET status = :status WHERE id = :id")
     fun updateStatusById(id: String, status: String)
 
+    @Query("UPDATE medication_reminder_database SET status = :status WHERE medicationIntakeId = :medicationIntakeId")
+    fun updateStatusByMedicationIntakeId(medicationIntakeId: String, status: String)
+
     @Insert
     fun insert(reminder: ReminderEntity)
 
