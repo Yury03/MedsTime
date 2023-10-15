@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.models.MedicationModel
-import com.example.domain.usecase.addition.SaveNewMedication
+import com.example.domain.usecase.common.SaveNewMedication
 import com.example.domain.usecase.common.ReplaceMedicationModel
-import com.example.domain.usecase.medication.GetMedicationById
+import com.example.domain.usecase.common.GetMedicationById
 import com.example.medstime.R
 import com.example.medstime.ui.add_med.AddMedState.Companion.ADD_MODE
 import com.example.medstime.ui.add_med.AddMedState.Companion.EDIT_MODE

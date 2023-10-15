@@ -5,38 +5,36 @@ import com.example.domain.models.MedicationModel
 import com.example.domain.models.ReminderModel
 
 interface Repository {
-    //todo поделить по бд
-    interface MedicationContract {
+    interface MedicationIntakeContract {
         fun getIntakeList(): List<MedicationIntakeModel>
-        fun getMedicationById(id: String): MedicationModel
         fun changeActualTimeIntake(medicationIntakeId: String, newTime: MedicationIntakeModel.Time)
-    }
-
-    interface ReminderContract {
-        fun getRemindersWithStatus(reminderStatus: ReminderModel.Status): List<ReminderModel>
-        fun getMedicationIntakeModel(medicationIntakeId: String): MedicationIntakeModel
-        fun getReminderModelById(reminderId: String): ReminderModel
-    }
-
-    interface CommonContract {
         fun changeMedicationIntakeIsTaken(
             medicationIntakeId: String,
             newIsTaken: Boolean,
             actualIntakeTime: MedicationIntakeModel.Time?
         )
 
-        fun changeNotificationStatus(
+        fun getMedicationIntakeModel(medicationIntakeId: String): MedicationIntakeModel
+    }
+
+    interface ReminderContract {
+        fun getReminderModelById(reminderId: String): ReminderModel
+        fun getRemindersWithStatus(reminderStatus: ReminderModel.Status): List<ReminderModel>
+        fun changeNotificationStatusByReminderId(
             reminderId: String,
             newStatus: ReminderModel.Status
-        )//todo переименовать
+        )
 
-        fun changeNotificationStatus(
+        fun changeNotificationStatusByMedicationIntakeId(
+            medicationIntakeId: String,
             newStatus: ReminderModel.Status,
-            medicationIntakeId: String
-        )//todo переименовать
+        )
+    }
 
-        fun replaceMedicationModel(medicationModel: MedicationModel)
+    interface CommonContract {
         fun saveNewMedication(medicationModel: MedicationModel)
         fun removeMedicationModel(medicationModelId: String)
+        fun replaceMedicationModel(medicationModel: MedicationModel)
+        fun getMedicationById(id: String): MedicationModel
     }
 }

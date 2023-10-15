@@ -6,11 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.models.MedicationIntakeModel
 import com.example.domain.models.ReminderModel
-import com.example.domain.usecase.addition.SaveNewMedication
-import com.example.domain.usecase.common.ChangeMedicationIntakeIsTaken
-import com.example.domain.usecase.common.ChangeNotificationStatus
-import com.example.domain.usecase.medication.ChangeActualTimeIntake
-import com.example.domain.usecase.medication.GetIntakeList
+import com.example.domain.usecase.common.SaveNewMedication
+import com.example.domain.usecase.medication_intake.ChangeMedicationIntakeIsTaken
+import com.example.domain.usecase.reminder.ChangeNotificationStatusByReminderId
+import com.example.domain.usecase.medication_intake.ChangeActualTimeIntake
+import com.example.domain.usecase.medication_intake.GetIntakeList
 import com.example.domain.usecase.common.RemoveMedicationModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,7 +20,7 @@ class MedicationListViewModel(
     private val getIntakeListUseCase: GetIntakeList,
     private val removeMedicationModelUseCase: RemoveMedicationModel,
     private val changeMedicationIntakeIsTakenUseCase: ChangeMedicationIntakeIsTaken,
-    private val changeNotificationStatusUseCase: ChangeNotificationStatus,
+    private val changeNotificationStatusUseCase: ChangeNotificationStatusByReminderId,
     private val changeActualTimeIntakeUseCase: ChangeActualTimeIntake,
     private val saveNewMedicationUseCase: SaveNewMedication,
 ) : ViewModel() {

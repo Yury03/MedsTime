@@ -5,7 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.example.domain.models.MedicationIntakeModel
-import com.example.domain.usecase.common.ChangeMedicationIntakeIsTaken
+import com.example.domain.usecase.medication_intake.ChangeMedicationIntakeIsTaken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

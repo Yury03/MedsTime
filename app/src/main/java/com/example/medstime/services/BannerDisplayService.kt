@@ -11,8 +11,8 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.example.domain.models.MedicationIntakeModel
-import com.example.domain.usecase.common.ChangeMedicationIntakeIsTaken
-import com.example.domain.usecase.reminder.GetMedicationIntakeModel
+import com.example.domain.usecase.medication_intake.ChangeMedicationIntakeIsTaken
+import com.example.domain.usecase.medication_intake.GetMedicationIntakeModel
 import com.example.domain.usecase.reminder.GetReminderModelById
 import com.example.medstime.R
 import com.example.medstime.receivers.MedicationReminderReceiver

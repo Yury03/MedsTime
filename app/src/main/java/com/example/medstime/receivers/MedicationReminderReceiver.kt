@@ -10,8 +10,8 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.domain.models.MedicationIntakeModel
 import com.example.domain.models.ReminderModel
-import com.example.domain.usecase.common.ChangeNotificationStatus
-import com.example.domain.usecase.reminder.GetMedicationIntakeModel
+import com.example.domain.usecase.reminder.ChangeNotificationStatusByReminderId
+import com.example.domain.usecase.medication_intake.GetMedicationIntakeModel
 import com.example.domain.usecase.reminder.GetReminderModelById
 import com.example.medstime.R
 import com.example.medstime.services.BannerDisplayService
@@ -30,8 +30,8 @@ class MedicationReminderReceiver : BroadcastReceiver() {
     private val getMedicationIntakeModel: GetMedicationIntakeModel by KoinJavaComponent.inject(
         GetMedicationIntakeModel::class.java
     )
-    private val changeNotificationStatus: ChangeNotificationStatus by KoinJavaComponent.inject(
-        ChangeNotificationStatus::class.java
+    private val changeNotificationStatus: ChangeNotificationStatusByReminderId by KoinJavaComponent.inject(
+        ChangeNotificationStatusByReminderId::class.java
     )
     private val getReminderModelById: GetReminderModelById by KoinJavaComponent.inject(
         GetReminderModelById::class.java

@@ -1,9 +1,9 @@
-package com.example.domain.usecase.reminder
+package com.example.domain.usecase.medication_intake
 
 import com.example.domain.Repository
 import com.example.domain.models.MedicationIntakeModel
 
-class GetMedicationIntakeModel(private val repository: Repository.ReminderContract) {
+class GetMedicationIntakeModel(private val repository: Repository.MedicationIntakeContract) {
     fun invoke(medicationIntakeModelId: String): MedicationIntakeModel {
         return repository.getMedicationIntakeModel(medicationIntakeModelId)
     }
