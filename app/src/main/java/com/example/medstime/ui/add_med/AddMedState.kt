@@ -5,14 +5,14 @@ import com.example.domain.models.MedicationModel
 data class AddMedState(
     val isSavedNewMedication: Boolean,
     val mode: String,
-
+    val inputError: Int,
     val medicationName: String,
     val dosage: String,
     val dosageUnits: String,
     val startIntakeDate: String,
     val medComment: String,
     val useBannerChBox: Boolean,
-    val intakeTime: List<MedicationModel.Time>,
+    val intakeTimeList: List<MedicationModel.Time>,
     val medicationReminderTime: String,
     val intakeType: String,
     val frequency: String,
