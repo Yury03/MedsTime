@@ -69,7 +69,7 @@ class MedicationReminderReceiver : BroadcastReceiver() {
         val serviceIntent = Intent(context, BannerDisplayService::class.java)
         serviceIntent.putExtra("intakeModelId", medicationIntakeModelId)
         serviceIntent.putExtra("reminderModelId", reminderModelId)
-        context.startForegroundService(serviceIntent)
+        context.startService(serviceIntent)
     }
 
     private fun sendNotification(context: Context, medicationIntakeId: String) {
@@ -132,6 +132,3 @@ class MedicationReminderReceiver : BroadcastReceiver() {
         )
     }
 }
-
-
-

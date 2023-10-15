@@ -5,15 +5,11 @@ import com.example.domain.models.MedicationModel
 import com.example.domain.models.ReminderModel
 
 interface Repository {
+    //todo поделить по бд
     interface MedicationContract {
         fun getIntakeList(): List<MedicationIntakeModel>
-        fun removeMedicationModel(medicationModelId: String)
         fun getMedicationById(id: String): MedicationModel
         fun changeActualTimeIntake(medicationIntakeId: String, newTime: MedicationIntakeModel.Time)
-    }
-
-    interface AdditionContract {
-        fun saveNewMedication(medicationModel: MedicationModel)//todo перенести в common
     }
 
     interface ReminderContract {
@@ -29,8 +25,18 @@ interface Repository {
             actualIntakeTime: MedicationIntakeModel.Time?
         )
 
-        fun changeNotificationStatus(reminderId: String, newStatus: ReminderModel.Status)
-        fun changeNotificationStatus(newStatus: ReminderModel.Status, medicationIntakeId: String)
-    }
+        fun changeNotificationStatus(
+            reminderId: String,
+            newStatus: ReminderModel.Status
+        )//todo переименовать
 
+        fun changeNotificationStatus(
+            newStatus: ReminderModel.Status,
+            medicationIntakeId: String
+        )//todo переименовать
+
+        fun replaceMedicationModel(medicationModel: MedicationModel)
+        fun saveNewMedication(medicationModel: MedicationModel)
+        fun removeMedicationModel(medicationModelId: String)
+    }
 }

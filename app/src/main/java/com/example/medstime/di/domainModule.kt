@@ -3,10 +3,11 @@ package com.example.medstime.di
 import com.example.domain.usecase.addition.SaveNewMedication
 import com.example.domain.usecase.common.ChangeMedicationIntakeIsTaken
 import com.example.domain.usecase.common.ChangeNotificationStatus
+import com.example.domain.usecase.common.ReplaceMedicationModel
 import com.example.domain.usecase.medication.ChangeActualTimeIntake
 import com.example.domain.usecase.medication.GetIntakeList
 import com.example.domain.usecase.medication.GetMedicationById
-import com.example.domain.usecase.medication.RemoveMedicationModel
+import com.example.domain.usecase.common.RemoveMedicationModel
 import com.example.domain.usecase.reminder.GetMedicationIntakeModel
 import com.example.domain.usecase.reminder.GetReminderModelById
 import com.example.domain.usecase.reminder.GetRemindersWithStatus
@@ -46,5 +47,8 @@ val domainModule = module {
     }
     factory<ChangeMedicationIntakeIsTaken> {
         ChangeMedicationIntakeIsTaken(repository = get())
+    }
+    factory<ReplaceMedicationModel> {
+        ReplaceMedicationModel(repository = get())
     }
 }

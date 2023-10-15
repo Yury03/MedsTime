@@ -7,8 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.models.MedicationModel
 import com.example.domain.usecase.addition.SaveNewMedication
+import com.example.domain.usecase.common.ReplaceMedicationModel
 import com.example.domain.usecase.medication.GetMedicationById
 import com.example.medstime.R
+import com.example.medstime.ui.add_med.AddMedState.Companion.ADD_MODE
 import com.example.medstime.ui.add_med.AddMedState.Companion.EDIT_MODE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,16 +24,18 @@ import java.util.UUID
 class AddMedViewModel(
     private val saveNewMedicationUseCase: SaveNewMedication,
     private val getMedicationModelUseCase: GetMedicationById,
+    private val replaceMedicationModelUseCase: ReplaceMedicationModel,
     private val resources: Resources,
 ) : ViewModel() {
     private val _state: MutableLiveData<AddMedState> =
         MutableLiveData()
     val state: LiveData<AddMedState>
         get() = _state
+    var editMedicationModelId: String? = null
 
     init {
         _state.value = AddMedState(
-            mode = AddMedState.ADD_MODE,
+            mode = ADD_MODE,
             isSavedNewMedication = false,
             inputError = 0,
             medicationName = "",
@@ -52,7 +56,7 @@ class AddMedViewModel(
         )
     }
 
-    private fun saveModelInRoom(medicationModel: MedicationModel) {
+    private fun saveNewModelInRoom(medicationModel: MedicationModel) {
         runBlocking {//TODO!!!
             viewModelScope.launch(Dispatchers.IO) {
                 saveNewMedicationUseCase.invoke(medicationModel)//todo return true or false
@@ -73,6 +77,7 @@ class AddMedViewModel(
 
             is AddMedEvent.Mode -> {
                 if (event.mode == EDIT_MODE) {
+                    editMedicationModelId = event.medicationModelId
                     getMedicationModelById(event.medicationModelId)
                 }
             }
@@ -101,14 +106,32 @@ class AddMedViewModel(
     private fun saveMedicationModel() {
         val medicationModel = makeMedicationModel()
         medicationModel.first?.let { model ->
-            saveModelInRoom(model)
+            when (state.value!!.mode) {
+                ADD_MODE -> saveNewModelInRoom(model)
+                EDIT_MODE -> replaceModelInRoom(model)
+            }
+
         } ?: _state.postValue(state.value!!.copy(inputError = medicationModel.second))
+    }
+
+    private fun replaceModelInRoom(medicationModel: MedicationModel) {
+        runBlocking {//TODO!!!
+            viewModelScope.launch(Dispatchers.IO) {
+                replaceMedicationModelUseCase.invoke(medicationModel)//todo return true or false
+                _state.postValue(state.value!!.copy(isSavedNewMedication = true))
+            }
+        }
     }
 
     private fun makeMedicationModel()
             : Pair<MedicationModel?, Int> {
         with(state.value!!) {
             var errorCode = 0
+            val id = if (state.value!!.mode == ADD_MODE) {
+                UUID.randomUUID().toString()
+            } else {
+                editMedicationModelId!!//todo?
+            }
             val trackingType = getTrackingType()
             val medicationReminderTime = extractIntFromString(medicationReminderTime)
             val medicationFrequency = getFrequency()
@@ -120,7 +143,7 @@ class AddMedViewModel(
             if (errorCode == 0) {
                 return Pair(
                     MedicationModel(
-                        id = UUID.randomUUID().toString(),
+                        id = id,
                         name = medicationName,
                         dosage = dosage.toDouble(),
                         dosageUnit = dosageUnits,
@@ -144,10 +167,7 @@ class AddMedViewModel(
         }
     }
 
-    private fun trackingDataIsCorrect(
-        trackingType: MedicationModel.TrackType
-    )
-            : Boolean {
+    private fun trackingDataIsCorrect(trackingType: MedicationModel.TrackType): Boolean {
         return when (trackingType) {
             MedicationModel.TrackType.STOCK_OF_MEDICINE -> state.value!!.stockOfMedicine
                 .isNotEmpty()
@@ -167,7 +187,7 @@ class AddMedViewModel(
      *  Метод получает нужные данные, в зависимости от типа отслеживания*/
     private fun getTrackingData()
             : Triple<Double?, Double?, Date?> {
-        with(state.value!!) {
+        with(_state.value!!) {
             val numberMedsStr = stockOfMedicine
             val numberDaysStr = numberOfDays
             val endIntakeDateStr = endDate
@@ -180,8 +200,6 @@ class AddMedViewModel(
                 else -> Triple(null, null, null)
             }
         }
-
-
     }
 
     private fun getTrackingType()

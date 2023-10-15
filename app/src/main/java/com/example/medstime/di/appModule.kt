@@ -29,7 +29,8 @@ val appModule = module {
         AddMedViewModel(
             saveNewMedicationUseCase = get(),
             getMedicationModelUseCase = get(),
-            resources = get()
+            replaceMedicationModelUseCase = get(),
+            resources = get(),
         )
     }
     single<Resources> { androidContext().resources }

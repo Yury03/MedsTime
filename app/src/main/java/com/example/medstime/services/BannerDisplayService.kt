@@ -44,7 +44,7 @@ class BannerDisplayService : Service() {
                 showAlertDialog(intakeModel, reminderModelId)
             }
         }
-        return START_NOT_STICKY
+        return START_STICKY
     }
 
     private fun showAlertDialog(intake: MedicationIntakeModel, reminderModelId: String) {

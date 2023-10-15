@@ -11,7 +11,7 @@ import com.example.domain.usecase.common.ChangeMedicationIntakeIsTaken
 import com.example.domain.usecase.common.ChangeNotificationStatus
 import com.example.domain.usecase.medication.ChangeActualTimeIntake
 import com.example.domain.usecase.medication.GetIntakeList
-import com.example.domain.usecase.medication.RemoveMedicationModel
+import com.example.domain.usecase.common.RemoveMedicationModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Calendar
