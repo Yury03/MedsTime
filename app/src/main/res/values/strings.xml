@@ -21,7 +21,6 @@
     <string name="medicine">Прием</string>
     <string name="add">Добавить</string>
     <string name="med_name_hint">Название лекарства</string>
-    <string name="add_med_title">Добавить отслеживание</string>
     <string name="med_daily_dosage_hint">Суточная дозировка</string>
     <string name="med_comment_hint">Комментарий</string>
     <string name="dosage_units_hint">Ед. дозировки</string>
@@ -67,6 +66,11 @@
     <string name="sp_key_camera_beta">activate_camera</string>
     <string name="beta_mode_activated">Beta mode переключен</string>
     <string name="placeholder_medication_fragment">Здесь будут показаны\nваши приемы лекарств.</string>
+    <string name="to_edit">Редактировать</string>
+    <string name="remove_medication_tracking">Удалить отслеживание</string>
+    <string name="change_time_take">Изменить время приема</string>
+    <string name="edit_med">Редактировать отслеживание</string>
+    <string name="edit_reminder">Редактировать напоминания</string>
     <string-array name="dosage_array">
         <item>Мг</item>
         <item>Капсулы</item>

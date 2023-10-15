@@ -5,7 +5,7 @@ data class MedicationIntakeModel(
     val name: String,                   // Название лекарства
     val dosage: Double,                 // Разовая доза
     val dosageUnit: String,             // Единица измерения дозы (например, "таблетка")
-    val isTaken: Boolean,               // Факт приема (принято или не принято)
+    val isTaken: Boolean = true,        // Факт приема (реальный факт приема определяется условием: isTaken && actualIntakeTime != null)
     val reminderTime: Int,              // Время за которое напоминать (в минутах)
     val medicationId: String,           // id модели приема
     val intakeTime: Time,               // Время приема лекарства
@@ -17,7 +17,19 @@ data class MedicationIntakeModel(
     data class Time(
         val hour: Int,  // Час
         val minute: Int,// Минуты
-    )
+    ) {
+        fun toEntityString(): String {
+            return "${hour},${minute}"
+        }
+
+        fun toDisplayString(): String {
+            return if (minute < 10) {
+                "${hour}:0${minute}"
+            } else {
+                "${hour}:${minute}"
+            }
+        }
+    }
 
 
     data class Date(

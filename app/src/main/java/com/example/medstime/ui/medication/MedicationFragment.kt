@@ -42,7 +42,6 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMedicationBinding.bind(view)
         initView()
-
     }
 
     private fun initView() {
@@ -98,8 +97,6 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
                     showCalendarText.setText(displayDate)
                 }
             })
-
-
         }
     }
 

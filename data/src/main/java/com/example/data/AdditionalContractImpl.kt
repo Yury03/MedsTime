@@ -192,7 +192,6 @@ class AdditionalContractImpl(private val context: Context) : Repository.Addition
             name = model.name,
             dosage = model.dosage,
             dosageUnit = model.dosageUnit,
-            isTaken = false,
             reminderTime = model.reminderTime,
             medicationId = model.id,
             intakeTime = MedicationIntakeModel.Time(intakeTime.hour, intakeTime.minute),

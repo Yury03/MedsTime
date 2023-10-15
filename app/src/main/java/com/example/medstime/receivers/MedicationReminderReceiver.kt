@@ -10,8 +10,9 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.domain.models.MedicationIntakeModel
 import com.example.domain.models.ReminderModel
-import com.example.domain.usecase.reminder.ChangeNotificationStatus
+import com.example.domain.usecase.common.ChangeNotificationStatus
 import com.example.domain.usecase.reminder.GetMedicationIntakeModel
+import com.example.domain.usecase.reminder.GetReminderModelById
 import com.example.medstime.R
 import com.example.medstime.services.BannerDisplayService
 import kotlinx.coroutines.CoroutineScope
@@ -32,25 +33,31 @@ class MedicationReminderReceiver : BroadcastReceiver() {
     private val changeNotificationStatus: ChangeNotificationStatus by KoinJavaComponent.inject(
         ChangeNotificationStatus::class.java
     )
+    private val getReminderModelById: GetReminderModelById by KoinJavaComponent.inject(
+        GetReminderModelById::class.java
+    )
 
     override fun onReceive(context: Context?, intent: Intent?) {
         val medicationIntakeId = intent?.getStringExtra("intakeModelId")!!//todo
         val reminderModelId = intent.getStringExtra("reminderModelId")!!//todo
         val type = intent.getStringExtra("type")!!
         CoroutineScope(Dispatchers.IO).launch {
-            changeNotificationStatus.invoke(reminderModelId, ReminderModel.Status.SHOWN)
-        }
-        when (type) {
-            ReminderModel.Type.PUSH_NOTIFICATION.toString() -> sendNotification(
-                context = context!!,
-                medicationIntakeId = medicationIntakeId
-            )
+            val reminderModel = getReminderModelById.invoke(reminderModelId)
+            if (reminderModel.status == ReminderModel.Status.NONE) {
+                changeNotificationStatus.invoke(reminderModelId, ReminderModel.Status.SHOWN)
+                when (type) {
+                    ReminderModel.Type.PUSH_NOTIFICATION.toString() -> sendNotification(
+                        context = context!!,
+                        medicationIntakeId = medicationIntakeId
+                    )
 
-            ReminderModel.Type.BANNER.toString() -> startBannerService(
-                context = context!!,
-                medicationIntakeModelId = medicationIntakeId,
-                reminderModelId = reminderModelId,
-            )
+                    ReminderModel.Type.BANNER.toString() -> startBannerService(
+                        context = context!!,
+                        medicationIntakeModelId = medicationIntakeId,
+                        reminderModelId = reminderModelId,
+                    )
+                }
+            }
         }
     }
 
@@ -94,11 +101,6 @@ class MedicationReminderReceiver : BroadcastReceiver() {
             notificationManager.notify(medicationIntakeId.hashCode(), builder.build())
         }
     }
-
-    private fun MedicationIntakeModel.Time.toDisplayString() =
-        if (minute < 10) "${hour}:0${minute}"
-        else "${hour}:${minute}"
-
 
     private fun getPendingIntent(
         context: Context?,

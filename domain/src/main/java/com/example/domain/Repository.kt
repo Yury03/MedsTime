@@ -7,27 +7,30 @@ import com.example.domain.models.ReminderModel
 interface Repository {
     interface MedicationContract {
         fun getIntakeList(): List<MedicationIntakeModel>
-        fun replaceMedicationItem(medicationModel: MedicationModel)
-        fun removeMedicationItem(medicationModel: MedicationModel)
+        fun removeMedicationModel(medicationModelId: String)
         fun getMedicationById(id: String): MedicationModel
-        fun replaceMedicationIntake(medicationIntakeModel: MedicationIntakeModel)
+        fun changeActualTimeIntake(medicationIntakeId: String, newTime: MedicationIntakeModel.Time)
     }
 
     interface AdditionContract {
-        fun saveNewMedication(medicationModel: MedicationModel)
+        fun saveNewMedication(medicationModel: MedicationModel)//todo перенести в common
     }
 
     interface ReminderContract {
         fun getRemindersWithStatus(reminderStatus: ReminderModel.Status): List<ReminderModel>
         fun getMedicationIntakeModel(medicationIntakeId: String): MedicationIntakeModel
-        fun changeNotificationStatus(reminderId: String, newStatus: ReminderModel.Status)
+        fun getReminderModelById(reminderId: String): ReminderModel
+    }
+
+    interface CommonContract {
         fun changeMedicationIntakeIsTaken(
             medicationIntakeId: String,
             newIsTaken: Boolean,
             actualIntakeTime: MedicationIntakeModel.Time?
         )
 
-        fun getReminderModelById(reminderId: String): ReminderModel
+        fun changeNotificationStatus(reminderId: String, newStatus: ReminderModel.Status)
+        fun changeNotificationStatus(newStatus: ReminderModel.Status, medicationIntakeId: String)
     }
 
 }
