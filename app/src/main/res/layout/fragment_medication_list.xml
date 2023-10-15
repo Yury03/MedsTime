@@ -5,6 +5,29 @@
     android:layout_height="match_parent"
     tools:context=".ui.medication.MedicationListFragment">
 
+    <LinearLayout
+        android:id="@+id/placeholder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/placeholder_capybara" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/placeholder_medication_fragment"
+            android:textAlignment="center"
+            android:textColor="@color/secondary_text"
+            android:textSize="@dimen/text_4_level" />
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/medicationsList"
         android:layout_width="match_parent"

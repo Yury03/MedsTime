@@ -4,47 +4,109 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginVertical="6dp"
-
+    android:background="@drawable/item_backg_medication_"
     android:clickable="true"
-    android:background="@drawable/medication_item_background"
-    android:focusable="true">
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_margin="5dp"
-        android:layout_weight="1"
-        app:srcCompat="@drawable/medication_icon_menu" />
+    android:focusable="true"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="6"
-        android:layout_margin="5dp"
-        android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/medName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/medication_name_placeholder"
-            android:textColor="@color/default_text"
-            android:textSize="@dimen/text_4_level" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/menu_icon_medication" />
 
-        <TextView
-            android:id="@+id/medDosage"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/medication_dosage_placeholder"
-            android:textColor="@color/default_text"
-            android:textSize="@dimen/text_5_level" />
+            android:layout_margin="5dp"
+            android:layout_weight="6"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/timeMedication"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/medication_item_text_meds_missed"
-            android:textSize="@dimen/text_6_level" />
+            <TextView
+                android:id="@+id/medName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/medication_name_placeholder"
+                android:textColor="@color/secondary_black_and_white"
+                android:textSize="@dimen/text_4_level" />
+
+            <TextView
+                android:id="@+id/medDosage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/medication_dosage_placeholder"
+                android:textColor="@color/secondary_black_and_white"
+                android:textSize="@dimen/text_5_level" />
+
+            <TextView
+                android:id="@+id/timeMedication"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/medication_item_text_meds_missed"
+                android:textSize="@dimen/text_6_level" />
+        </LinearLayout>
+
     </LinearLayout>
+
+    <net.cachapa.expandablelayout.ExpandableLayout
+        android:id="@+id/buttonLayer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:el_duration="600"
+        app:el_expanded="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/itemTakenButton"
+                style="@style/MedicationItemButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/taken"
+                app:icon="@drawable/button_icon_check" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/itemChangeTimeTakeButton"
+                style="@style/MedicationItemButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/change_time_take"
+                android:visibility="gone"
+                app:icon="@drawable/button_icon_clock" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/itemSkippedButton"
+                style="@style/MedicationItemButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/skipped"
+                app:icon="@drawable/button_icon_skip" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/itemEditButton"
+                style="@style/MedicationItemButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/to_edit"
+                app:icon="@drawable/button_icon_edit" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/itemRemoveButton"
+                style="@style/MedicationItemButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/remove_medication_tracking"
+                app:icon="@drawable/button_icon_remove" />
+        </LinearLayout>
+    </net.cachapa.expandablelayout.ExpandableLayout>
 </LinearLayout>
