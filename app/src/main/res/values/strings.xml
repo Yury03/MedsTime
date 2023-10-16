@@ -71,6 +71,7 @@
     <string name="change_time_take">Изменить время приема</string>
     <string name="edit_med">Редактировать отслеживание</string>
     <string name="edit_reminder">Редактировать напоминания</string>
+    <string name="required_field">Обязательное поле</string>
     <string-array name="dosage_array">
         <item>Мг</item>
         <item>Капсулы</item>
