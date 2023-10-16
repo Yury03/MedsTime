@@ -10,8 +10,8 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.domain.models.MedicationIntakeModel
 import com.example.domain.models.ReminderModel
-import com.example.domain.usecase.reminder.ChangeNotificationStatusByReminderId
 import com.example.domain.usecase.medication_intake.GetMedicationIntakeModel
+import com.example.domain.usecase.reminder.ChangeNotificationStatusByReminderId
 import com.example.domain.usecase.reminder.GetReminderModelById
 import com.example.medstime.R
 import com.example.medstime.services.BannerDisplayService
@@ -67,8 +67,8 @@ class MedicationReminderReceiver : BroadcastReceiver() {
         reminderModelId: String
     ) {
         val serviceIntent = Intent(context, BannerDisplayService::class.java)
-        serviceIntent.putExtra("intakeModelId", medicationIntakeModelId)
-        serviceIntent.putExtra("reminderModelId", reminderModelId)
+        serviceIntent.putExtra("intakeModelId", medicationIntakeModelId)//todo string
+        serviceIntent.putExtra("reminderModelId", reminderModelId)//todo string
         context.startService(serviceIntent)
     }
 
@@ -79,14 +79,14 @@ class MedicationReminderReceiver : BroadcastReceiver() {
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val channel = NotificationChannel(
                 "medication_channel",
-                "Напоминания о приеме лекарств",
+                "Напоминания о приеме лекарств",//todo string
                 NotificationManager.IMPORTANCE_HIGH
             )
             notificationManager.createNotificationChannel(channel)
             val builder = NotificationCompat.Builder(context, "medication_channel")
                 .setSmallIcon(R.drawable.menu_icon_medication)
-                .setContentTitle("Напоминание о приеме лекарства ${intake.name}")
-                .setContentText("Прием назначен на ${intake.intakeTime.toDisplayString()}")
+                .setContentTitle("Напоминание о приеме лекарства ${intake.name}")//todo string
+                .setContentText("Прием назначен на ${intake.intakeTime.toDisplayString()}")//todo string
                 .addAction(
                     R.drawable.button_icon_check,
                     context.getString(R.string.taken),
@@ -110,10 +110,10 @@ class MedicationReminderReceiver : BroadcastReceiver() {
         val intent = Intent(context, ChangeIsTakenStatusReceiver::class.java)
         intent.apply {
             val actualTime = getActualTime()
-            putExtra("isTaken", isTaken)
-            putExtra("medicationIntakeId", medicationIntakeId)
-            putExtra("actualIntakeHour", actualTime.hour)
-            putExtra("actualIntakeMinute", actualTime.minute)
+            putExtra("isTaken", isTaken)//todo string
+            putExtra("medicationIntakeId", medicationIntakeId)//todo string
+            putExtra("actualIntakeHour", actualTime.hour)//todo string
+            putExtra("actualIntakeMinute", actualTime.minute)//todo string
         }
         Log.d(TAG, medicationIntakeId.hashCode().toString())
         return PendingIntent.getBroadcast(

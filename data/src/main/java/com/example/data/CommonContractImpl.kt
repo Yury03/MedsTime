@@ -215,11 +215,9 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
 
     private fun generateUniqueId() = UUID.randomUUID().toString()
 
-
     override fun getMedicationById(id: String): MedicationModel {
         return MedicationMapper.mapToModel(medicationDao.getById(id))
     }
-
 
     override fun replaceMedicationModel(medicationModel: MedicationModel) {
         removeMedicationModel(medicationModel.id)
@@ -228,12 +226,13 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
 
     /**Метод **removeMedicationModel**
      * - получает все *приемы лекарств*
-     * - удаляет все напоминания по *id приема лекарств*
+     * - меняет статус всех напоминаний на DEPRECATED по *id приема лекарств*
      * - удаляет все *приемы лекарств по id модели Medication*
      * - удаляет модель Medication*/
     override fun removeMedicationModel(medicationModelId: String) {
+        val status = ReminderModel.Status.DEPRECATED.toString()//todo?
         medicationIntakeDao.getByMedicationModelId(medicationModelId).forEach {
-            reminderDao.deleteByMedicationIntakeModelId(it.id)
+            reminderDao.updateStatusByMedicationIntakeId(it.id, status)
         }
         medicationIntakeDao.deleteByMedicationModelId(medicationModelId)
         medicationDao.deleteById(medicationModelId)

@@ -22,7 +22,6 @@ class MedicationListViewModel(
     private val changeMedicationIntakeIsTakenUseCase: ChangeMedicationIntakeIsTaken,
     private val changeNotificationStatusUseCase: ChangeNotificationStatusByReminderId,
     private val changeActualTimeIntakeUseCase: ChangeActualTimeIntake,
-    private val saveNewMedicationUseCase: SaveNewMedication,
 ) : ViewModel() {
     /**список пар Время - Список приемов лекарств**/
     private val _intakeListToday: MutableLiveData<List<Pair<MedicationIntakeModel.Time, List<MedicationIntakeModel>>>> =

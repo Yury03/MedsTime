@@ -22,7 +22,6 @@ val appModule = module {
             changeMedicationIntakeIsTakenUseCase = get(),
             changeNotificationStatusUseCase = get(),
             changeActualTimeIntakeUseCase = get(),
-            saveNewMedicationUseCase = get(),
         )
     }
     viewModel<AddMedViewModel> {
