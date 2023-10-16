@@ -7,7 +7,7 @@ import com.example.data.room.dao.MedicationIntakeDao
 import com.example.domain.Repository
 import com.example.domain.models.MedicationIntakeModel
 
-/**Класс реализует юзкейсы, связанные с приемами. Используется только MedicationIntakeDatabase.
+/**Класс реализует юзкейсы, связанные с приемами лекарств. Используется только MedicationIntakeDatabase.
  * - **get intake list** возвращает все модели приемов из MedicationIntakeDatabase;
  * - **change actual time intake** меняет фактическое время приема;
  * - **change medication intake is taken** меняет статус приема;

@@ -54,7 +54,7 @@ class MedicationListViewModel(
             } else {
                 ReminderModel.Status.SKIP
             }
-            changeNotificationStatusUseCase.invoke(newReminderStatus, medicationIntakeId)
+            changeNotificationStatusUseCase.invoke(medicationIntakeId, newReminderStatus)
             callGetIntakeList()
         }
     }

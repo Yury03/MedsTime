@@ -163,16 +163,9 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                     send(AddMedEvent.ContinueButtonClicked)
                 }
             }
-            infoAboutBanner.setOnClickListener {
-                showInfoAboutBannerDialog()
-            }
+
             backButton.setOnClickListener {
                 closeFragment()
-            }
-            useBannerChBox.setOnClickListener {
-                if (!checkSystemAlertWindowPermission()) {
-                    (it as CheckBox).isChecked = false
-                }
             }
             scanBarcode.setOnClickListener {
                 checkCameraPermission()
@@ -400,8 +393,25 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         val cameraBeta = sharedPref.getBoolean(getString(R.string.sp_key_camera_beta), defaultValue)
         if (cameraBeta) {
             activateCamera()
+            activateUseBanner()
             binding.scanBarcode.visibility = View.VISIBLE
         }
+    }
+
+    /**Использование баннера работает неправильно, периодически крашится*/
+    private fun activateUseBanner() {
+        with(binding) {
+            bannerLayout.visibility = View.VISIBLE
+            useBannerChBox.setOnClickListener {
+                if (!checkSystemAlertWindowPermission()) {
+                    (it as CheckBox).isChecked = false
+                }
+            }
+            infoAboutBanner.setOnClickListener {
+                showInfoAboutBannerDialog()
+            }
+        }
+
     }
 
     private fun checkCameraPermission() {
@@ -478,8 +488,8 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     }
 
     private fun updateSelectedDays(selectedDays: List<Int>) {
-        for (i in selectedDays.indices) {
-            val chip = binding.chipGroupDaysWeek.getChildAt(i) as Chip
+        for (i in selectedDays) {
+            val chip = binding.chipGroupDaysWeek.getChildAt(i-1) as Chip
             if (!chip.isChecked) {
                 chip.isChecked = true
             }
@@ -487,6 +497,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     }
 
     private fun updateIntakeTimeChips(intakeTime: List<MedicationModel.Time>) {
+        //todo обновляется после отправки event continueButton
         intakeTime.forEach {
             if (it.minute < 10) addChipTime("${it.hour}:0${it.minute}")
             else addChipTime("${it.hour}:${it.minute}")
