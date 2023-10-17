@@ -10,8 +10,8 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.domain.models.MedicationIntakeModel
 import com.example.domain.models.ReminderModel
-import com.example.domain.usecase.common.ChangeNotificationStatus
-import com.example.domain.usecase.reminder.GetMedicationIntakeModel
+import com.example.domain.usecase.medication_intake.GetMedicationIntakeModel
+import com.example.domain.usecase.reminder.ChangeNotificationStatusByReminderId
 import com.example.domain.usecase.reminder.GetReminderModelById
 import com.example.medstime.R
 import com.example.medstime.services.BannerDisplayService
@@ -24,14 +24,14 @@ import java.util.Calendar
 
 class MedicationReminderReceiver : BroadcastReceiver() {
     companion object {
-        private const val TAG = "MedicationReminderReceiver"
+        private const val LOG_TAG = "MedicationReminderReceiver"
     }
 
     private val getMedicationIntakeModel: GetMedicationIntakeModel by KoinJavaComponent.inject(
         GetMedicationIntakeModel::class.java
     )
-    private val changeNotificationStatus: ChangeNotificationStatus by KoinJavaComponent.inject(
-        ChangeNotificationStatus::class.java
+    private val changeNotificationStatus: ChangeNotificationStatusByReminderId by KoinJavaComponent.inject(
+        ChangeNotificationStatusByReminderId::class.java
     )
     private val getReminderModelById: GetReminderModelById by KoinJavaComponent.inject(
         GetReminderModelById::class.java
@@ -67,35 +67,36 @@ class MedicationReminderReceiver : BroadcastReceiver() {
         reminderModelId: String
     ) {
         val serviceIntent = Intent(context, BannerDisplayService::class.java)
-        serviceIntent.putExtra("intakeModelId", medicationIntakeModelId)
-        serviceIntent.putExtra("reminderModelId", reminderModelId)
+        serviceIntent.putExtra("intakeModelId", medicationIntakeModelId)//todo string
+        serviceIntent.putExtra("reminderModelId", reminderModelId)//todo string
         context.startService(serviceIntent)
     }
 
     private fun sendNotification(context: Context, medicationIntakeId: String) {
         CoroutineScope(Dispatchers.IO).launch {
+            val requestCode = System.currentTimeMillis().toInt()
             val intake = getMedicationIntakeModel.invoke(medicationIntakeId)
             val notificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val channel = NotificationChannel(
                 "medication_channel",
-                "Напоминания о приеме лекарств",
+                "Напоминания о приеме лекарств",//todo string
                 NotificationManager.IMPORTANCE_HIGH
             )
             notificationManager.createNotificationChannel(channel)
             val builder = NotificationCompat.Builder(context, "medication_channel")
                 .setSmallIcon(R.drawable.menu_icon_medication)
-                .setContentTitle("Напоминание о приеме лекарства ${intake.name}")
-                .setContentText("Прием назначен на ${intake.intakeTime.toDisplayString()}")
+                .setContentTitle("Напоминание о приеме лекарства ${intake.name}")//todo string
+                .setContentText("Прием назначен на ${intake.intakeTime.toDisplayString()}")//todo string
                 .addAction(
                     R.drawable.button_icon_check,
                     context.getString(R.string.taken),
-                    getPendingIntent(context, true, medicationIntakeId)
+                    getPendingIntent(context, true, medicationIntakeId, requestCode)
                 )
                 .addAction(
                     R.drawable.button_icon_skip,
                     context.getString(R.string.skipped),
-                    getPendingIntent(context, false, medicationIntakeId)
+                    getPendingIntent(context, false, medicationIntakeId, requestCode + 1)
                 )
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
             notificationManager.notify(medicationIntakeId.hashCode(), builder.build())
@@ -105,20 +106,22 @@ class MedicationReminderReceiver : BroadcastReceiver() {
     private fun getPendingIntent(
         context: Context?,
         isTaken: Boolean,
-        medicationIntakeId: String
+        medicationIntakeId: String,
+        requestCode: Int,
     ): PendingIntent {
         val intent = Intent(context, ChangeIsTakenStatusReceiver::class.java)
+        Log.i(LOG_TAG, "$isTaken")
         intent.apply {
             val actualTime = getActualTime()
-            putExtra("isTaken", isTaken)
-            putExtra("medicationIntakeId", medicationIntakeId)
-            putExtra("actualIntakeHour", actualTime.hour)
-            putExtra("actualIntakeMinute", actualTime.minute)
+            putExtra("isTaken", isTaken)//todo string
+            putExtra("medicationIntakeId", medicationIntakeId)//todo string
+            putExtra("actualIntakeHour", actualTime.hour)//todo string
+            putExtra("actualIntakeMinute", actualTime.minute)//todo string
         }
-        Log.d(TAG, medicationIntakeId.hashCode().toString())
+        Log.d(LOG_TAG, medicationIntakeId.hashCode().toString())
         return PendingIntent.getBroadcast(
             context,
-            medicationIntakeId.hashCode(),//TODO
+            requestCode,
             intent,
             PendingIntent.FLAG_IMMUTABLE
         )
