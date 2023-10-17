@@ -74,6 +74,7 @@ class MedicationReminderReceiver : BroadcastReceiver() {
 
     private fun sendNotification(context: Context, medicationIntakeId: String) {
         CoroutineScope(Dispatchers.IO).launch {
+            val requestCode = System.currentTimeMillis().toInt()
             val intake = getMedicationIntakeModel.invoke(medicationIntakeId)
             val notificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -90,12 +91,12 @@ class MedicationReminderReceiver : BroadcastReceiver() {
                 .addAction(
                     R.drawable.button_icon_check,
                     context.getString(R.string.taken),
-                    getPendingIntent(context, true, medicationIntakeId)
+                    getPendingIntent(context, true, medicationIntakeId, requestCode)
                 )
                 .addAction(
                     R.drawable.button_icon_skip,
                     context.getString(R.string.skipped),
-                    getPendingIntent(context, false, medicationIntakeId)
+                    getPendingIntent(context, false, medicationIntakeId, requestCode + 1)
                 )
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
             notificationManager.notify(medicationIntakeId.hashCode(), builder.build())
@@ -105,7 +106,8 @@ class MedicationReminderReceiver : BroadcastReceiver() {
     private fun getPendingIntent(
         context: Context?,
         isTaken: Boolean,
-        medicationIntakeId: String
+        medicationIntakeId: String,
+        requestCode: Int,
     ): PendingIntent {
         val intent = Intent(context, ChangeIsTakenStatusReceiver::class.java)
         Log.i(LOG_TAG, "$isTaken")
@@ -119,7 +121,7 @@ class MedicationReminderReceiver : BroadcastReceiver() {
         Log.d(LOG_TAG, medicationIntakeId.hashCode().toString())
         return PendingIntent.getBroadcast(
             context,
-            medicationIntakeId.hashCode(),//TODO
+            requestCode,
             intent,
             PendingIntent.FLAG_IMMUTABLE
         )

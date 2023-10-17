@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MedicationIntakeDao {
     @Query("SELECT * FROM medication_intake_database")
-    fun getAll(): Flow<List<MedicationIntakeEntity>>
+    fun getAll(): Flow<List<MedicationIntakeEntity>?>
 
     @Query("SELECT * FROM medication_intake_database WHERE id = :id")
     fun getById(id: String): MedicationIntakeEntity

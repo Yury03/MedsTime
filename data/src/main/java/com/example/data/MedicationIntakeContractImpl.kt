@@ -28,9 +28,9 @@ class MedicationIntakeContractImpl(context: Context) : Repository.MedicationInta
     override suspend fun getIntakeList(): Flow<List<MedicationIntakeModel>> {
         val medicationIntakeList = medicationIntakeDao.getAll()
         val flowListModel = medicationIntakeList.map { list ->
-            list.map {
+            list?.map {
                 MedicationIntakeMapper.mapToModel(it)
-            }
+            } ?: emptyList()
         }
         return flowListModel
     }
