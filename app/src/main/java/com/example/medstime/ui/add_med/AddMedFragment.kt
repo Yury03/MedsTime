@@ -127,9 +127,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             addIntakeTime.setOnClickListener {
                 val picker = callTimePicker()
                 picker.addOnPositiveButtonClickListener {
-                    val chipText = if (picker.minute < 10) ("${picker.hour}:0${picker.minute}")
-                    else ("${picker.hour}:${picker.minute}")
-                    addChipTime(chipText)
+                    addChipTime(picker.hour, picker.minute)
                 }
                 picker.show(parentFragmentManager, TIME_PICKER_TAG)
             }
@@ -331,11 +329,15 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         datePickerDialog.show()
     }
 
-    private fun callTimePicker() =
-        MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_24H).setHour(12).setMinute(0)
-            .setTitleText(R.string.title_add_reminder).setTheme(R.style.TimePickerDialog).build()
+    private fun callTimePicker(hour: Int = 12, minute: Int = 0) =
+        MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_24H).setHour(hour)
+            .setMinute(minute)
+            .setTitleText(R.string.title_add_reminder)
+            .setTheme(R.style.TimePickerDialog)
+            .build()
 
-    private fun addChipTime(chipText: String) {
+    private fun addChipTime(hour: Int, minute: Int) {
+        val chipText = timeToDisplayString(hour, minute)
         val timeChips = getIntakeTime()
         val chipTime = parseTimeString(chipText)
         timeChips.forEach {
@@ -352,6 +354,14 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             chipBackgroundColor =
                 ContextCompat.getColorStateList(context, R.color.selected_bottom_menu_item2)
             closeIconTint = ContextCompat.getColorStateList(context, R.color.chip_close_icon_tint)
+            setOnClickListener {
+                val picker = callTimePicker(hour, minute)
+                picker.addOnPositiveButtonClickListener {
+                    val editChipText = timeToDisplayString(picker.hour, picker.minute)
+                    this.text = editChipText
+                }
+                picker.show(parentFragmentManager, TIME_PICKER_TAG)
+            }
         }
         binding.chipGroupTime.addView(newChip, binding.chipGroupTime.childCount)
     }
@@ -512,8 +522,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
 
     private fun updateIntakeTimeChips(intakeTime: List<MedicationModel.Time>) {
         intakeTime.forEach {
-            if (it.minute < 10) addChipTime("${it.hour}:0${it.minute}")
-            else addChipTime("${it.hour}:${it.minute}")
+            addChipTime(it.hour, it.minute)
         }
     }
 
@@ -528,4 +537,10 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             this.text = text
         }
     }
+
+    private fun timeToDisplayString(hour: Int, minute: Int) =
+        if (minute < 10) "${hour}:0${minute}"
+        else "$hour:$minute"
+
+
 }
