@@ -18,27 +18,27 @@ class ReminderContractImpl(private val context: Context) : Repository.ReminderCo
     }
     private val reminderDao: ReminderDao by lazy { reminderDatabase.reminderDao() }
 
-    override fun getRemindersWithStatus(reminderStatus: ReminderModel.Status): List<ReminderModel> {
+    override suspend fun getRemindersWithStatus(reminderStatus: ReminderModel.Status): List<ReminderModel> {
         return reminderDao.getWithStatus(reminderStatus.toString()).map {
             ReminderMapper.mapToModel(it)
         }
     }
 
-    override fun changeNotificationStatusByReminderId(
+    override suspend fun changeNotificationStatusByReminderId(
         reminderId: String,
         newStatus: ReminderModel.Status
     ) {
         reminderDao.updateStatusById(reminderId, newStatus.toString())
     }
 
-    override fun changeNotificationStatusByMedicationIntakeId(
+    override suspend fun changeNotificationStatusByMedicationIntakeId(
         medicationIntakeId: String,
         newStatus: ReminderModel.Status
     ) {
         reminderDao.updateStatusByMedicationIntakeId(medicationIntakeId, newStatus.toString())
     }
 
-    override fun getReminderModelById(reminderId: String): ReminderModel {
+    override suspend fun getReminderModelById(reminderId: String): ReminderModel {
         return ReminderMapper.mapToModel(reminderDao.getById(reminderId))
     }
 }

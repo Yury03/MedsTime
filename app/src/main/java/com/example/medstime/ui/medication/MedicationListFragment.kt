@@ -19,6 +19,7 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
     private val viewModel by viewModel<MedicationListViewModel>()
     private var _binding: FragmentMedicationListBinding? = null
     private val binding get() = _binding!!
+    private lateinit var _date: MedicationIntakeModel.Date
 
     companion object {
         private const val TIME_PICKER_TAG = "TimePickerMedicationListFragment"
@@ -30,24 +31,43 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
         val day = arguments?.getInt("day")!!                //todo обработка ошибок
         val month = arguments?.getInt("month")!!
         val year = arguments?.getInt("year")!!
-        viewModel.setDate(MedicationIntakeModel.Date(day, month, year))
+        _date = (MedicationIntakeModel.Date(day, month, year))
         val medicationClick = { model: MedicationIntakeModel ->
             createItemButtonClickMap(model)
         }
+        viewModel.initIntakeListToday()
         viewModel.intakeListToday.observe(viewLifecycleOwner) {
-            if (it.isEmpty()) {
+            val sortedList = splitIntakeList(it)
+            if (sortedList.isEmpty()) {
                 binding.placeholder.visibility = View.VISIBLE
                 binding.medicationsList.visibility = View.GONE
             }
 
             binding.medicationsList.adapter = TimesListAdapter(
-                dataList = it,
+                dataList = sortedList,
                 context = requireContext(),
                 medicationClick = medicationClick,
             )
         }
         binding.medicationsList.layoutManager = LinearLayoutManager(context)
-        viewModel.getIntakeList()
+    }
+
+    /**Метод splitIntakeList делит список приемов, на пары "время - список приемов" и сортирует возвращаемый список по времени*/
+    private fun splitIntakeList(intakeList: List<MedicationIntakeModel>):
+            List<Pair<MedicationIntakeModel.Time, List<MedicationIntakeModel>>> {
+        val list = intakeList.filter {
+            it.intakeDate == _date
+        }
+        //если в данную дату есть приемы, то делим их на пары типа Время - Список приемов
+        val groupedMedications: List<Pair<MedicationIntakeModel.Time, List<MedicationIntakeModel>>> =
+            list.groupBy { it.intakeTime }.map { (time, medications) ->
+                time to medications
+            }
+        return groupedMedications.sortedWith(
+            compareBy(
+                { it.first.hour },
+                { it.first.minute })
+        )
     }
 
     private fun createItemButtonClickMap(intake: MedicationIntakeModel): Map<Int, View.OnClickListener> {
@@ -97,7 +117,6 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
         MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_24H).setHour(oldTime.hour)
             .setMinute(oldTime.minute).setTitleText(R.string.title_add_reminder)
             .setTheme(R.style.TimePickerDialog).build()
-
 
     override fun onDestroy() {
         super.onDestroy()

@@ -3,38 +3,39 @@ package com.example.domain
 import com.example.domain.models.MedicationIntakeModel
 import com.example.domain.models.MedicationModel
 import com.example.domain.models.ReminderModel
+import kotlinx.coroutines.flow.Flow
 
 interface Repository {
     interface MedicationIntakeContract {
-        fun getIntakeList(): List<MedicationIntakeModel>
-        fun changeActualTimeIntake(medicationIntakeId: String, newTime: MedicationIntakeModel.Time)
-        fun changeMedicationIntakeIsTaken(
+        suspend fun getIntakeList(): Flow<List<MedicationIntakeModel>>
+        suspend fun changeActualTimeIntake(medicationIntakeId: String, newTime: MedicationIntakeModel.Time)
+        suspend fun changeMedicationIntakeIsTaken(
             medicationIntakeId: String,
             newIsTaken: Boolean,
             actualIntakeTime: MedicationIntakeModel.Time?
         )
 
-        fun getMedicationIntakeModel(medicationIntakeId: String): MedicationIntakeModel
+        suspend fun getMedicationIntakeModel(medicationIntakeId: String): MedicationIntakeModel
     }
 
     interface ReminderContract {
-        fun getReminderModelById(reminderId: String): ReminderModel
-        fun getRemindersWithStatus(reminderStatus: ReminderModel.Status): List<ReminderModel>
-        fun changeNotificationStatusByReminderId(
+        suspend fun getReminderModelById(reminderId: String): ReminderModel
+        suspend fun getRemindersWithStatus(reminderStatus: ReminderModel.Status): List<ReminderModel>
+        suspend fun changeNotificationStatusByReminderId(
             reminderId: String,
             newStatus: ReminderModel.Status
         )
 
-        fun changeNotificationStatusByMedicationIntakeId(
+        suspend fun changeNotificationStatusByMedicationIntakeId(
             medicationIntakeId: String,
             newStatus: ReminderModel.Status,
         )
     }
 
     interface CommonContract {
-        fun saveNewMedication(medicationModel: MedicationModel)
-        fun removeMedicationModel(medicationModelId: String)
-        fun replaceMedicationModel(medicationModel: MedicationModel)
-        fun getMedicationById(id: String): MedicationModel
+        suspend fun saveNewMedication(medicationModel: MedicationModel)
+        suspend fun removeMedicationModel(medicationModelId: String)
+        suspend fun replaceMedicationModel(medicationModel: MedicationModel)
+        suspend fun getMedicationById(id: String): MedicationModel
     }
 }

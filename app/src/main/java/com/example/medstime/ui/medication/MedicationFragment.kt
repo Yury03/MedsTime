@@ -41,6 +41,7 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMedicationBinding.bind(view)
+
         initView()
     }
 
@@ -78,19 +79,8 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
                     requireActivity().supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
                 navHostFragment.navController.navigate(R.id.addMedFragment)
             }
-            /*todo
-                           val slideInLeftAnimation: Animation = AnimationUtils.loadAnimation(
-                            requireContext(),
-                            android.R.anim.slide_in_left
-                        )
-                        val slideOutRightAnimation: Animation = AnimationUtils.loadAnimation(
-                            requireContext(),
-                            android.R.anim.slide_out_right
-                        )
-                        showCalendarText.inAnimation = slideInLeftAnimation
-                        showCalendarText.outAnimation = slideOutRightAnimation*/
             viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                //todo                private var lastPosition = 0
+
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     val displayDate = getDisplayDate(dateList[position])

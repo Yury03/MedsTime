@@ -4,7 +4,7 @@ import com.example.domain.Repository
 import com.example.domain.models.ReminderModel
 
 class ChangeNotificationStatusByReminderId(private val repository: Repository.ReminderContract) {
-    fun invoke(reminderId: String, newStatus: ReminderModel.Status) {
+    suspend fun invoke(reminderId: String, newStatus: ReminderModel.Status) {
         repository.changeNotificationStatusByReminderId(reminderId, newStatus)
     }
 }

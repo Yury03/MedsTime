@@ -50,7 +50,7 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
     private val reminderDao: ReminderDao by lazy { reminderDatabase.reminderDao() }
 
     /**Функция сохраняет новую модель medication, а затем получает и сохраняет сгенерированные модели приемов и уведомлений*/
-    override fun saveNewMedication(medicationModel: MedicationModel) {
+    override suspend fun saveNewMedication(medicationModel: MedicationModel) {
         val entity = MedicationMapper.mapToEntity(medicationModel)
         medicationDao.insert(entity)
         val medicationIntakeList = generateMedicationIntakeModels(medicationModel)
@@ -215,11 +215,11 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
 
     private fun generateUniqueId() = UUID.randomUUID().toString()
 
-    override fun getMedicationById(id: String): MedicationModel {
+    override suspend fun getMedicationById(id: String): MedicationModel {
         return MedicationMapper.mapToModel(medicationDao.getById(id))
     }
 
-    override fun replaceMedicationModel(medicationModel: MedicationModel) {
+    override suspend fun replaceMedicationModel(medicationModel: MedicationModel) {
         removeMedicationModel(medicationModel.id)
         saveNewMedication(medicationModel)
     }
@@ -229,7 +229,7 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
      * - меняет статус всех напоминаний на DEPRECATED по *id приема лекарств*
      * - удаляет все *приемы лекарств по id модели Medication*
      * - удаляет модель Medication*/
-    override fun removeMedicationModel(medicationModelId: String) {
+    override suspend fun removeMedicationModel(medicationModelId: String) {
         val status = ReminderModel.Status.DEPRECATED.toString()//todo?
         medicationIntakeDao.getByMedicationModelId(medicationModelId).forEach {
             reminderDao.updateStatusByMedicationIntakeId(it.id, status)

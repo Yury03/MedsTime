@@ -24,7 +24,7 @@ import java.util.Calendar
 
 class MedicationReminderReceiver : BroadcastReceiver() {
     companion object {
-        private const val TAG = "MedicationReminderReceiver"
+        private const val LOG_TAG = "MedicationReminderReceiver"
     }
 
     private val getMedicationIntakeModel: GetMedicationIntakeModel by KoinJavaComponent.inject(
@@ -108,6 +108,7 @@ class MedicationReminderReceiver : BroadcastReceiver() {
         medicationIntakeId: String
     ): PendingIntent {
         val intent = Intent(context, ChangeIsTakenStatusReceiver::class.java)
+        Log.i(LOG_TAG, "$isTaken")
         intent.apply {
             val actualTime = getActualTime()
             putExtra("isTaken", isTaken)//todo string
@@ -115,7 +116,7 @@ class MedicationReminderReceiver : BroadcastReceiver() {
             putExtra("actualIntakeHour", actualTime.hour)//todo string
             putExtra("actualIntakeMinute", actualTime.minute)//todo string
         }
-        Log.d(TAG, medicationIntakeId.hashCode().toString())
+        Log.d(LOG_TAG, medicationIntakeId.hashCode().toString())
         return PendingIntent.getBroadcast(
             context,
             medicationIntakeId.hashCode(),//TODO

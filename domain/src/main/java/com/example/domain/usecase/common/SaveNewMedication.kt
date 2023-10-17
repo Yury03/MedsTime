@@ -4,7 +4,7 @@ import com.example.domain.Repository
 import com.example.domain.models.MedicationModel
 
 class SaveNewMedication(private val repository: Repository.CommonContract) {
-    fun invoke(medicationModel: MedicationModel) {
+    suspend fun invoke(medicationModel: MedicationModel) {
         repository.saveNewMedication(medicationModel)
     }
 }

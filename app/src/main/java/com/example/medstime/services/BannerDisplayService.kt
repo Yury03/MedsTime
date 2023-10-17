@@ -82,7 +82,7 @@ class BannerDisplayService : Service() {
         }
     }
 
-    private fun callPendingReceiver(reminderModelId: String) {
+    private suspend fun callPendingReceiver(reminderModelId: String) {
         val reminder = getReminderModel.invoke(reminderModelId)
         reminder.timeShow = Calendar.getInstance().timeInMillis + 5.minutes.inWholeMilliseconds
         val alarmManager = ContextCompat.getSystemService(
