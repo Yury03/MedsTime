@@ -127,10 +127,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             addIntakeTime.setOnClickListener {
                 val picker = callTimePicker()
                 picker.addOnPositiveButtonClickListener {
-                    val chipText =
-                        if (picker.minute < 10) ("${picker.hour}:0${picker.minute}")
-                        else ("${picker.hour}:${picker.minute}")
-                    addChipTime(chipText)
+                    addChipTime(picker.hour, picker.minute)
                 }
                 picker.show(parentFragmentManager, TIME_PICKER_TAG)
             }
@@ -163,21 +160,23 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                     send(AddMedEvent.ContinueButtonClicked)
                 }
             }
-            infoAboutBanner.setOnClickListener {
-                showInfoAboutBannerDialog()
-            }
             backButton.setOnClickListener {
                 closeFragment()
-            }
-            useBannerChBox.setOnClickListener {
-                if (!checkSystemAlertWindowPermission()) {
-                    (it as CheckBox).isChecked = false
-                }
             }
             scanBarcode.setOnClickListener {
                 checkCameraPermission()
                 if (scanBarcodeLayout.isExpanded) scanBarcodeLayout.collapse()
                 else scanBarcodeLayout.expand()
+            }
+            medicationName.addTextChangedListener {
+                if (textFieldMedicationName.isErrorEnabled) {
+                    textFieldMedicationName.isErrorEnabled = false
+                }
+            }
+            dosage.addTextChangedListener {
+                if (textFieldDosage.isErrorEnabled) {
+                    textFieldDosage.isErrorEnabled = false
+                }
             }
         }
     }
@@ -273,14 +272,17 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             }.create().show()
 
     private fun showError(error: Int) {
-        //todo добавить фронтенд: фокус на поле ввода, нужный цвет, подсказка
         Log.e(LOG_TAG, "ERROR CONTINUE BUTTON")
         val errorStr = when (error) {
             1 -> {
+                binding.textFieldMedicationName.error = getText(R.string.required_field)
+                binding.textFieldMedicationName.requestFocus()
                 getText(R.string.add_med_error_no_name).toString()
             }
 
             2 -> {
+                binding.textFieldDosage.error = getText(R.string.required_field)
+                binding.textFieldDosage.requestFocus()
                 getText(R.string.add_med_error_no_dosage).toString()
             }
 
@@ -290,7 +292,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
 
             4 -> {
                 getText(R.string.add_med_error_selected_days).toString()
-
             }
 
             5 -> {
@@ -301,7 +302,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
 
         }
         Toast.makeText(requireContext(), errorStr, Toast.LENGTH_SHORT).show()
-
     }
 
     private fun parseTimeString(chipText: String): MedicationModel.Time {
@@ -329,11 +329,20 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         datePickerDialog.show()
     }
 
-    private fun callTimePicker() =
-        MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_24H).setHour(12).setMinute(0)
-            .setTitleText(R.string.title_add_reminder).setTheme(R.style.TimePickerDialog).build()
+    private fun callTimePicker(hour: Int = 12, minute: Int = 0) =
+        MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_24H).setHour(hour)
+            .setMinute(minute)
+            .setTitleText(R.string.title_add_reminder)
+            .setTheme(R.style.TimePickerDialog)
+            .build()
 
-    private fun addChipTime(chipText: String) {
+    private fun addChipTime(hour: Int, minute: Int) {
+        val chipText = timeToDisplayString(hour, minute)
+        val timeChips = getIntakeTime()
+        val chipTime = parseTimeString(chipText)
+        timeChips.forEach {
+            if (it.hour == chipTime.hour && it.minute == parseTimeString(chipText).minute) return //проверка на совпадение с уже существующим чипом
+        }
         val newChip = Chip(binding.chipGroupTime.context)
         newChip.apply {
             text = chipText
@@ -345,6 +354,14 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             chipBackgroundColor =
                 ContextCompat.getColorStateList(context, R.color.selected_bottom_menu_item2)
             closeIconTint = ContextCompat.getColorStateList(context, R.color.chip_close_icon_tint)
+            setOnClickListener {
+                val picker = callTimePicker(hour, minute)
+                picker.addOnPositiveButtonClickListener {
+                    val editChipText = timeToDisplayString(picker.hour, picker.minute)
+                    this.text = editChipText
+                }
+                picker.show(parentFragmentManager, TIME_PICKER_TAG)
+            }
         }
         binding.chipGroupTime.addView(newChip, binding.chipGroupTime.childCount)
     }
@@ -400,8 +417,25 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         val cameraBeta = sharedPref.getBoolean(getString(R.string.sp_key_camera_beta), defaultValue)
         if (cameraBeta) {
             activateCamera()
+            activateUseBanner()
             binding.scanBarcode.visibility = View.VISIBLE
         }
+    }
+
+    /**Использование баннера работает неправильно, периодически крашится*/
+    private fun activateUseBanner() {
+        with(binding) {
+            bannerLayout.visibility = View.VISIBLE
+            useBannerChBox.setOnClickListener {
+                if (!checkSystemAlertWindowPermission()) {
+                    (it as CheckBox).isChecked = false
+                }
+            }
+            infoAboutBanner.setOnClickListener {
+                showInfoAboutBannerDialog()
+            }
+        }
+
     }
 
     private fun checkCameraPermission() {
@@ -478,8 +512,8 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     }
 
     private fun updateSelectedDays(selectedDays: List<Int>) {
-        for (i in selectedDays.indices) {
-            val chip = binding.chipGroupDaysWeek.getChildAt(i) as Chip
+        for (i in selectedDays) {
+            val chip = binding.chipGroupDaysWeek.getChildAt(i - 1) as Chip
             if (!chip.isChecked) {
                 chip.isChecked = true
             }
@@ -488,8 +522,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
 
     private fun updateIntakeTimeChips(intakeTime: List<MedicationModel.Time>) {
         intakeTime.forEach {
-            if (it.minute < 10) addChipTime("${it.hour}:0${it.minute}")
-            else addChipTime("${it.hour}:${it.minute}")
+            addChipTime(it.hour, it.minute)
         }
     }
 
@@ -504,4 +537,10 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             this.text = text
         }
     }
+
+    private fun timeToDisplayString(hour: Int, minute: Int) =
+        if (minute < 10) "${hour}:0${minute}"
+        else "$hour:$minute"
+
+
 }

@@ -1,7 +1,7 @@
 package com.example.medstime.di
 
 import android.content.res.Resources
-import com.example.domain.usecase.reminder.GetMedicationIntakeModel
+import com.example.domain.usecase.medication_intake.GetMedicationIntakeModel
 import com.example.domain.usecase.reminder.GetRemindersWithStatus
 import com.example.medstime.ui.add_med.AddMedViewModel
 import com.example.medstime.ui.main_activity.MainViewModel
@@ -22,7 +22,6 @@ val appModule = module {
             changeMedicationIntakeIsTakenUseCase = get(),
             changeNotificationStatusUseCase = get(),
             changeActualTimeIntakeUseCase = get(),
-            saveNewMedicationUseCase = get(),
         )
     }
     viewModel<AddMedViewModel> {

@@ -1,11 +1,11 @@
-package com.example.domain.usecase.common
+package com.example.domain.usecase.medication_intake
 
 import com.example.domain.Repository
 import com.example.domain.models.MedicationIntakeModel
 
 
-class ChangeMedicationIntakeIsTaken(private val repository: Repository.CommonContract) {
-    fun invoke(
+class ChangeMedicationIntakeIsTaken(private val repository: Repository.MedicationIntakeContract) {
+    suspend fun invoke(
         medicationIntakeId: String,
         newIsTaken: Boolean,
         actualIntakeTime: MedicationIntakeModel.Time?

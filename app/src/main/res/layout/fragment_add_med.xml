@@ -64,6 +64,7 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textFieldMedicationName"
                     style="@style/AddMedTextInputLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -73,7 +74,6 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/medicationName"
-                        style="@style/AddMedTextInputEditText"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:inputType="text" />
@@ -114,6 +114,7 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textFieldDosage"
                     style="@style/AddMedTextInputLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -179,11 +180,13 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
+                android:id="@+id/bannerLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 android:focusableInTouchMode="true"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <CheckBox
                     android:id="@+id/useBannerChBox"

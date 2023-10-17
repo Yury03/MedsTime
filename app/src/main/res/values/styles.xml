@@ -38,20 +38,11 @@
     <style name="AddMedTextInputLayout" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="hintTextColor">@color/selected_bottom_menu_item2</item>
         <item name="boxStrokeColor">@color/color_outlined_stroke</item>
-
-
     </style>
 
     <style name="AddMedTextInputLayout.ExposedDropdownMenu" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
         <item name="hintTextColor">@color/selected_bottom_menu_item2</item>
         <item name="boxStrokeColor">@color/color_outlined_stroke</item>
-
-
-    </style>
-
-    <style name="AddMedTextInputEditText" parent="ThemeOverlay.Design.TextInputEditText">
-        <item name="android:colorControlActivated">@color/black</item>
-
     </style>
 
     <style name="MedicationItemButton" parent="@style/Widget.MaterialComponents.Button.TextButton">
@@ -63,7 +54,6 @@
         <item name="iconTint">@color/main_black_and_white</item>
         <item name="marginHorizontal">8dp</item>
     </style>
-
 
     <color name="light_secondary_black_and_white">#858585</color>
 </resources>
