@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.domain.models.PackageItemModel
@@ -20,14 +21,14 @@ import java.util.Date
 
 @Composable
 fun PackageItem(packageModel: PackageItemModel) {
-
     Card {
         Column(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp)
         ) {
             RowWithIcon(
                 drawableId = R.drawable.icon_calendar,
-                text = "90 приемов",
+                text = "${packageModel.intakesCount} " +
+                        stringResource(id = R.string.intakes).padStart(0),
             )
             RowWithIcon(
                 drawableId = R.drawable.icon_box_plus,
@@ -52,7 +53,7 @@ private fun RowWithIcon(drawableId: Int, text: String) {
             painter = painterResource(id = drawableId),
             contentDescription = "",
         )
-        Text(text = text)
+        Text(text = text, modifier = Modifier.padding(4.dp))
     }
 }
 
@@ -62,7 +63,6 @@ private fun dateToString(time: Long): String {
     val date = Date(time)
     return formatter.format(date)
 }
-
 
 @Preview(showBackground = true)
 @Composable

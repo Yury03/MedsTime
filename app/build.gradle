@@ -77,6 +77,7 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
     implementation 'androidx.activity:activity-compose:1.8.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-compose'
 
     //todo for barcode scan
     // implementation 'com.google.zxing:core:3.4.1'
