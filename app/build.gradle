@@ -63,6 +63,7 @@ dependencies {
     implementation 'androidx.camera:camera-view:1.2.3'
     implementation 'androidx.camera:camera-lifecycle:1.2.3'
     implementation "androidx.camera:camera-camera2:1.2.3"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.2"
 
     //Compose
@@ -78,12 +79,10 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
     implementation 'androidx.activity:activity-compose:1.8.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-compose'
+    implementation "me.saket.swipe:swipe:1.2.0"
 
     //todo for barcode scan
     // implementation 'com.google.zxing:core:3.4.1'
-
-    //etc
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
 
     //tests
     testImplementation 'junit:junit:4.13.2'

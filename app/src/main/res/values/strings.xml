@@ -73,6 +73,7 @@
     <string name="edit_reminder">Редактировать напоминания</string>
     <string name="required_field">Обязательное поле</string>
     <string name="intakes">приемов</string>
+    <string name="before">до</string>
     <string-array name="dosage_array">
         <item>Мг</item>
         <item>Капсулы</item>
