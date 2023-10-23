@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.fragment.app.Fragment
+import com.example.medstime.ui.meds_tracking.components.MedsTrackPlaceholder
 import com.example.medstime.ui.meds_tracking.components.MedsTrackingItem
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -47,10 +48,14 @@ class MedsTrackingFragment : Fragment() {
             if (state.isLoading) {
                 CircularProgressIndicator()
             } else {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    itemsIndexed(state.medsTrackList) { _, medsTrackItem ->
-                        MedsTrackingItem(trackModel = medsTrackItem)
+                if (state.medsTrackList.isNotEmpty()) {
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        itemsIndexed(state.medsTrackList) { _, medsTrackItem ->
+                            MedsTrackingItem(trackModel = medsTrackItem)
+                        }
                     }
+                } else {
+                    MedsTrackPlaceholder()
                 }
             }
         }
