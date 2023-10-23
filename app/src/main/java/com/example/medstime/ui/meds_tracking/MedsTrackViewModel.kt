@@ -1,5 +1,6 @@
 package com.example.medstime.ui.meds_tracking
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,8 +20,14 @@ class MedsTrackViewModel(
     init {
         _state.value = MedsTrackState(isLoading = true, medsTrackList = listOf())
         viewModelScope.launch(Dispatchers.IO) {
-            _state.value =
-                MedsTrackState(isLoading = false, medsTrackList = getAllTracksUseCase.invoke())
+            _state.postValue(
+                MedsTrackState(
+                    isLoading = false,
+                    medsTrackList = getAllTracksUseCase.invoke()
+                )
+            )
+            Log.i("MedsTrackingFragmentViewModel", _state.value.toString())
+            Log.i("MedsTrackingFragmentViewModel", state.value.toString())
         }
     }
 }

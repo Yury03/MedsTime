@@ -5,6 +5,7 @@ import com.example.data.room.MedsTrackDatabase
 import com.example.data.room.dao.MedsTrackDao
 import com.example.domain.Repository
 import com.example.domain.models.MedsTrackModel
+import com.example.domain.models.PackageItemModel
 
 class MedsTrackContractImpl(context: Context) : Repository.MedsTrackContract {
     private val medsTrackDatabase: MedsTrackDatabase by lazy {
@@ -15,6 +16,52 @@ class MedsTrackContractImpl(context: Context) : Repository.MedsTrackContract {
 //        return medsTrackDao.getAll().map {
 //            MedsTrackMapper.mapToModel(it)
 //        }
-        return emptyList()
+//        return emptyList()
+        val packageItemsStub = listOf(
+            PackageItemModel(
+                id = "fuisset",
+                idMedsTrackModel = "verterem",
+                intakesCount = 343,
+                endDate = 1683963600900,
+                expirationDate = 1683963600900
+            ),
+            PackageItemModel(
+                id = "fuisset",
+                idMedsTrackModel = "verterem",
+                intakesCount = 33,
+                endDate = 1683963600900,
+                expirationDate = 1683963600900
+            ),
+            PackageItemModel(
+                id = "fuisset",
+                idMedsTrackModel = "verterem",
+                intakesCount = 33,
+                endDate = 1683963600900,
+                expirationDate = 1683963600900
+            ),
+            PackageItemModel(
+                id = "fuisset",
+                idMedsTrackModel = "verterem",
+                intakesCount = 33,
+                endDate = 1683963600900,
+                expirationDate = 1683963600900
+            ),
+        )
+        return listOf(
+            MedsTrackModel(
+                "111", "item 1",
+                endDate = 1683844600900,
+                packageCounter = 90,
+                recommendedPurchaseDate = 1683963600900,
+                packageItems = packageItemsStub,
+            ),
+            MedsTrackModel(
+                "111", "item 2",
+                endDate = 1683844600900,
+                packageCounter = 24,
+                recommendedPurchaseDate = 1683963600900,
+                packageItems = packageItemsStub,
+            ),
+        )
     }
 }

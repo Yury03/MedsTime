@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -35,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import com.example.domain.models.MedsTrackModel
 import com.example.domain.models.PackageItemModel
 import com.example.medstime.R
@@ -44,10 +48,56 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@Composable
+fun MedsTrackingList(trackingList: List<MedsTrackModel>) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            itemsIndexed(trackingList) { _, item ->
+                MedsTrackingItem(trackModel = item)
+            }
+        }
+        AddMedsTrackingItem()
+    }
+}
+
+@Composable
+fun AddMedsTrackingItem() {
+    Card(
+        modifier = Modifier
+            .padding(vertical = 8.dp)
+            .height(108.dp)
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(15.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(
+                ContextCompat.getColor(
+                    LocalContext.current,
+                    R.color.screen_front,
+                )
+            ),
+        ),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.button_icon_plus),
+                contentDescription = ""
+            )
+        }
+
+    }
+}
 
 @Composable
 fun MedsTrackingItem(trackModel: MedsTrackModel) {
-    val expanded = remember { mutableStateOf(true) }//todo зависит от стейта?
+    val expanded = remember { mutableStateOf(false) }//todo зависит от стейта?
     Card(
         modifier = Modifier
             .fillMaxSize()
@@ -55,6 +105,14 @@ fun MedsTrackingItem(trackModel: MedsTrackModel) {
             .clickable { expanded.value = !expanded.value },
         shape = RoundedCornerShape(15.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(
+                ContextCompat.getColor(
+                    LocalContext.current,
+                    R.color.screen_front,
+                )
+            ),
+        ),
     ) {
         val archive = SwipeAction(icon = (painterResource(id = R.drawable.button_icon_edit)),
             background = colorResource(id = R.color.selected_bottom_menu_item2),
@@ -85,7 +143,8 @@ private fun MainPart(trackModel: MedsTrackModel) {
         fontWeight = FontWeight.Bold,
     )
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceAround,
     ) {
         val beforeStr = stringResource(id = R.string.before)
@@ -106,7 +165,10 @@ private fun MainPart(trackModel: MedsTrackModel) {
 }
 
 @Composable
-fun ExpandablePart(trackModel: MedsTrackModel, expanded: MutableState<Boolean>) {
+fun ExpandablePart(
+    trackModel: MedsTrackModel,
+    expanded: MutableState<Boolean>,
+) {
     val transition = updateTransition(expanded, label = "expandableLayoutTransition")
     val height by transition.animateDp(
         label = "expandableLayoutHeightTransition",
@@ -119,7 +181,8 @@ fun ExpandablePart(trackModel: MedsTrackModel, expanded: MutableState<Boolean>) 
     Box(
         modifier = Modifier
             .height(height)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .background(colorResource(id = R.color.screen_front)),
         contentAlignment = Alignment.TopStart,
     ) {
         LazyRow() {
@@ -150,9 +213,20 @@ private fun getDisplayDate(date: Long): String {
     return formatter.format(dateObject)
 }
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFFF0F1F5,
+    showSystemUi = true,
+)
 @Composable
-private fun PreviewMedsTrackingItem() {
+private fun PreviewMedsTrackingList() {
+    Box(modifier = Modifier.fillMaxSize()) {
+        MedsTrackingList(trackingList = getTrackingListStub())
+    }
+}
+
+
+fun getTrackingListStub(): List<MedsTrackModel> {
     val packageItemsStub = listOf(
         PackageItemModel(
             id = "fuisset",
@@ -183,7 +257,7 @@ private fun PreviewMedsTrackingItem() {
             expirationDate = 1683963600900
         ),
     )
-    val trackModelsStub = listOf(
+    return listOf(
         MedsTrackModel(
             "111", "item 1",
             endDate = 1683844600900,
@@ -199,9 +273,5 @@ private fun PreviewMedsTrackingItem() {
             packageItems = packageItemsStub,
         ),
     )
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        itemsIndexed(trackModelsStub) { _, item ->
-            MedsTrackingItem(trackModel = item)
-        }
-    }
+//    return emptyList()
 }
