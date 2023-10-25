@@ -67,10 +67,9 @@ fun MedsTrackingList(trackingList: List<MedsTrackModel>) {
 fun AddMedsTrackingItem() {
     Card(
         modifier = Modifier
-            .padding(vertical = 8.dp)
             .height(108.dp)
             .fillMaxWidth(),
-        shape = RoundedCornerShape(15.dp),
+        shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color(
@@ -88,7 +87,7 @@ fun AddMedsTrackingItem() {
         ) {
             Image(
                 painter = painterResource(id = R.drawable.button_icon_plus),
-                contentDescription = ""
+                contentDescription = null
             )
         }
 
@@ -103,7 +102,7 @@ fun MedsTrackingItem(trackModel: MedsTrackModel) {
             .fillMaxSize()
             .padding(vertical = 8.dp)
             .clickable { expanded.value = !expanded.value },
-        shape = RoundedCornerShape(15.dp),
+        shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color(
@@ -123,10 +122,8 @@ fun MedsTrackingItem(trackModel: MedsTrackModel) {
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 MainPart(trackModel)
                 ExpandablePart(trackModel, expanded)
@@ -142,6 +139,7 @@ private fun MainPart(trackModel: MedsTrackModel) {
         fontSize = dimensionResource(id = R.dimen.text_4_level).value.sp,
         fontWeight = FontWeight.Bold,
     )
+
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -152,14 +150,24 @@ private fun MainPart(trackModel: MedsTrackModel) {
             drawableId = R.drawable.icon_calendar,
             text = beforeStr.padEnd(beforeStr.length + 1) +
                     getDisplayDate(trackModel.endDate),
+            modifier = Modifier//todo как вынести в переменную с weight?
+                .padding(vertical = 8.dp)
+                .weight(1f),
         )
         ColumnWithIcon(
             drawableId = R.drawable.icon_box,
             text = trackModel.packageCounter.toString(),
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .background(colorResource(id = R.color.light_grey_background))
+                .weight(1f),
         )
         ColumnWithIcon(
             drawableId = R.drawable.icon_cart,
             text = getDisplayDate(trackModel.recommendedPurchaseDate),
+            modifier = Modifier //todo как вынести в переменную с weight?
+                .padding(vertical = 8.dp)
+                .weight(1f)
         )
     }
 }
@@ -187,24 +195,28 @@ fun ExpandablePart(
     ) {
         LazyRow() {
             itemsIndexed(trackModel.packageItems) { _, item ->
-                PackageItemSecond(packageModel = item)
+                PackageItem(packageModel = item)
             }
         }
     }
 }
 
 @Composable
-private fun ColumnWithIcon(drawableId: Int, text: String) {
+private fun ColumnWithIcon(drawableId: Int, text: String, modifier: Modifier) {
     Column(
-        modifier = Modifier.padding(vertical = 2.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+
     ) {
         Image(
+            modifier = Modifier.padding(vertical = 4.dp),
             painter = painterResource(id = drawableId),
-            contentDescription = "",
+            contentDescription = null,
         )
         Text(text = text, modifier = Modifier.padding(4.dp))
     }
+
+
 }
 
 private fun getDisplayDate(date: Long): String {
@@ -213,12 +225,8 @@ private fun getDisplayDate(date: Long): String {
     return formatter.format(dateObject)
 }
 
-@Preview(
-    showBackground = true,
-    backgroundColor = 0xFFF0F1F5,
-    showSystemUi = true,
-)
 @Composable
+@Preview
 private fun PreviewMedsTrackingList() {
     Box(modifier = Modifier.fillMaxSize()) {
         MedsTrackingList(trackingList = getTrackingListStub())

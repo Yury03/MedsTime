@@ -1,7 +1,6 @@
 package com.example.medstime.ui.meds_tracking
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,7 +52,6 @@ class MedsTrackingFragment : Fragment() {
                 medsTrackList = listOf()
             )
         )
-        Log.i(TAG, "[UPDATE STATE]: $state")
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -61,10 +59,8 @@ class MedsTrackingFragment : Fragment() {
             contentAlignment = Alignment.Center
         ) {
             if (state.isLoading) {
-                Log.i(TAG, "[UPDATE]: state.isLoading = true")
                 CircularProgressIndicator()
             } else {
-                Log.i(TAG, "[UPDATE]: state.isLoading = false")
                 MedsTrackingList(trackingList = state.medsTrackList)
                 if (state.medsTrackList.isEmpty()) {
                     MedsTrackPlaceholder()

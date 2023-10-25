@@ -25,7 +25,7 @@ fun MedsTrackPlaceholder() {
     ) {
         Image(
             painter = painterResource(id = R.drawable.placeholder_capybara),
-            contentDescription = "capybara",
+            contentDescription = null,
             modifier = Modifier.wrapContentWidth(),
         )
         Text(

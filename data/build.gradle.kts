@@ -15,25 +15,31 @@ android {
     }
 
     buildTypes {
-        release {
+        getByName("release") {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
+        getByName("debug") {
+            isMinifyEnabled = true
+            proguardFiles("proguard-rules.pro")
+        }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_19
+        targetCompatibility = JavaVersion.VERSION_19
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
+//    kotlinOptions {
+//        jvmTarget = "19"
+//    }
 }
 
+
+
 dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.10")
     implementation("androidx.core:core-ktx:1.12.0")
     //modules
     implementation(project(":domain"))

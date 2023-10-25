@@ -1,6 +1,5 @@
 package com.example.medstime.ui.meds_tracking
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,8 +25,6 @@ class MedsTrackViewModel(
                     medsTrackList = getAllTracksUseCase.invoke()
                 )
             )
-            Log.i("MedsTrackingFragmentViewModel", _state.value.toString())
-            Log.i("MedsTrackingFragmentViewModel", state.value.toString())
         }
     }
 }
