@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -67,6 +68,7 @@ fun MedsTrackingList(trackingList: List<MedsTrackModel>) {
 fun AddMedsTrackingItem() {
     Card(
         modifier = Modifier
+            .padding(vertical = 8.dp)
             .height(108.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -96,12 +98,11 @@ fun AddMedsTrackingItem() {
 
 @Composable
 fun MedsTrackingItem(trackModel: MedsTrackModel) {
-    val expanded = remember { mutableStateOf(false) }//todo зависит от стейта?
+    val expanded = remember { mutableStateOf(true) }//todo зависит от стейта?
     Card(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 8.dp)
-            .clickable { expanded.value = !expanded.value },
+            .padding(vertical = 8.dp),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         colors = CardDefaults.cardColors(
@@ -122,10 +123,10 @@ fun MedsTrackingItem(trackModel: MedsTrackModel) {
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                MainPart(trackModel)
+                MainPart(trackModel, expanded)
                 ExpandablePart(trackModel, expanded)
             }
         }
@@ -133,7 +134,7 @@ fun MedsTrackingItem(trackModel: MedsTrackModel) {
 }
 
 @Composable
-private fun MainPart(trackModel: MedsTrackModel) {
+private fun MainPart(trackModel: MedsTrackModel, expanded: MutableState<Boolean>) {
     Text(
         text = trackModel.name,
         fontSize = dimensionResource(id = R.dimen.text_4_level).value.sp,
@@ -151,24 +152,40 @@ private fun MainPart(trackModel: MedsTrackModel) {
             text = beforeStr.padEnd(beforeStr.length + 1) +
                     getDisplayDate(trackModel.endDate),
             modifier = Modifier//todo как вынести в переменную с weight?
-                .padding(vertical = 8.dp)
+                .padding(8.dp)
                 .weight(1f),
         )
         ColumnWithIcon(
             drawableId = R.drawable.icon_box,
             text = trackModel.packageCounter.toString(),
             modifier = Modifier
-                .padding(vertical = 8.dp)
+                .fillMaxHeight()
                 .background(colorResource(id = R.color.light_grey_background))
-                .weight(1f),
+                .padding(8.dp)
+                .weight(1f)
+                .clickable { expanded.value = !expanded.value },
         )
         ColumnWithIcon(
             drawableId = R.drawable.icon_cart,
             text = getDisplayDate(trackModel.recommendedPurchaseDate),
             modifier = Modifier //todo как вынести в переменную с weight?
-                .padding(vertical = 8.dp)
+                .padding(8.dp)
                 .weight(1f)
         )
+    }
+}
+
+@Composable
+private fun ColumnWithIcon(drawableId: Int, text: String, modifier: Modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Image(
+            painter = painterResource(id = drawableId),
+            contentDescription = null,
+        )
+        Text(text = text)
     }
 }
 
@@ -184,13 +201,22 @@ fun ExpandablePart(
             tween(durationMillis = 600)
         }
     ) { isExpanded ->
-        if (isExpanded.value) 110.dp else 0.dp//todo как исправить 150.dp на wrap_content
+        if (isExpanded.value) 110.dp else 0.dp//todo как исправить 110.dp на wrap_content
+    }
+    val verticalPaddingBox by transition.animateDp(
+        label = "expandableLayoutHeightTransition",
+        transitionSpec = {
+            tween(durationMillis = 600)
+        }
+    ) { isExpanded ->
+        if (isExpanded.value) 8.dp else 0.dp
     }
     Box(
         modifier = Modifier
+            .background(colorResource(id = R.color.light_grey_background))
+            .padding(vertical = verticalPaddingBox)
             .height(height)
-            .fillMaxWidth()
-            .background(colorResource(id = R.color.screen_front)),
+            .fillMaxWidth(),
         contentAlignment = Alignment.TopStart,
     ) {
         LazyRow() {
@@ -199,24 +225,6 @@ fun ExpandablePart(
             }
         }
     }
-}
-
-@Composable
-private fun ColumnWithIcon(drawableId: Int, text: String, modifier: Modifier) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-
-    ) {
-        Image(
-            modifier = Modifier.padding(vertical = 4.dp),
-            painter = painterResource(id = drawableId),
-            contentDescription = null,
-        )
-        Text(text = text, modifier = Modifier.padding(4.dp))
-    }
-
-
 }
 
 private fun getDisplayDate(date: Long): String {
@@ -232,7 +240,6 @@ private fun PreviewMedsTrackingList() {
         MedsTrackingList(trackingList = getTrackingListStub())
     }
 }
-
 
 fun getTrackingListStub(): List<MedsTrackModel> {
     val packageItemsStub = listOf(
