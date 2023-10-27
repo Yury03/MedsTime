@@ -1,5 +1,6 @@
 package com.example.medstime.ui.meds_tracking.components
 
+import android.util.Log
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
@@ -69,8 +70,8 @@ fun AddMedsTrackingItem() {
     Card(
         modifier = Modifier
             .padding(vertical = 8.dp)
-            .height(108.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .height(96.dp),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         colors = CardDefaults.cardColors(
@@ -92,17 +93,17 @@ fun AddMedsTrackingItem() {
                 contentDescription = null
             )
         }
-
     }
 }
 
 @Composable
 fun MedsTrackingItem(trackModel: MedsTrackModel) {
-    val expanded = remember { mutableStateOf(true) }//todo зависит от стейта?
+    val expanded = remember { mutableStateOf(false) }//todo зависит от стейта?
     Card(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .fillMaxWidth()
+            .height(96.dp),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         colors = CardDefaults.cardColors(
@@ -115,7 +116,7 @@ fun MedsTrackingItem(trackModel: MedsTrackModel) {
         ),
     ) {
         val archive = SwipeAction(icon = (painterResource(id = R.drawable.button_icon_edit)),
-            background = colorResource(id = R.color.selected_bottom_menu_item2),
+            background = colorResource(id = R.color.meds_time_primary),
             onSwipe = {/*переход на фрагмент редактирования*/ })
 
         SwipeableActionsBox(
@@ -159,11 +160,14 @@ private fun MainPart(trackModel: MedsTrackModel, expanded: MutableState<Boolean>
             drawableId = R.drawable.icon_box,
             text = trackModel.packageCounter.toString(),
             modifier = Modifier
+                .clickable {
+                    Log.e("TAG", "text")
+                    expanded.value = !expanded.value
+                }//todo появился баг с переходом на compose 1.5.3(не работает клик)
                 .fillMaxHeight()
                 .background(colorResource(id = R.color.light_grey_background))
                 .padding(8.dp)
-                .weight(1f)
-                .clickable { expanded.value = !expanded.value },
+                .weight(1f),
         )
         ColumnWithIcon(
             drawableId = R.drawable.icon_cart,
@@ -178,7 +182,7 @@ private fun MainPart(trackModel: MedsTrackModel, expanded: MutableState<Boolean>
 @Composable
 private fun ColumnWithIcon(drawableId: Int, text: String, modifier: Modifier) {
     Column(
-        modifier = modifier,
+        modifier = modifier.clickable { Log.e("TAG", text) },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(

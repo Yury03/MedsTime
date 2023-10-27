@@ -69,6 +69,3 @@ class MedsTrackingFragment : Fragment() {
         }
     }
 }
-
-
-

@@ -45,12 +45,12 @@ dependencies {
     implementation(project(":domain"))
 
     //databases
-    implementation("androidx.room:room-ktx:2.5.2")
-    implementation("androidx.room:room-runtime:2.5.2")
-    ksp("androidx.room:room-compiler:2.5.2")
+    implementation("androidx.room:room-ktx:2.6.0")
+    implementation("androidx.room:room-runtime:2.6.0")
+    ksp("androidx.room:room-compiler:2.6.0")
 
     //etc
-    implementation("com.google.code.gson:gson:2.9.0")
+    implementation("com.google.code.gson:gson:2.10.1")
 
     //tests
     testImplementation("junit:junit:4.13.2")

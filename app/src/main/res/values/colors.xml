@@ -13,8 +13,8 @@
     <color name="bottom_menu_background">#FFFFFFFF</color>
     <color name="bottom_menu_item">#FF000000</color>
     <!--todo naming-->
-    <color name="selected_bottom_menu_item2">#87CEEB</color>
-    <color name="selected_bottom_menu_item">#04A1F4</color>
+    <color name="meds_time_primary">#87CEEB</color>
+    <color name="meds_time_primary_dark">#04A1F4</color>
 
     <!--general colors-->
     <color name="screen_back">#FFF0F1F5</color>
@@ -49,4 +49,6 @@
     <color name="capybara_color_20">#3304A1F4</color>
     <color name="capybara_color_10">#1A04A1F4</color>
 
+    <!--icon default colors-->
+    <color name="icon_default">#FF111111</color>
 </resources>
