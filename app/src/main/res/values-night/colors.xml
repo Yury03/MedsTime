@@ -4,8 +4,8 @@
     <color name="bottom_menu_background">#303134</color>
     <color name="bottom_menu_item">#FFB0B0B0</color>
     <!--    todo naming-->
-    <color name="selected_bottom_menu_item2">#FF87CEEB</color>
-    <color name="selected_bottom_menu_item">#FF59B85D</color>
+    <color name="meds_time_primary">#6BD06F</color>
+    <color name="meds_time_primary_dark">#FF59B85D</color>
     <!--general colors-->
     <color name="screen_back">#FF202124</color>
     <color name="screen_front">#FF333333</color>
@@ -31,5 +31,8 @@
     <color name="capybara_color_30">#4D83D8FB</color>
     <color name="capybara_color_20">#3383D8FB</color>
     <color name="capybara_color_10">#1A83D8FB</color>
+
+    <!--icon default colors-->
+    <color name="icon_default">#FFC2C2C2</color>
 
 </resources>

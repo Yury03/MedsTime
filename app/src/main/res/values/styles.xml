@@ -16,7 +16,7 @@
     <style name="AddMedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:backgroundTint">@color/selected_bottom_menu_item2</item>
+        <item name="android:backgroundTint">@color/meds_time_primary</item>
         <item name="android:textAlignment">textStart</item>
         <item name="iconGravity">end</item>
         <item name="iconTint">@color/black</item>
@@ -31,17 +31,17 @@
     </style>
 
     <style name="TimePickerDialog" parent="@style/ThemeOverlay.MaterialComponents.TimePicker">
-        <item name="colorPrimary">@color/selected_bottom_menu_item2</item>
+        <item name="colorPrimary">@color/meds_time_primary</item>
         <item name="colorOnPrimary">@color/white</item>
     </style>
 
     <style name="AddMedTextInputLayout" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="hintTextColor">@color/selected_bottom_menu_item2</item>
+        <item name="hintTextColor">@color/meds_time_primary</item>
         <item name="boxStrokeColor">@color/color_outlined_stroke</item>
     </style>
 
     <style name="AddMedTextInputLayout.ExposedDropdownMenu" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-        <item name="hintTextColor">@color/selected_bottom_menu_item2</item>
+        <item name="hintTextColor">@color/meds_time_primary</item>
         <item name="boxStrokeColor">@color/color_outlined_stroke</item>
     </style>
 

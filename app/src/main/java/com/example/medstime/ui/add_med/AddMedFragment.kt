@@ -53,20 +53,18 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
 
     private val viewModel by viewModel<AddMedViewModel>()
     private lateinit var binding: FragmentAddMedBinding
+
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
     private lateinit var _previousState: AddMedState
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
+//        cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext()) ошибка с библиотекой камеры? Появилась после изменения грэдл. Приложение крашится
         binding = FragmentAddMedBinding.inflate(inflater, container, false)
         hideBottomNavigationBar()
         return binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -77,7 +75,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         setAdapterSpinReminderType()
         setAdapterSpinIntakeType()
         setAdapterSpinFrequency()
-        betaFunctions()
+//        betaFunctions()
         initView()
     }
 
@@ -352,7 +350,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                 binding.chipGroupTime.removeView(newChip)
             }
             chipBackgroundColor =
-                ContextCompat.getColorStateList(context, R.color.selected_bottom_menu_item2)
+                ContextCompat.getColorStateList(context, R.color.meds_time_primary)
             closeIconTint = ContextCompat.getColorStateList(context, R.color.chip_close_icon_tint)
             setOnClickListener {
                 val picker = callTimePicker(hour, minute)

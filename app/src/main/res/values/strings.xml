@@ -72,6 +72,9 @@
     <string name="edit_med">Редактировать отслеживание</string>
     <string name="edit_reminder">Редактировать напоминания</string>
     <string name="required_field">Обязательное поле</string>
+    <string name="intakes">приемов</string>
+    <string name="before">до</string>
+    <string name="placeholder_meds_track_fragment">Здесь будут показаны все ваши лекарства</string>
     <string-array name="dosage_array">
         <item>Мг</item>
         <item>Капсулы</item>

@@ -6,6 +6,7 @@ import com.example.domain.usecase.reminder.GetRemindersWithStatus
 import com.example.medstime.ui.add_med.AddMedViewModel
 import com.example.medstime.ui.main_activity.MainViewModel
 import com.example.medstime.ui.medication.MedicationListViewModel
+import com.example.medstime.ui.meds_tracking.MedsTrackViewModel
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -30,6 +31,11 @@ val appModule = module {
             getMedicationModelUseCase = get(),
             replaceMedicationModelUseCase = get(),
             resources = get(),
+        )
+    }
+    viewModel<MedsTrackViewModel> {
+        MedsTrackViewModel(
+            getAllTracksUseCase = get()
         )
     }
     single<Resources> { androidContext().resources }

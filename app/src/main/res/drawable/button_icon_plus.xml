@@ -7,13 +7,13 @@
     <path
         android:pathData="M12 4.37v15.26"
         android:strokeWidth="2"
-        android:strokeColor="@color/main_black_and_white"
+        android:strokeColor="@color/icon_default"
         android:strokeLineCap="round"
         android:strokeMiterLimit="10" />
     <path
         android:pathData="M4.37 12h15.26"
         android:strokeWidth="2"
-        android:strokeColor="@color/main_black_and_white"
+        android:strokeColor="@color/icon_default"
         android:strokeLineCap="round"
         android:strokeMiterLimit="10" />
 </vector>

@@ -12,8 +12,7 @@
     <fragment
         android:id="@+id/medsTrackingFragment"
         android:name="com.example.medstime.ui.meds_tracking.MedsTrackingFragment"
-        android:label="fragment_meds_tracking"
-        tools:layout="@layout/fragment_meds_tracking" />
+        android:label="fragment_meds_tracking" />
     <fragment
         android:id="@+id/notificationsFragment"
         android:name="com.example.medstime.ui.notifications.NotificationsFragment"
