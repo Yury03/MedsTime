@@ -2,13 +2,18 @@ package com.example.domain
 
 import com.example.domain.models.MedicationIntakeModel
 import com.example.domain.models.MedicationModel
+import com.example.domain.models.MedsTrackModel
 import com.example.domain.models.ReminderModel
 import kotlinx.coroutines.flow.Flow
 
 interface Repository {
     interface MedicationIntakeContract {
         suspend fun getIntakeList(): Flow<List<MedicationIntakeModel>>
-        suspend fun changeActualTimeIntake(medicationIntakeId: String, newTime: MedicationIntakeModel.Time)
+        suspend fun changeActualTimeIntake(
+            medicationIntakeId: String,
+            newTime: MedicationIntakeModel.Time
+        )
+
         suspend fun changeMedicationIntakeIsTaken(
             medicationIntakeId: String,
             newIsTaken: Boolean,
@@ -37,5 +42,9 @@ interface Repository {
         suspend fun removeMedicationModel(medicationModelId: String)
         suspend fun replaceMedicationModel(medicationModel: MedicationModel)
         suspend fun getMedicationById(id: String): MedicationModel
+    }
+
+    interface MedsTrackContract {
+        suspend fun getAllTracks(): List<MedsTrackModel>
     }
 }

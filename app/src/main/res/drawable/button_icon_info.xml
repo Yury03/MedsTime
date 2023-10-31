@@ -8,7 +8,7 @@
         <path
             android:pathData="M12 22c5.52 0 10-4.48 10-10S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10M12 16v-4M12 8h0.01"
             android:strokeWidth="2"
-            android:strokeColor="@color/main_black_and_white"
+            android:strokeColor="@color/icon_default"
             android:strokeLineCap="round"
             android:strokeLineJoin="round" />
     </group>

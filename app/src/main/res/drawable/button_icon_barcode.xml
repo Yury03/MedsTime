@@ -6,94 +6,94 @@
     android:viewportHeight="24">
     <group>
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M8.57 0.01H7L6.97 0.04v23.83c0 0.01 0 0.02 0.02 0.02h1.58c0.01 0 0.02 0 0.02-0.02V0.04c0-0.01 0-0.03-0.02-0.03Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M47.39 0h-0.57c-0.01 0-0.02 0.01-0.02 0.03v23.83c0 0.02 0.01 0.03 0.02 0.03h0.57l0.01-0.03V0.03L47.4 0Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M0.58 0H0.02L0 0.03v23.84c0 0.02 0 0.03 0.02 0.03h0.56c0.02 0 0.02-0.01 0.02-0.03V0.03C0.6 0.02 0.6 0 0.58 0Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M1.58 0H1.02L1 0.04v23.83c0 0.02 0.01 0.03 0.02 0.03h0.56c0.01 0 0.02 0 0.02-0.03V0.03c0-0.01 0-0.02-0.02-0.02Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M3.1 0H2.01L2 0.03v23.84l0.02 0.03H3.1l0.02-0.03V0.03C3.11 0.02 3.11 0 3.1 0Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M5.06 0H4.51C4.49 0 4.47 0.03 4.47 0.05v23.8c0 0.02 0.02 0.05 0.04 0.05h0.55c0.02 0 0.04-0.03 0.04-0.05V0.05C5.1 0.03 5.08 0 5.06 0Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M6.56 0.02H5.5c-0.02 0-0.04 0.02-0.04 0.05v23.78c0 0.02 0.02 0.04 0.04 0.04h1.06c0.01 0 0.03-0.02 0.03-0.04V0.07c0-0.03-0.02-0.05-0.03-0.05Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M10.57 0.01H9.44S9.42 0.02 9.42 0.04v23.83l0.02 0.03h1.13l0.02-0.03V0.04c0-0.02 0-0.03-0.02-0.03Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M12.04 0.02H11l-0.02 0.03v23.81c0 0.02 0 0.03 0.02 0.03h1.05c0.02 0 0.02-0.01 0.02-0.03V0.06c0-0.02 0-0.04-0.02-0.04Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M13.6 0h-0.63l-0.02 0.03v23.84c0 0.02 0.01 0.03 0.02 0.03h0.62c0.01 0 0.02-0.01 0.02-0.03V0.03c0-0.01 0-0.02-0.02-0.02Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M17.01 0h-1.04l-0.02 0.04v23.82c0 0.02 0.01 0.03 0.02 0.03h1.04c0.01 0 0.02-0.01 0.02-0.03V0.04c0-0.02 0-0.03-0.02-0.03Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M19 0h-1.06l-0.02 0.03v23.83c0 0.02 0 0.03 0.02 0.03h1.05c0.01 0 0.02-0.01 0.02-0.03V0.03c0-0.01 0-0.03-0.02-0.03Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M21.52 0h-1.09l-0.02 0.03v23.83c0 0.02 0 0.03 0.02 0.03h1.09s0.02 0 0.02-0.03V0.03l-0.02-0.02Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M22.48 0h-0.52C21.93 0 21.9 0.04 21.9 0.1V23.8c0 0.04 0.03 0.08 0.06 0.08h0.52c0.03 0 0.06-0.04 0.06-0.08V0.09C22.54 0.04 22.5 0 22.48 0Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M23.5 0h-0.6l-0.02 0.03v23.83c0 0.02 0.01 0.03 0.02 0.03h0.6c0.02 0 0.02-0.01 0.02-0.03V0.03c0-0.01 0-0.03-0.02-0.03Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M24.48 0h-0.56C23.9 0 23.9 0.03 23.9 0.06v23.78c0 0.03 0.01 0.05 0.03 0.05h0.56c0.02 0 0.04-0.02 0.04-0.05V0.06C24.52 0.03 24.5 0 24.48 0Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M26.49 0.02H24.9l-0.02 0.03v23.81c0 0.02 0.01 0.03 0.02 0.03h1.59s0.02-0.01 0.02-0.03V0.06l-0.02-0.04Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M27.98 0H27.4L27.4 0.03v23.83c0 0.02 0.01 0.03 0.02 0.03h0.57S28 23.88 28 23.86V0.03L27.98 0Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M29.47 0.02H28.4c-0.01 0-0.02 0.01-0.02 0.03v23.81c0 0.02 0.01 0.03 0.02 0.03h1.07c0.01 0 0.02-0.01 0.02-0.03V0.05c0-0.02-0.01-0.03-0.02-0.03Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M30.96 0.02h-1.09s-0.02 0.01-0.02 0.03v23.81c0 0.02 0.01 0.03 0.02 0.03h1.1l0.01-0.03V0.05c0-0.02 0-0.03-0.02-0.03Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M33.45 0.02h-1.58c-0.01 0-0.02 0-0.02 0.02v23.82c0 0.02 0 0.03 0.02 0.03h1.58c0.01 0 0.02-0.01 0.02-0.03V0.04c0-0.01 0-0.02-0.02-0.02Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M34.98 0h-0.6l-0.02 0.03v23.83c0 0.02 0 0.03 0.02 0.03h0.6C35 23.9 35 23.88 35 23.86V0.03C35 0.02 35 0 34.98 0Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M36.43 0h-1.05l-0.02 0.03v23.83c0 0.02 0.01 0.03 0.02 0.03h1.05c0.02 0 0.03-0.01 0.03-0.03V0.03c0-0.01-0.01-0.03-0.03-0.03Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M38.43 0h-1.05l-0.02 0.03v23.83c0 0.02 0 0.03 0.02 0.03h1.05c0.02 0 0.02-0.01 0.02-0.03V0.03c0-0.01 0-0.03-0.02-0.03Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M39.4 0h-0.54c-0.02 0-0.04 0.03-0.04 0.07v23.77c0 0.03 0.02 0.06 0.04 0.06h0.54c0.03 0 0.05-0.03 0.05-0.06V0.07C39.45 0.03 39.43 0 39.4 0Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M40.42 0h-0.58l-0.02 0.03v23.84c0 0.01 0 0.02 0.02 0.02h0.58s0.02 0 0.02-0.02V0.03L40.42 0Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M42.91 0h-0.56l-0.02 0.03v23.84c0 0.02 0 0.03 0.02 0.03h0.56c0.01 0 0.02-0.01 0.02-0.03V0.03c0-0.01 0-0.03-0.02-0.03Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M45.4 0h-1.56l-0.02 0.03v23.83c0 0.02 0 0.03 0.02 0.03h1.56c0.01 0 0.02-0.01 0.02-0.03V0.03c0-0.01 0-0.03-0.02-0.03Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M46.4 0h-0.57l-0.02 0.03v23.83c0 0.02 0.01 0.03 0.02 0.03h0.57c0.01 0 0.02-0.01 0.02-0.03V0.03L46.4 0.01Z" />
         <path
-            android:fillColor="@color/main_black_and_white"
+            android:fillColor="@color/icon_default"
             android:pathData="M15.54 0.03h-1.56c-0.01 0-0.03 0.02-0.03 0.05v23.77c0 0.02 0.02 0.04 0.03 0.04h1.56c0.02 0 0.04-0.02 0.04-0.04V0.08c0-0.03-0.02-0.05-0.04-0.05Z" />
     </group>
 </vector>

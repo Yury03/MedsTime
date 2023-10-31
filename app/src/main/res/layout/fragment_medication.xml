@@ -15,7 +15,7 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/floating_action_button_margin"
         android:layout_marginBottom="@dimen/floating_action_button_margin"
-        android:backgroundTint="@color/selected_bottom_menu_item2"
+        android:backgroundTint="@color/meds_time_primary"
         android:clickable="true"
         android:src="@drawable/button_icon_plus"
         android:tint="@color/main_black_and_white" />
@@ -84,7 +84,7 @@
             android:layout_marginBottom="5dp"
             android:background="@drawable/button_bg_calendar_hide"
             android:text="@string/close"
-            android:textColor="@color/selected_bottom_menu_item2"
+            android:textColor="@color/meds_time_primary"
             android:visibility="gone" />
 
     </LinearLayout>
