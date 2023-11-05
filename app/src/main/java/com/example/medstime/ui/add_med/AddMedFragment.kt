@@ -59,7 +59,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-//        cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext()) ошибка с библиотекой камеры? Появилась после изменения грэдл. Приложение крашится
+//        cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext()) //ошибка с библиотекой камеры? Появилась после изменения грэдл. Приложение крашится
         binding = FragmentAddMedBinding.inflate(inflater, container, false)
         hideBottomNavigationBar()
         return binding.root
@@ -150,7 +150,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                             newSelectedDays = getSelectedDays(),
                             newIntakeTime = getIntakeTime(),
                             newTrackType = binding.trackingType.text.toString(),
-                            newStock = binding.numberMeds.text.toString(),
                             newNumberOfDays = binding.numberDays.text.toString(),
                             newEndDate = binding.endIntakeDate.text.toString(),
                         )
@@ -200,7 +199,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                         frequency.updateAutoCompleteText(state.frequency)
                         updateSelectedDays(state.selectedDays)
                         trackingType.updateAutoCompleteText(state.trackType)
-                        numberMeds.updateText(state.stockOfMedicine)
                         numberDays.updateText(state.numberOfDays)
                         endIntakeDate.updateText(state.endDate)
                     }
@@ -477,25 +475,25 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                 trackArray[0] -> {//интерфейс "Не добавлять"
                     textFieldEndIntakeDate.visibility = View.GONE
                     textFieldNumberDays.visibility = View.GONE
-                    textFieldNumberMeds.visibility = View.GONE
+                    buttonAddMedTrack.visibility = View.GONE
                 }
 
                 trackArray[1] -> {//интерфейс "Запас лекарств"
                     textFieldNumberDays.visibility = View.GONE
                     textFieldEndIntakeDate.visibility = View.GONE
-                    textFieldNumberMeds.visibility = View.VISIBLE
+                    buttonAddMedTrack.visibility = View.VISIBLE
                 }
 
                 trackArray[2] -> {//интерфейс "Количество дней"
                     textFieldNumberDays.visibility = View.VISIBLE
                     textFieldEndIntakeDate.visibility = View.GONE
-                    textFieldNumberMeds.visibility = View.GONE
+                    buttonAddMedTrack.visibility = View.GONE
                 }
 
                 trackArray[3] -> {//интерфейс "Дата"
                     textFieldEndIntakeDate.visibility = View.VISIBLE
                     textFieldNumberDays.visibility = View.GONE
-                    textFieldNumberMeds.visibility = View.GONE
+                    buttonAddMedTrack.visibility = View.GONE
                 }
 
                 frequencyArray[0] -> {//интерфейс "выбранные дни"
@@ -539,6 +537,4 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     private fun timeToDisplayString(hour: Int, minute: Int) =
         if (minute < 10) "${hour}:0${minute}"
         else "$hour:$minute"
-
-
 }

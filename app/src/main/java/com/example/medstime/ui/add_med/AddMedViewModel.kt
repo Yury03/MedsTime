@@ -95,10 +95,12 @@ class AddMedViewModel(
                     numberOfDays = event.newNumberOfDays,
                     selectedDays = event.newSelectedDays,
                     startIntakeDate = event.newStartIntakeDate,
-                    stockOfMedicine = event.newStock,
                     trackType = event.newTrackType,
                     useBannerChBox = event.newUseBanner,
                 )
+            }
+            is AddMedEvent.AddMedTrackButtonClicked->{
+
             }
         }
     }
@@ -110,7 +112,6 @@ class AddMedViewModel(
                 ADD_MODE -> saveNewModelInRoom(model)
                 EDIT_MODE -> replaceModelInRoom(model)
             }
-
         } ?: _state.postValue(state.value!!.copy(inputError = medicationModel.second))
     }
 

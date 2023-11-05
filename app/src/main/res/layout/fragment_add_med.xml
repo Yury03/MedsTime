@@ -289,7 +289,6 @@
                 android:text="@string/add_duration"
                 app:icon="@drawable/button_icon_open_curtain" />
 
-
             <net.cachapa.expandablelayout.ExpandableLayout
                 android:id="@+id/durationLayout"
                 android:layout_width="match_parent"
@@ -436,21 +435,15 @@
                             android:inputType="date" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/textFieldNumberMeds"
-                        style="@style/AddMedTextInputLayout"
+                    <Button
+                        android:id="@+id/buttonAddMedTrack"
+                        style="@style/AddMedButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="4dp"
-                        android:hint="@string/number_meds_hint"
-                        android:visibility="gone">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/numberMeds"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="numberDecimal" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                        android:text="@string/add_med_track"
+                        android:visibility="gone"
+                        app:icon="@drawable/button_icon_add_med_track" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textFieldNumberDays"

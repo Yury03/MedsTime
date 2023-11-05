@@ -75,6 +75,13 @@
     <string name="intakes">приемов</string>
     <string name="before">до</string>
     <string name="placeholder_meds_track_fragment">Здесь будут показаны все ваши лекарства</string>
+    <string name="add_med_track">Добавить лекарство</string>
+    <string name="number_of_meds_per_package">в одной упаковке</string>
+    <string name="expiration_date_hint">Срок годности</string>
+    <string name="back">Назад</string>
+    <string name="save">Сохранить</string>
+    <string name="add_package">Добавить упаковку</string>
+
     <string-array name="dosage_array">
         <item>Мг</item>
         <item>Капсулы</item>

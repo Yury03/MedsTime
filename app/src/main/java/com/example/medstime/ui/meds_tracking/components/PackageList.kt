@@ -21,11 +21,18 @@ import com.example.medstime.R
 fun PackageList(
     verticalPaddingBox: Dp,
     height: Dp,
-    trackModel: MedsTrackModel
+    trackModel: MedsTrackModel,
+    showAddItem: Boolean = true,
+    showBackground: Boolean = true,
 ) {
     Box(
         modifier = Modifier
-            .background(colorResource(id = R.color.light_grey_background))
+            .background(
+                if (showBackground)
+                    colorResource(id = R.color.light_grey_background)
+                else
+                    colorResource(id = R.color.local_transparent)
+            )
             .padding(vertical = verticalPaddingBox)
             .height(height)
             .fillMaxWidth(),
@@ -34,10 +41,10 @@ fun PackageList(
         LazyRow {
             itemsIndexed(trackModel.packageItems) { position, item ->
                 PackageItem(packageModel = item)
-                if (position == trackModel.packageItems.size - 1) AddPackageItem(height = 96.dp)
+                if (position == trackModel.packageItems.size - 1 && showAddItem)
+                    AddPackageItem(height = 96.dp)
             }
         }
-
     }
 }
 
