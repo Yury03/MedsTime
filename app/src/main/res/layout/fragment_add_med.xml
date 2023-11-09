@@ -133,11 +133,10 @@
                     android:id="@+id/textFieldUnits"
                     style="@style/AddMedTextInputLayout.ExposedDropdownMenu"
                     android:layout_width="0dp"
-
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
                     android:layout_weight="3"
-                    android:hint="@string/spinner_units_hint">
+                    android:hint="@string/units_hint">
 
                     <AutoCompleteTextView
                         android:id="@+id/dosageUnits"

@@ -26,7 +26,7 @@
     <string name="dosage_units_hint">Ед. дозировки</string>
     <string name="default_dosage_unit">Таблетки</string>
     <string name="current_stock">Текущий запас</string>
-    <string name="spinner_units_hint">Вид</string>
+    <string name="units_hint">Вид</string>
     <string name="spinner_tracking_hint">Тип отслеживания</string>
     <string name="default_tracking_type">Не добавлять</string>
     <string name="add_reminder">Добавить напоминания</string>
