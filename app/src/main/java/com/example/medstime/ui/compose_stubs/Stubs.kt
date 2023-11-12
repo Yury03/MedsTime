@@ -1,62 +1,49 @@
-package com.example.medstime.ui.meds_tracking.components
+package com.example.medstime.ui.compose_stubs
 
 import com.example.domain.models.MedicationModel
 import com.example.domain.models.MedsTrackModel
 import com.example.domain.models.PackageItemModel
 import java.util.Date
 
-fun getListTrackingModel() =
-    listOf(
-        MedsTrackModel(
-            "111", "item 1",
-            endDate = 1683844600900,
-            packageCounter = 90,
-            recommendedPurchaseDate = 1683963600900,
-            packageItems = listOf(
-                PackageItemModel(
-                    id = "",
-                    idMedsTrackModel = "",
-                    intakesCount = 0,
-                    endDate = 0,
-                    expirationDate = 0
-                )
-            ),
-        ),
-        MedsTrackModel(
-            "111", "item 2",
-            endDate = 1683844600900,
-            packageCounter = 24,
-            recommendedPurchaseDate = 1683963600900,
-            packageItems = getListPackageModel(),
-        ),
-    )
+fun getListTrackingModel() = listOf(
+    MedsTrackModel(
+        "111", "item 1",
+        endDate = 1683844600900,
+        packageCounter = 90,
+        recommendedPurchaseDate = 1683963600900,
+        packageItems = getListPackageModel()
+    ),
+    MedsTrackModel(
+        "111", "item 2",
+        endDate = 1683844600900,
+        packageCounter = 24,
+        recommendedPurchaseDate = 1683963600900,
+        packageItems = getListEditPackageModel(),
+    ),
+)
 
 
 fun getListPackageModel() = listOf(
     PackageItemModel(
-        id = "fuisset",
-        idMedsTrackModel = "verterem",
+        id = "23480109",
         intakesCount = 343,
         endDate = 1683963600900,
         expirationDate = 1683963600900
     ),
     PackageItemModel(
-        id = "fuisset",
-        idMedsTrackModel = "verterem",
+        id = "23410029",
         intakesCount = 33,
         endDate = 1683963600900,
         expirationDate = 1683963600900
     ),
     PackageItemModel(
-        id = "fuisset",
-        idMedsTrackModel = "verterem",
+        id = "21048029",
         intakesCount = 33,
         endDate = 1683963600900,
         expirationDate = 1683963600900
     ),
     PackageItemModel(
-        id = "fuisset",
-        idMedsTrackModel = "verterem",
+        id = "10348029",
         intakesCount = 33,
         endDate = 1683963600900,
         expirationDate = 1683963600900
@@ -74,15 +61,14 @@ fun getListMedicationModel() = listOf(
         frequency = MedicationModel.Frequency.DAILY,
         selectedDays = listOf(),
         startDate = Date(),
-        intakeType =MedicationModel.IntakeType.NONE,
+        intakeType = MedicationModel.IntakeType.NONE,
         comment = "",
         useBanner = false,
         trackType = MedicationModel.TrackType.STOCK_OF_MEDICINE,
         stockOfMedicine = null,
         endDate = null,
         numberOfDays = null
-    ),
-    MedicationModel(
+    ), MedicationModel(
         id = "23",
         name = "Item2",
         dosage = 0.0,
@@ -92,15 +78,14 @@ fun getListMedicationModel() = listOf(
         frequency = MedicationModel.Frequency.DAILY,
         selectedDays = listOf(),
         startDate = Date(),
-        intakeType =MedicationModel.IntakeType.NONE,
+        intakeType = MedicationModel.IntakeType.NONE,
         comment = "",
         useBanner = false,
         trackType = MedicationModel.TrackType.NUMBER_OF_DAYS,
         stockOfMedicine = null,
         endDate = null,
         numberOfDays = 320.0,
-    ),
-    MedicationModel(
+    ), MedicationModel(
         id = "312",
         name = "Item3",
         dosage = 0.0,
@@ -110,7 +95,7 @@ fun getListMedicationModel() = listOf(
         frequency = MedicationModel.Frequency.DAILY,
         selectedDays = listOf(),
         startDate = Date(),
-        intakeType =MedicationModel.IntakeType.NONE,
+        intakeType = MedicationModel.IntakeType.NONE,
         comment = "",
         useBanner = false,
         trackType = MedicationModel.TrackType.NONE,
@@ -119,3 +104,19 @@ fun getListMedicationModel() = listOf(
         numberOfDays = null
     )
 )
+
+private fun getListEditPackageModel() =
+    listOf(
+        PackageItemModel(
+            id = "443943924",
+            intakesCount = -1,
+            endDate = 0,
+            expirationDate = 1683963600900
+        ),
+        PackageItemModel(
+            id = "443942124",
+            intakesCount = -1,
+            endDate = 0,
+            expirationDate = 1683963600900
+        ),
+    )

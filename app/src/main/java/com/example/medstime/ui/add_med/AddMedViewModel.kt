@@ -1,5 +1,6 @@
 package com.example.medstime.ui.add_med
 
+import android.annotation.SuppressLint
 import android.content.res.Resources
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -52,7 +53,9 @@ class AddMedViewModel(
             trackType = "",
             stockOfMedicine = "",
             numberOfDays = "",
-            endDate = ""
+            endDate = "",
+            trackModelId = null
+
         )
     }
 
@@ -99,8 +102,13 @@ class AddMedViewModel(
                     useBannerChBox = event.newUseBanner,
                 )
             }
-            is AddMedEvent.AddMedTrackButtonClicked->{
 
+            is AddMedEvent.AddMedTrackButtonClicked -> {
+
+            }
+
+            is AddMedEvent.RestoreState -> {
+                _state.value = event.state
             }
         }
     }
@@ -292,6 +300,7 @@ class AddMedViewModel(
     }
 
     /**### Функция *Date.toDisplayString()* приводит java.util.Date к строке вида dd.MM.yyyy*/
+    @SuppressLint("SimpleDateFormat")
     private fun Date.toDisplayString()
             : String {
         val formatter = SimpleDateFormat("dd.MM.yyyy")

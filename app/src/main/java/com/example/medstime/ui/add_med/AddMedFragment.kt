@@ -38,30 +38,39 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.google.common.util.concurrent.ListenableFuture
+import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Calendar
 import java.util.Locale
 
 
 class AddMedFragment : Fragment(R.layout.fragment_add_med) {
-    private companion object {
-        const val LOG_TAG = "AddMedFragment"
-        const val TIME_PICKER_TAG = "TimePickerAddMedFragment"
-        const val CAMERA_PERMISSION_CODE = 300
-        const val SYSTEM_ALERT_WINDOW_CODE = 400
+    companion object {
+        private const val LOG_TAG = "AddMedFragment"
+        private const val TIME_PICKER_TAG = "TimePickerAddMedFragment"
+        private const val CAMERA_PERMISSION_CODE = 300
+        private const val SYSTEM_ALERT_WINDOW_CODE = 400
+        const val ARG_KEY_STATE = "state"
     }
 
     private val viewModel by viewModel<AddMedViewModel>()
     private lateinit var binding: FragmentAddMedBinding
 
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
-    private lateinit var _previousState: AddMedState
+    private lateinit var _currentState: AddMedState
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
 //        cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext()) //ошибка с библиотекой камеры? Появилась после изменения грэдл. Приложение крашится
         binding = FragmentAddMedBinding.inflate(inflater, container, false)
         hideBottomNavigationBar()
+        savedInstanceState?.let { args ->
+            val stateJson = args.getString(ARG_KEY_STATE)
+            stateJson?.let {
+                val addMedState = Gson().fromJson(it, AddMedState::class.java)
+                viewModel.send(AddMedEvent.RestoreState(addMedState))
+            }
+        }
         return binding.root
     }
 
@@ -89,7 +98,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
 
     private fun handleArguments() {
         arguments?.let {
-            if (it.getString("mode").equals("EditMode")) {
+            if (it.getString("mode").equals("EditMode")) {//todo string res
                 val id = it.getString("medicationModelId")!!
                 viewModel.send(AddMedEvent.Mode(AddMedState.EDIT_MODE, id))
                 changeViewTextToEditMode()
@@ -110,7 +119,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         requireContext().startService(serviceIntent)
         closeFragment()
     }
-
 
     private fun initView() {
         with(binding) {
@@ -175,11 +183,15 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                     textFieldDosage.isErrorEnabled = false
                 }
             }
+            buttonAddMedTrack.setOnClickListener {
+                openAddMedTrackFragment()
+            }
         }
     }
 
     private fun observeViewModelData() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
+            _currentState = state
             with(binding) {
                 when (state.mode) {
                     AddMedState.ADD_MODE -> {
@@ -211,7 +223,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                     medicationSaved()
                 }
             }
-            _previousState = state
         }
     }
 
@@ -259,6 +270,23 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             .navigate(R.id.medicationFragment)
     }
 
+    private fun openAddMedTrackFragment() {
+        val outState = Bundle()
+        val stateJson = Gson().toJson(_currentState)
+        outState.putString("state", stateJson)
+        onSaveInstanceState(outState)
+        val args = Bundle().apply {
+            putString("medName", _currentState.medicationName)
+            putString("dosageUnits", _currentState.dosageUnits)
+        }
+        if (_currentState.mode == AddMedState.EDIT_MODE) {
+            _currentState.trackModelId?.let {
+                args.putString("key3", it)
+            }
+        }
+        requireActivity().findNavController(R.id.fragmentContainerView)
+            .navigate(R.id.addMedTrackFragment, args)
+    }
 
     private fun showInfoAboutBannerDialog() =
         AlertDialog.Builder(requireActivity()).setTitle(R.string.dialog_title_info_about_banner)
@@ -406,6 +434,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         super.onDestroyView()
         showBottomNavigationBar()
     }
+
 
     private fun betaFunctions() {
         val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return

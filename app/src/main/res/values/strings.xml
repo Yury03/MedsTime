@@ -81,6 +81,9 @@
     <string name="back">Назад</string>
     <string name="save">Сохранить</string>
     <string name="add_package">Добавить упаковку</string>
+    <string name="intakes_count_is_not_defined">Количество приемов не определено</string>
+    <string name="package_end_date_is_not_defined">Дата конца упаковки не определена</string>
+    <string name="package_list">Список упаковок:</string>
 
     <string-array name="dosage_array">
         <item>Мг</item>

@@ -21,6 +21,7 @@ data class AddMedState(
     val stockOfMedicine: String,
     val numberOfDays: String,
     val endDate: String,
+    val trackModelId: String?,
 ) {
     companion object {
         const val EDIT_MODE = "edit"

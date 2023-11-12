@@ -7,6 +7,7 @@ sealed class AddMedEvent {
     data object ContinueButtonClicked : AddMedEvent()
     data object ErrorWasShown : AddMedEvent()
     data class Mode(val mode: String, val medicationModelId: String) : AddMedEvent()
+    data class RestoreState(val state: AddMedState) : AddMedEvent()
     data class MedicationModelChanged(
         val medicationName: String,
         val newDosage: String,

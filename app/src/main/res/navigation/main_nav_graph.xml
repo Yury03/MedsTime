@@ -23,4 +23,8 @@
         android:name="com.example.medstime.ui.add_med.AddMedFragment"
         android:label="fragment_add_med"
         tools:layout="@layout/fragment_add_med" />
+    <fragment
+        android:id="@+id/addMedTrackFragment"
+        android:name="com.example.medstime.ui.add_track.AddMedTrackFragment"
+        android:label="AddMedTrackFragment" />
 </navigation>
