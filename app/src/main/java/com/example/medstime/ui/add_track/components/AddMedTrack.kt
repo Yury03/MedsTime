@@ -1,6 +1,6 @@
 package com.example.medstime.ui.add_track.components
 
-import androidx.compose.foundation.clickable
+import android.os.Bundle
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +13,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,9 +33,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.domain.models.MedsTrackModel
 import com.example.medstime.R
+import com.example.medstime.ui.add_med.AddMedFragment
 import com.example.medstime.ui.common_components.AddMedButton
 import com.example.medstime.ui.common_components.PackageList
 import com.example.medstime.ui.compose_stubs.getListTrackingModel
@@ -47,11 +50,12 @@ import com.example.medstime.ui.compose_stubs.getListTrackingModel
 @ExperimentalMaterial3Api
 @Composable
 fun AddMedTrack(
+    navController: NavController,
+    addMedFragmentState: String,
     medName: String = "",
     dosageUnit: String,
     medsTrackModel: MedsTrackModel? = null,
 ) {
-    val navController = rememberNavController()
     var textDosageUnits by remember { mutableStateOf(dosageUnit) }
     var expanded by remember { mutableStateOf(false) }
 
@@ -65,16 +69,25 @@ fun AddMedTrack(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                modifier = Modifier
-                    .clickable {
-                        navController.navigate(R.id.addMedFragment)
-                        /*TODO возврат на предыдущую страницу с сохранением всех данных*/
-                    }
-                    .padding(12.dp),
-                painter = painterResource(id = R.drawable.button_icon_arrow_to_left),
-                contentDescription = null,
-            )
+            IconButton(
+                onClick = {
+                    navController.navigate(
+                        R.id.addMedFragment,
+                        Bundle().apply {
+                            putString(
+                                AddMedFragment.ARG_KEY_STATE,
+                                addMedFragmentState
+                            )
+                        })
+                    /*TODO возврат на предыдущую страницу с сохранением всех данных*/
+                }) {
+                Icon(
+                    modifier = Modifier
+                        .padding(12.dp),
+                    painter = painterResource(id = R.drawable.button_icon_arrow_to_left),
+                    contentDescription = null,
+                )
+            }
             Text(
                 text = stringResource(id = R.string.add_package),
                 fontSize = dimensionResource(id = R.dimen.text_4_level).value.sp,
@@ -189,8 +202,10 @@ fun PreviewAddMedTrack() {
             .fillMaxSize()
     ) {
         AddMedTrack(
+            navController = rememberNavController(),
             medsTrackModel = getListTrackingModel()[1],
-            dosageUnit = "Таблетки"
+            dosageUnit = "Таблетки",
+            addMedFragmentState = "",
         )
     }
 }
@@ -205,8 +220,10 @@ fun PreviewAddMedTrackEditMode() {
             .fillMaxSize()
     ) {
         AddMedTrack(
+            navController = rememberNavController(),
             medsTrackModel = getListTrackingModel()[0],
             dosageUnit = "Мг",
+            addMedFragmentState = "",
         )
     }
 }

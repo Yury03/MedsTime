@@ -13,6 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
+import com.example.medstime.R
+import com.example.medstime.ui.add_med.AddMedFragment
 import com.example.medstime.ui.add_track.components.AddMedTrack
 import com.example.medstime.ui.main_activity.MainActivity
 
@@ -27,14 +30,15 @@ class AddMedTrackFragment : Fragment() {
     private lateinit var medName: String
     private lateinit var dosageUnits: String
     private lateinit var medsTrackModelId: String
+    private lateinit var addMedState: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         hideBottomNavigationBar()
         arguments?.let { args ->
             medName = args.getString(ARG_KEY_MED_NAME) ?: ""
             dosageUnits = args.getString(ARG_KEY_DOSAGE_UNITS) ?: ""
-            medsTrackModelId = args.getString(ARG_KEY_MEDS_TRACK_MODEL_ID)
-                ?: ""//todo get model in view model if id is not empty
+            medsTrackModelId = args.getString(ARG_KEY_MEDS_TRACK_MODEL_ID) ?: ""
+            addMedState = args.getString(AddMedFragment.ARG_KEY_STATE)!!
         }
     }
 
@@ -57,14 +61,19 @@ class AddMedTrackFragment : Fragment() {
                 .fillMaxSize()
         ) {
             AddMedTrack(
+                navController = requireActivity().findNavController(R.id.fragmentContainerView),
+                addMedFragmentState = addMedState,
                 medName = medName,
                 dosageUnit = dosageUnits,
+                medsTrackModel = null,//todo get model in view model if id is not empty
             )
         }
     }
+
     private fun hideBottomNavigationBar() {
         (requireActivity() as MainActivity).hideBottomNavigationBar()
     }
+
     private fun showBottomNavigationBar() {
         (requireActivity() as MainActivity).showBottomNavigationBar()
     }

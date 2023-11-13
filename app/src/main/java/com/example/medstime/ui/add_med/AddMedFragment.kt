@@ -32,6 +32,7 @@ import com.example.domain.models.MedicationModel
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentAddMedBinding
 import com.example.medstime.services.ReminderService
+import com.example.medstime.ui.add_track.AddMedTrackFragment
 import com.example.medstime.ui.main_activity.MainActivity
 import com.google.android.material.chip.Chip
 import com.google.android.material.textfield.TextInputEditText
@@ -51,11 +52,12 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         private const val CAMERA_PERMISSION_CODE = 300
         private const val SYSTEM_ALERT_WINDOW_CODE = 400
         const val ARG_KEY_STATE = "state"
+        const val ARG_KEY_MODE = "mode"
+        const val ARG_KEY_MEDICATION_MODEL_ID = "medication_model_id"
     }
 
     private val viewModel by viewModel<AddMedViewModel>()
     private lateinit var binding: FragmentAddMedBinding
-
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
     private lateinit var _currentState: AddMedState
     override fun onCreateView(
@@ -64,21 +66,13 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
 //        cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext()) //ошибка с библиотекой камеры? Появилась после изменения грэдл. Приложение крашится
         binding = FragmentAddMedBinding.inflate(inflater, container, false)
         hideBottomNavigationBar()
-        savedInstanceState?.let { args ->
-            val stateJson = args.getString(ARG_KEY_STATE)
-            stateJson?.let {
-                val addMedState = Gson().fromJson(it, AddMedState::class.java)
-                viewModel.send(AddMedEvent.RestoreState(addMedState))
-            }
-        }
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        handleArguments()
         observeViewModelData()
+        handleArguments()
         setAdapterSpinDosageUnits()
         setAdapterSpinTrackType()
         setAdapterSpinReminderType()
@@ -97,11 +91,18 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     }
 
     private fun handleArguments() {
-        arguments?.let {
-            if (it.getString("mode").equals("EditMode")) {//todo string res
-                val id = it.getString("medicationModelId")!!
+        arguments?.let { args ->
+            if (args.getString(ARG_KEY_MODE).equals(AddMedState.EDIT_MODE)) {
+                val id = args.getString(ARG_KEY_MEDICATION_MODEL_ID)!!
                 viewModel.send(AddMedEvent.Mode(AddMedState.EDIT_MODE, id))
                 changeViewTextToEditMode()
+            }
+            //передача текущего состояния фрагмента, для последующего восстановления
+            val stateJson = args.getString(ARG_KEY_STATE)
+            stateJson?.let {
+                val addMedState = Gson().fromJson(it, AddMedState::class.java)
+                updateAllData(state = addMedState, isForcedUpdate = true)
+                viewModel.send(AddMedEvent.UpdateState(addMedState))
             }
         }
     }
@@ -145,23 +146,8 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             }
             continueButton.setOnClickListener {
                 with(viewModel) {
-                    send(
-                        AddMedEvent.MedicationModelChanged(
-                            medicationName = binding.medicationName.text.toString(),
-                            newDosage = binding.dosage.text.toString(),
-                            newDosageUnits = binding.dosageUnits.text.toString(),
-                            newStartIntakeDate = binding.startIntakeDate.text.toString(),
-                            newMedComment = binding.medComment.text.toString(),
-                            newReminderTime = binding.reminderType.text.toString(),
-                            newUseBanner = binding.useBannerChBox.isChecked,
-                            newFrequency = binding.frequency.text.toString(),
-                            newSelectedDays = getSelectedDays(),
-                            newIntakeTime = getIntakeTime(),
-                            newTrackType = binding.trackingType.text.toString(),
-                            newNumberOfDays = binding.numberDays.text.toString(),
-                            newEndDate = binding.endIntakeDate.text.toString(),
-                        )
-                    )
+                    updateCurrentState()
+                    send(AddMedEvent.UpdateState(_currentState))
                     send(AddMedEvent.ContinueButtonClicked)
                 }
             }
@@ -192,39 +178,38 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     private fun observeViewModelData() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             _currentState = state
-            with(binding) {
-                when (state.mode) {
-                    AddMedState.ADD_MODE -> {
-                        startIntakeDate.updateText(state.startIntakeDate)
-                    }
-
-                    AddMedState.EDIT_MODE -> {
-                        medicationName.updateText(state.medicationName)
-                        startIntakeDate.updateText(state.startIntakeDate)
-                        dosage.updateText(state.dosage)
-                        dosageUnits.updateAutoCompleteText(state.dosageUnits)
-                        medComment.updateText(state.medComment)
-                        useBannerChBox.updateIsChecked(state.useBannerChBox)
-                        updateIntakeTimeChips(state.intakeTimeList)
-                        reminderType.updateAutoCompleteText(state.medicationReminderTime)
-                        intakeType.updateAutoCompleteText(state.intakeType)
-                        frequency.updateAutoCompleteText(state.frequency)
-                        updateSelectedDays(state.selectedDays)
-                        trackingType.updateAutoCompleteText(state.trackType)
-                        numberDays.updateText(state.numberOfDays)
-                        endIntakeDate.updateText(state.endDate)
-                    }
-                }
-                if (state.inputError != 0) {
-                    showError(state.inputError)
-                    viewModel.send(AddMedEvent.ErrorWasShown)
-                }
-                if (state.isSavedNewMedication) {
-                    medicationSaved()
-                }
-            }
+            updateAllData(state)
         }
     }
+
+    private fun updateAllData(state: AddMedState, isForcedUpdate: Boolean = false) {
+        with(binding) {
+            startIntakeDate.updateText(state.startIntakeDate)
+            if (state.mode == AddMedState.EDIT_MODE || isForcedUpdate) {
+                medicationName.updateText(state.medicationName)
+                dosage.updateText(state.dosage)
+                dosageUnits.updateAutoCompleteText(state.dosageUnits)
+                medComment.updateText(state.medComment)
+                useBannerChBox.updateIsChecked(state.useBannerChBox)
+                updateIntakeTimeChips(state.intakeTimeList)
+                reminderType.updateAutoCompleteText(state.medicationReminderTime)
+                intakeType.updateAutoCompleteText(state.intakeType)
+                frequency.updateAutoCompleteText(state.frequency)
+                updateSelectedDays(state.selectedDays)
+                trackingType.updateAutoCompleteText(state.trackType)
+                numberDays.updateText(state.numberOfDays)
+                endIntakeDate.updateText(state.endDate)
+            }
+        }
+        if (state.inputError != 0) {
+            showError(state.inputError)
+            viewModel.send(AddMedEvent.ErrorWasShown)
+        }
+        if (state.isSavedNewMedication) {
+            medicationSaved()
+        }
+    }
+
 
     private fun getIntakeTime(): List<MedicationModel.Time> {
         val intakeTimeArray = mutableListOf<MedicationModel.Time>()
@@ -271,17 +256,16 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     }
 
     private fun openAddMedTrackFragment() {
-        val outState = Bundle()
+        updateCurrentState()
         val stateJson = Gson().toJson(_currentState)
-        outState.putString("state", stateJson)
-        onSaveInstanceState(outState)
         val args = Bundle().apply {
-            putString("medName", _currentState.medicationName)
-            putString("dosageUnits", _currentState.dosageUnits)
+            putString(AddMedTrackFragment.ARG_KEY_MED_NAME, _currentState.medicationName)
+            putString(AddMedTrackFragment.ARG_KEY_DOSAGE_UNITS, _currentState.dosageUnits)
+            putString(ARG_KEY_STATE, stateJson)
         }
         if (_currentState.mode == AddMedState.EDIT_MODE) {
             _currentState.trackModelId?.let {
-                args.putString("key3", it)
+                args.putString(AddMedTrackFragment.ARG_KEY_MEDS_TRACK_MODEL_ID, it)
             }
         }
         requireActivity().findNavController(R.id.fragmentContainerView)
@@ -566,4 +550,22 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     private fun timeToDisplayString(hour: Int, minute: Int) =
         if (minute < 10) "${hour}:0${minute}"
         else "$hour:$minute"
+
+    private fun updateCurrentState() {
+        _currentState = _currentState.copy(
+            medicationName = binding.medicationName.text.toString(),
+            dosage = binding.dosage.text.toString(),
+            dosageUnits = binding.dosageUnits.text.toString(),
+            startIntakeDate = binding.startIntakeDate.text.toString(),
+            medComment = binding.medComment.text.toString(),
+            medicationReminderTime = binding.reminderType.text.toString(),
+            useBannerChBox = binding.useBannerChBox.isChecked,
+            frequency = binding.frequency.text.toString(),
+            selectedDays = getSelectedDays(),
+            intakeTimeList = getIntakeTime(),
+            trackType = binding.trackingType.text.toString(),
+            numberOfDays = binding.numberDays.text.toString(),
+            endDate = binding.endIntakeDate.text.toString(),
+        )
+    }
 }

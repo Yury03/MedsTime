@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.domain.models.MedicationIntakeModel
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentMedicationListBinding
+import com.example.medstime.ui.add_med.AddMedFragment
 import com.example.medstime.ui.medication.adapters.TimesListAdapter
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -92,8 +93,8 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
             }
             put(R.id.itemEditButton) {
                 val args = Bundle()
-                args.putString("mode", "EditMode")//TODO
-                args.putString("medicationModelId", intake.medicationId)
+                args.putString(AddMedFragment.ARG_KEY_MODE, "EditMode")//TODO
+                args.putString(AddMedFragment.ARG_KEY_MEDICATION_MODEL_ID, intake.medicationId)
                 val navController = findNavController(requireActivity(), R.id.fragmentContainerView)
                 navController.navigate(
                     resId = R.id.addMedFragment,

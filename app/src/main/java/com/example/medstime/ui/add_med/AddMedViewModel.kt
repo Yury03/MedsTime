@@ -85,29 +85,11 @@ class AddMedViewModel(
                 }
             }
 
-            is AddMedEvent.MedicationModelChanged -> {
-                _state.value = _state.value!!.copy(
-                    medicationName = event.medicationName,
-                    dosage = event.newDosage,
-                    dosageUnits = event.newDosageUnits,
-                    endDate = event.newEndDate,
-                    frequency = event.newFrequency,
-                    intakeTimeList = event.newIntakeTime,
-                    medComment = event.newMedComment,
-                    medicationReminderTime = event.newReminderTime,
-                    numberOfDays = event.newNumberOfDays,
-                    selectedDays = event.newSelectedDays,
-                    startIntakeDate = event.newStartIntakeDate,
-                    trackType = event.newTrackType,
-                    useBannerChBox = event.newUseBanner,
-                )
-            }
-
             is AddMedEvent.AddMedTrackButtonClicked -> {
 
             }
 
-            is AddMedEvent.RestoreState -> {
+            is AddMedEvent.UpdateState -> {
                 _state.value = event.state
             }
         }
