@@ -1,6 +1,7 @@
 package com.example.data
 
 import android.content.Context
+import com.example.data.mappers.MedsTrackMapper
 import com.example.data.room.MedsTrackDatabase
 import com.example.data.room.dao.MedsTrackDao
 import com.example.domain.Repository
@@ -60,4 +61,9 @@ class MedsTrackContractImpl(context: Context) : Repository.MedsTrackContract {
             ),
         )
     }
+
+    override suspend fun getTrackById(medsTrackModelId: String): MedsTrackModel {
+        return MedsTrackMapper.mapToModel(medsTrackDao.getById(medsTrackModelId))
+    }
+
 }

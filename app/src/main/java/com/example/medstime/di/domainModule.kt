@@ -9,6 +9,7 @@ import com.example.domain.usecase.medication_intake.ChangeMedicationIntakeIsTake
 import com.example.domain.usecase.medication_intake.GetIntakeList
 import com.example.domain.usecase.medication_intake.GetMedicationIntakeModel
 import com.example.domain.usecase.meds_track.GetAllTracks
+import com.example.domain.usecase.meds_track.GetTrackById
 import com.example.domain.usecase.reminder.ChangeNotificationStatusByMedIntakeId
 import com.example.domain.usecase.reminder.ChangeNotificationStatusByReminderId
 import com.example.domain.usecase.reminder.GetReminderModelById
@@ -45,6 +46,9 @@ val domainModule = module {
     /**Meds track contract*/
     factory<GetAllTracks> {
         GetAllTracks(repository = get())
+    }
+    factory<GetTrackById> {
+        GetTrackById(repository = get())
     }
     /**Common contract*/
     factory<GetMedicationById> {

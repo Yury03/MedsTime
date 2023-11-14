@@ -1,6 +1,5 @@
 package com.example.medstime.ui.add_med
 
-import android.annotation.SuppressLint
 import android.content.res.Resources
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,14 +12,14 @@ import com.example.domain.usecase.common.SaveNewMedication
 import com.example.medstime.R
 import com.example.medstime.ui.add_med.AddMedState.Companion.ADD_MODE
 import com.example.medstime.ui.add_med.AddMedState.Companion.EDIT_MODE
+import com.example.medstime.ui.utils.generateStringId
+import com.example.medstime.ui.utils.getCurrentDate
+import com.example.medstime.ui.utils.toDate
+import com.example.medstime.ui.utils.toDisplayString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.Date
-import java.util.UUID
 
 class AddMedViewModel(
     private val saveNewMedicationUseCase: SaveNewMedication,
@@ -55,7 +54,6 @@ class AddMedViewModel(
             numberOfDays = "",
             endDate = "",
             trackModelId = null
-
         )
     }
 
@@ -119,7 +117,7 @@ class AddMedViewModel(
         with(state.value!!) {
             var errorCode = 0
             val id = if (state.value!!.mode == ADD_MODE) {
-                UUID.randomUUID().toString()
+                generateStringId()
             } else {
                 editMedicationModelId!!//todo?
             }
@@ -265,33 +263,8 @@ class AddMedViewModel(
         }
     }
 
-    private fun getCurrentDate()
-            : String {
-        val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-        return LocalDate.now().format(formatter)
-    }
-
-    /**### Функция *Double.toDisplayString()* убирает незначащие нули и возвращает строку готовую для отображения*/
-    private fun Double.toDisplayString()
-            : String {
-        return if (this == this.toInt().toDouble()) {
-            this.toInt().toString()
-        } else {
-            this.toString()
-        }
-    }
-
-    /**### Функция *Date.toDisplayString()* приводит java.util.Date к строке вида dd.MM.yyyy*/
-    @SuppressLint("SimpleDateFormat")
-    private fun Date.toDisplayString()
-            : String {
-        val formatter = SimpleDateFormat("dd.MM.yyyy")
-        return formatter.format(this)
-    }
-
     /**### Функция *MedicationModel.IntakeType.toAdapterString()* переводит данные в строку из адаптера AutoCompleteTextView*/
-    private fun MedicationModel.IntakeType.toAdapterString()
-            : String {
+    private fun MedicationModel.IntakeType.toAdapterString(): String {
         val intakeTypeArray = resources.getStringArray(R.array.intake_array)
         return when (this) {
             MedicationModel.IntakeType.NONE -> intakeTypeArray[0]
@@ -302,8 +275,7 @@ class AddMedViewModel(
     }
 
     /**### Функция *Int.toAdapterString* переводит данные **REMINDER TYPE** в строку из адаптера AutoCompleteTextView*/
-    private fun Int.toAdapterString()
-            : String {
+    private fun Int.toAdapterString(): String {
         val reminderTypeArray = resources.getStringArray(R.array.reminder_array)
         return when (this) {
             0 -> reminderTypeArray[0]
@@ -320,8 +292,7 @@ class AddMedViewModel(
     }
 
     /**### Функция *MedicationModel.TrackType.toAdapterString()* переводит данные в строку из адаптера AutoCompleteTextView*/
-    private fun MedicationModel.TrackType.toAdapterString()
-            : String {
+    private fun MedicationModel.TrackType.toAdapterString(): String {
         val trackTypeArray = resources.getStringArray(R.array.track_array)
         return when (this) {
             MedicationModel.TrackType.NONE -> trackTypeArray[0]
@@ -332,8 +303,7 @@ class AddMedViewModel(
     }
 
     /**### Функция *MedicationModel.Frequency.toAdapterString()* переводит данные в строку из адаптера AutoCompleteTextView*/
-    private fun MedicationModel.Frequency.toAdapterString()
-            : String {
+    private fun MedicationModel.Frequency.toAdapterString(): String {
         val frequencyTypeArray = resources.getStringArray(R.array.frequency_array)
         return when (this) {
             MedicationModel.Frequency.SELECTED_DAYS -> frequencyTypeArray[0]
@@ -342,16 +312,7 @@ class AddMedViewModel(
         }
     }
 
-    private fun String.toDate()
-            : Date {
-        val format = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-        val localDate = LocalDate.parse(this, format)
-        val instant = localDate.atStartOfDay().toInstant(java.time.ZoneOffset.UTC)
-        return Date.from(instant)
-    }
-
-    private fun MedicationModel.Frequency.isCorrect()
-            : Boolean {
+    private fun MedicationModel.Frequency.isCorrect(): Boolean {
         return when (this) {
             MedicationModel.Frequency.DAILY -> true
             MedicationModel.Frequency.EVERY_OTHER_DAY -> true

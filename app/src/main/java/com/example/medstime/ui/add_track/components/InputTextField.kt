@@ -5,10 +5,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 
@@ -17,9 +13,9 @@ fun InputTextField(
     modifier: Modifier = Modifier,
     textValue: String,
     hint: String,
-    isNumber: Boolean = false
+    isNumber: Boolean = false,
+    onValueChange: (String) -> Unit,
 ) {
-    var text by remember { mutableStateOf(textValue) }
     val keyboardOptions = if (isNumber) {
         KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
     } else {
@@ -28,9 +24,7 @@ fun InputTextField(
     OutlinedTextField(
         modifier = modifier,
         value = textValue,
-        onValueChange = {
-            text = it
-        },
+        onValueChange = onValueChange,
         label = { Text(hint) },
         keyboardOptions = keyboardOptions
     )

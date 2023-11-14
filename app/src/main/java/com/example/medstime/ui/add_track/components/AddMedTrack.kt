@@ -36,8 +36,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.domain.models.MedsTrackModel
+import com.example.domain.models.PackageItemModel
 import com.example.medstime.R
 import com.example.medstime.ui.add_med.AddMedFragment
+import com.example.medstime.ui.add_track.AddMedTrackViewModel
 import com.example.medstime.ui.common_components.AddMedButton
 import com.example.medstime.ui.common_components.PackageList
 import com.example.medstime.ui.compose_stubs.getListTrackingModel
@@ -55,10 +57,19 @@ fun AddMedTrack(
     medName: String = "",
     dosageUnit: String,
     medsTrackModel: MedsTrackModel? = null,
+    viewModel: AddMedTrackViewModel? = null, //todo nullable для preview
 ) {
-    var textDosageUnits by remember { mutableStateOf(dosageUnit) }
     var expanded by remember { mutableStateOf(false) }
-
+    var textDosageUnit by remember { mutableStateOf(dosageUnit) }
+    var textExpirationDate by remember { mutableStateOf("") }
+    var textQuantityInPackage by remember { mutableStateOf("") }
+    var textMedName by remember { mutableStateOf(medName) }
+    val packageList = remember {
+        mutableListOf<PackageItemModel>()
+    }//todo тип? mutableListOf?
+    medsTrackModel?.let {
+        packageList.addAll(it.packageItems)
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -95,40 +106,43 @@ fun AddMedTrack(
                 fontFamily = FontFamily(Font(R.font.roboto_regular)),
             )
         }
-
         InputTextField(
             modifier = Modifier.fillMaxWidth(),
-            textValue = medName,
+            textValue = textMedName,
             hint = stringResource(id = R.string.med_name_hint),
+            onValueChange = { textMedName = it }
         )
-
         Text(
             modifier = Modifier.padding(top = 4.dp),
             fontSize = dimensionResource(id = R.dimen.text_5_level).value.sp,
             text = stringResource(id = R.string.package_list),
         )
-
         PackageList(
             verticalPaddingBox = 8.dp,
             height = 110.dp,
-            packageItems = medsTrackModel?.packageItems ?: emptyList(),
+            packageItems = packageList,
             showAddItem = false,
             showBackground = false,
         )
-
         BottomInputFields(
-            expanded,
-            textDosageUnits
-        ) { newExpanded, newTextDosageUnits ->
-            expanded = newExpanded
-            textDosageUnits = newTextDosageUnits
-        }
+            expanded = expanded,
+            textDosageUnits = textDosageUnit,
+            textExpirationDate = textExpirationDate,
+            textQuantityInPackage = textQuantityInPackage,
+            onValuesChangedDosageUnits = { newExpanded, newTextDosageUnits ->
+                expanded = newExpanded
+                textDosageUnit = newTextDosageUnits
+            },
+            onValueChangedExpirationDate = { textExpirationDate = it },
+            onValueChangedQuantityInPackage = { textQuantityInPackage = it }
+
+        )
         AddMedButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 18.dp),
             onClick = {
-                //todo сбор данных и формирование package item где intakes неопределены
+
             },
             iconId = R.drawable.button_icon_arrow_to_right,
             stringId = R.string.add,
@@ -136,25 +150,31 @@ fun AddMedTrack(
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BottomInputFields(
     expanded: Boolean,
     textDosageUnits: String,
-    onValuesChanged: (Boolean, String) -> Unit,
+    textExpirationDate: String,
+    textQuantityInPackage: String,
+    onValuesChangedDosageUnits: (Boolean, String) -> Unit,
+    onValueChangedExpirationDate: (String) -> Unit,
+    onValueChangedQuantityInPackage: (String) -> Unit,
 ) {
     val dosageArray = stringArrayResource(id = R.array.dosage_array)
     InputTextField(
         modifier = Modifier.fillMaxWidth(),
-        textValue = "",//todo DatePicker
+        textValue = textExpirationDate,//todo DatePicker
         hint = stringResource(id = R.string.expiration_date_hint),
+        onValueChange = onValueChangedExpirationDate,
     )
     Row {
         ExposedDropdownMenuBox(
             modifier = Modifier.weight(0.4f),
             expanded = expanded,
             onExpandedChange = {
-                onValuesChanged(
+                onValuesChangedDosageUnits(
                     !expanded,
                     textDosageUnits
                 )
@@ -174,7 +194,7 @@ private fun BottomInputFields(
                     DropdownMenuItem(
                         text = { Text(it) },
                         onClick = {
-                            onValuesChanged(false, it)
+                            onValuesChangedDosageUnits(false, it)
                         }
                     )
                 }
@@ -184,10 +204,11 @@ private fun BottomInputFields(
             modifier = Modifier
                 .weight(0.6f)
                 .padding(start = 4.dp),
-            textValue = "",
+            textValue = textQuantityInPackage,
             //todo label = { Text(text = stringResource(id = R.string.hint)) },
             hint = stringResource(id = R.string.number_of_meds_per_package),
             isNumber = true,
+            onValueChange = onValueChangedQuantityInPackage,
         )
     }
 }

@@ -18,6 +18,7 @@ import com.example.medstime.R
 import com.example.medstime.ui.add_med.AddMedFragment
 import com.example.medstime.ui.add_track.components.AddMedTrack
 import com.example.medstime.ui.main_activity.MainActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class AddMedTrackFragment : Fragment() {
@@ -27,6 +28,7 @@ class AddMedTrackFragment : Fragment() {
         const val ARG_KEY_MEDS_TRACK_MODEL_ID = "meds_track_model_id"
     }
 
+    private val viewModel by viewModel<AddMedTrackViewModel>()
     private lateinit var medName: String
     private lateinit var dosageUnits: String
     private lateinit var medsTrackModelId: String
@@ -47,6 +49,10 @@ class AddMedTrackFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
+                //todo
+                // 1) observe state
+                // 2) update data in AddMedTrack
+                // 3) change AddMedTrack signature
                 AddMedTrackScreen()
             }
         }
@@ -66,6 +72,7 @@ class AddMedTrackFragment : Fragment() {
                 medName = medName,
                 dosageUnit = dosageUnits,
                 medsTrackModel = null,//todo get model in view model if id is not empty
+                viewModel = viewModel,
             )
         }
     }
