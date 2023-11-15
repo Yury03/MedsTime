@@ -4,14 +4,14 @@ import com.example.domain.models.MedsTrackModel
 import com.example.domain.models.PackageItemModel
 
 data class AddMedTrackState(
-    val medName: String,
-    val medTrack: MedsTrackModel?,
-    val medsTrackId: String?,
-    val actualPackageList: List<PackageItemModel>,
-    val expirationDate: String,
-    val dosageUnit: String,
-    val quantityInPackage: String,
-    val errorCode: Int,
+    val medName: String = "",
+    val medTrack: MedsTrackModel? = null,
+    val medsTrackId: String? = null,
+    val actualPackageList: List<PackageItemModel> = emptyList(),
+    val expirationDate: String = "",
+    val dosageUnit: String = "",
+    val quantityInPackage: String = "",
+    val errorCode: Int = VALID,
 ) {
     companion object ERROR {
         const val VALID = 0

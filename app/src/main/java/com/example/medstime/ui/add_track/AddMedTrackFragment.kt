@@ -26,21 +26,30 @@ class AddMedTrackFragment : Fragment() {
         const val ARG_KEY_MED_NAME = "med_name"
         const val ARG_KEY_DOSAGE_UNITS = "dosage_units"
         const val ARG_KEY_MEDS_TRACK_MODEL_ID = "meds_track_model_id"
+        const val LOG_TAG = "AddMedTrackFragment"
     }
 
     private val viewModel by viewModel<AddMedTrackViewModel>()
+    private var medsTrackModelId: String? = null
     private lateinit var medName: String
     private lateinit var dosageUnits: String
-    private lateinit var medsTrackModelId: String
     private lateinit var addMedState: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         hideBottomNavigationBar()
         arguments?.let { args ->
             medName = args.getString(ARG_KEY_MED_NAME) ?: ""
             dosageUnits = args.getString(ARG_KEY_DOSAGE_UNITS) ?: ""
-            medsTrackModelId = args.getString(ARG_KEY_MEDS_TRACK_MODEL_ID) ?: ""
+            medsTrackModelId = args.getString(ARG_KEY_MEDS_TRACK_MODEL_ID)
             addMedState = args.getString(AddMedFragment.ARG_KEY_STATE)!!
+            viewModel.send(
+                AddMedTrackEvent.HandleArguments(
+                    medName = medName,
+                    dosageUnits = dosageUnits,
+                    medsTrackModelId = medsTrackModelId,
+                )
+            )
         }
     }
 
@@ -49,14 +58,13 @@ class AddMedTrackFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                //todo
-                // 1) observe state
-                // 2) update data in AddMedTrack
-                // 3) change AddMedTrack signature
                 AddMedTrackScreen()
             }
         }
     }
+
+
+
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -69,10 +77,7 @@ class AddMedTrackFragment : Fragment() {
             AddMedTrack(
                 navController = requireActivity().findNavController(R.id.fragmentContainerView),
                 addMedFragmentState = addMedState,
-                medName = medName,
-                dosageUnit = dosageUnits,
-                medsTrackModel = null,//todo get model in view model if id is not empty
-                viewModel = viewModel,
+//                viewModel = viewModel,
             )
         }
     }

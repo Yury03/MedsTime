@@ -6,7 +6,7 @@ sealed class AddMedTrackEvent {
     data class HandleArguments(
         val medName: String,
         val dosageUnits: String,
-        val medsTrackModelId: String?
+        val medsTrackModelId: String?,
     ) : AddMedTrackEvent()
 
 }

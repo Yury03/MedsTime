@@ -17,6 +17,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,16 +34,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.domain.models.MedsTrackModel
 import com.example.domain.models.PackageItemModel
 import com.example.medstime.R
 import com.example.medstime.ui.add_med.AddMedFragment
 import com.example.medstime.ui.add_track.AddMedTrackViewModel
 import com.example.medstime.ui.common_components.AddMedButton
 import com.example.medstime.ui.common_components.PackageList
-import com.example.medstime.ui.compose_stubs.getListTrackingModel
 
 /**## Функция AddMedTrack реализует весь ui экрана добавления/редактирования упаковок
  * ## Параметры:
@@ -53,21 +53,19 @@ import com.example.medstime.ui.compose_stubs.getListTrackingModel
 @Composable
 fun AddMedTrack(
     navController: NavController,
-    addMedFragmentState: String,
-    medName: String = "",
-    dosageUnit: String,
-    medsTrackModel: MedsTrackModel? = null,
-    viewModel: AddMedTrackViewModel? = null, //todo nullable для preview
+    viewModel: AddMedTrackViewModel = viewModel(),
+    addMedFragmentState: String,//argument for button click
 ) {
+    val uiState by viewModel.state.collectAsState()
     var expanded by remember { mutableStateOf(false) }
-    var textDosageUnit by remember { mutableStateOf(dosageUnit) }
+    var textDosageUnit by remember { mutableStateOf(uiState.dosageUnit) }
     var textExpirationDate by remember { mutableStateOf("") }
     var textQuantityInPackage by remember { mutableStateOf("") }
-    var textMedName by remember { mutableStateOf(medName) }
+    var textMedName by remember { mutableStateOf(uiState.medName) }
     val packageList = remember {
         mutableListOf<PackageItemModel>()
     }//todo тип? mutableListOf?
-    medsTrackModel?.let {
+    uiState.medTrack?.let {
         packageList.addAll(it.packageItems)
     }
     Column(
@@ -224,8 +222,6 @@ fun PreviewAddMedTrack() {
     ) {
         AddMedTrack(
             navController = rememberNavController(),
-            medsTrackModel = getListTrackingModel()[1],
-            dosageUnit = "Таблетки",
             addMedFragmentState = "",
         )
     }
@@ -242,8 +238,6 @@ fun PreviewAddMedTrackEditMode() {
     ) {
         AddMedTrack(
             navController = rememberNavController(),
-            medsTrackModel = getListTrackingModel()[0],
-            dosageUnit = "Мг",
             addMedFragmentState = "",
         )
     }
