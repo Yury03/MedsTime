@@ -1,5 +1,6 @@
 package com.example.medstime.ui.common_components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,13 +28,12 @@ fun PackageList(
     showAddItem: Boolean = true,
     showBackground: Boolean = true,
 ) {
+    Log.d("TAG", "Update packageList:$packageItems")
     Box(
         modifier = Modifier
             .background(
-                if (showBackground)
-                    colorResource(id = R.color.light_grey_background)
-                else
-                    colorResource(id = R.color.local_transparent)
+                if (showBackground) colorResource(id = R.color.light_grey_background)
+                else colorResource(id = R.color.local_transparent)
             )
             .padding(vertical = verticalPaddingBox)
             .height(height)
@@ -43,11 +43,9 @@ fun PackageList(
         LazyRow {
             itemsIndexed(packageItems) { position, item ->
                 PackageItem(packageModel = item)
-                if (position == packageItems.size - 1 && showAddItem)
-                    AddPackageItem(height = 96.dp)
+                if (position == packageItems.size - 1 && showAddItem) AddPackageItem(height = 96.dp)
             }
         }
-
     }
 }
 

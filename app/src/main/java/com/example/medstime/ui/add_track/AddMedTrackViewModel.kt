@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Date
 
 class AddMedTrackViewModel(
     private val getMedTrackByIdUseCase: GetTrackById
@@ -19,43 +20,49 @@ class AddMedTrackViewModel(
         MutableStateFlow(AddMedTrackState())
     val state: StateFlow<AddMedTrackState> = _state.asStateFlow()
 
-
-
-    private fun updateErrorCode() =
-        when {
-//        medName.isEmpty() -> {
-//            false
-//        }
-            _state.value.expirationDate.isEmpty() -> {
-                AddMedTrackState.EXPIRATION_DATE
+    private fun updateErrorCode(): Int {
+        val stateValue = _state.value
+        val currentDate = Date()
+        return when {
+            stateValue.expirationDate.isEmpty() -> {
+                AddMedTrackState.EXPIRATION_DATE_IS_EMPTY
             }
 
-            _state.value.quantityInPackage.isEmpty() -> {
+            stateValue.expirationDate.toDate().after(currentDate) -> {
+                AddMedTrackState.EXPIRATION_DATE_TOO_SMALL
+            }
+
+            stateValue.quantityInPackage.isEmpty() -> {
                 AddMedTrackState.QUANTITY_IN_PACKAGE
             }
 
             else -> AddMedTrackState.VALID
         }
-
+    }
 
     fun send(event: AddMedTrackEvent) {
         when (event) {
             AddMedTrackEvent.AddNewPackageButtonClicked -> {
                 val errorCode = updateErrorCode()
+
                 val currentPackageList = mutableListOf<PackageItemModel>().apply {
                     addAll(_state.value.actualPackageList)
                 }
                 if (errorCode == AddMedTrackState.VALID) {
+                    //добавление упаковки лекарств
                     currentPackageList.add(
                         PackageItemModel(
                             id = generateStringId(),
                             expirationDate = _state.value.expirationDate.toDate().time
                         )
                     )
+                    //обновление состояния
                     _state.update { currentState ->
                         currentState.copy(
                             errorCode = errorCode,
                             actualPackageList = currentPackageList,
+                            expirationDate = "",
+                            quantityInPackage = "",
                         )
                     }
                 } else {
@@ -73,20 +80,19 @@ class AddMedTrackViewModel(
 
             is AddMedTrackEvent.HandleArguments -> {
                 event.medsTrackModelId?.let { medsTrackModelId ->
-                    getMedsTrackModelById(medsTrackModelId)
+                    pullMedsTrackModelById(medsTrackModelId)
                 }
-                _state.update { currentState ->
+                _state.update { currentState ->//todo почистить
                     currentState.copy(
                         medName = event.medName,
                         medsTrackId = event.medsTrackModelId,
-                        dosageUnit = event.dosageUnits,
                     )
                 }
             }
         }
     }
 
-    private fun getMedsTrackModelById(medsTrackModelId: String) {
+    private fun pullMedsTrackModelById(medsTrackModelId: String) {
         viewModelScope.launch {
             val medTrack = getMedTrackByIdUseCase.invoke(medsTrackModelId)
             _state.update { currentState ->

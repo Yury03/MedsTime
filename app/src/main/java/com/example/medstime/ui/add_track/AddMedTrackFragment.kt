@@ -62,10 +62,7 @@ class AddMedTrackFragment : Fragment() {
             }
         }
     }
-
-
-
-
+    
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun AddMedTrackScreen() {
@@ -77,7 +74,6 @@ class AddMedTrackFragment : Fragment() {
             AddMedTrack(
                 navController = requireActivity().findNavController(R.id.fragmentContainerView),
                 addMedFragmentState = addMedState,
-//                viewModel = viewModel,
             )
         }
     }

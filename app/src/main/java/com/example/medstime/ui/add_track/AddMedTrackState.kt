@@ -15,7 +15,8 @@ data class AddMedTrackState(
 ) {
     companion object ERROR {
         const val VALID = 0
-        const val EXPIRATION_DATE = 1
-        const val QUANTITY_IN_PACKAGE = 2
+        const val EXPIRATION_DATE_IS_EMPTY = 1
+        const val EXPIRATION_DATE_TOO_SMALL = 2
+        const val QUANTITY_IN_PACKAGE = 3
     }
 }

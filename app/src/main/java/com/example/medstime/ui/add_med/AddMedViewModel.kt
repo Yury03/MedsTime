@@ -13,7 +13,7 @@ import com.example.medstime.R
 import com.example.medstime.ui.add_med.AddMedState.Companion.ADD_MODE
 import com.example.medstime.ui.add_med.AddMedState.Companion.EDIT_MODE
 import com.example.medstime.ui.utils.generateStringId
-import com.example.medstime.ui.utils.getCurrentDate
+import com.example.medstime.ui.utils.getCurrentDateString
 import com.example.medstime.ui.utils.toDate
 import com.example.medstime.ui.utils.toDisplayString
 import kotlinx.coroutines.Dispatchers
@@ -41,7 +41,7 @@ class AddMedViewModel(
             medicationName = "",
             dosage = "",
             dosageUnits = "",
-            startIntakeDate = getCurrentDate(),
+            startIntakeDate = getCurrentDateString(),
             medComment = "",
             useBannerChBox = false,
             intakeTimeList = listOf(),

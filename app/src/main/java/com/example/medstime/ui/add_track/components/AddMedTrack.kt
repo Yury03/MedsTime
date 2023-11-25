@@ -1,6 +1,7 @@
 package com.example.medstime.ui.add_track.components
 
 import android.os.Bundle
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,9 +38,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.domain.models.PackageItemModel
 import com.example.medstime.R
 import com.example.medstime.ui.add_med.AddMedFragment
+import com.example.medstime.ui.add_track.AddMedTrackEvent
 import com.example.medstime.ui.add_track.AddMedTrackViewModel
 import com.example.medstime.ui.common_components.AddMedButton
 import com.example.medstime.ui.common_components.PackageList
@@ -59,15 +60,13 @@ fun AddMedTrack(
     val uiState by viewModel.state.collectAsState()
     var expanded by remember { mutableStateOf(false) }
     var textDosageUnit by remember { mutableStateOf(uiState.dosageUnit) }
-    var textExpirationDate by remember { mutableStateOf("") }
-    var textQuantityInPackage by remember { mutableStateOf("") }
-    var textMedName by remember { mutableStateOf(uiState.medName) }
-    val packageList = remember {
-        mutableListOf<PackageItemModel>()
-    }//todo тип? mutableListOf?
-    uiState.medTrack?.let {
-        packageList.addAll(it.packageItems)
+    var textExpirationDate by remember(uiState) { mutableStateOf(uiState.expirationDate) }
+    var textQuantityInPackage by remember(uiState) { mutableStateOf(uiState.quantityInPackage) }
+    var textMedName by remember(uiState) { mutableStateOf(uiState.medName) }
+    val packageList by remember(uiState) {
+        mutableStateOf(uiState.actualPackageList)
     }
+    Log.d("TAG", uiState.toString())
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -127,20 +126,26 @@ fun AddMedTrack(
             textDosageUnits = textDosageUnit,
             textExpirationDate = textExpirationDate,
             textQuantityInPackage = textQuantityInPackage,
-            onValuesChangedDosageUnits = { newExpanded, newTextDosageUnits ->
+            onValuesChangedDosageUnits = { newExpanded, newTextDosageUnit ->
                 expanded = newExpanded
-                textDosageUnit = newTextDosageUnits
+                textDosageUnit = newTextDosageUnit
+                viewModel.send(AddMedTrackEvent.UpdateState(uiState.copy(dosageUnit = textDosageUnit)))
             },
-            onValueChangedExpirationDate = { textExpirationDate = it },
-            onValueChangedQuantityInPackage = { textQuantityInPackage = it }
-
+            onValueChangedExpirationDate = { newTextExpirationDate ->
+                textExpirationDate = newTextExpirationDate
+                viewModel.send(AddMedTrackEvent.UpdateState(uiState.copy(expirationDate = newTextExpirationDate)))
+            },
+            onValueChangedQuantityInPackage = { newTextQuantityInPackage ->
+                textQuantityInPackage = newTextQuantityInPackage
+                viewModel.send(AddMedTrackEvent.UpdateState(uiState.copy(quantityInPackage = newTextQuantityInPackage)))
+            }
         )
         AddMedButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 18.dp),
             onClick = {
-
+                viewModel.send(AddMedTrackEvent.AddNewPackageButtonClicked)
             },
             iconId = R.drawable.button_icon_arrow_to_right,
             stringId = R.string.add,
