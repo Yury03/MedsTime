@@ -1,7 +1,7 @@
 package com.example.medstime.ui.add_track.components
 
 import android.os.Bundle
-import android.util.Log
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -17,14 +19,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
@@ -44,6 +52,8 @@ import com.example.medstime.ui.add_track.AddMedTrackEvent
 import com.example.medstime.ui.add_track.AddMedTrackViewModel
 import com.example.medstime.ui.common_components.AddMedButton
 import com.example.medstime.ui.common_components.PackageList
+import com.example.medstime.ui.utils.toDisplayString
+import java.util.Date
 
 /**## Функция AddMedTrack реализует весь ui экрана добавления/редактирования упаковок
  * ## Параметры:
@@ -60,13 +70,12 @@ fun AddMedTrack(
     val uiState by viewModel.state.collectAsState()
     var expanded by remember { mutableStateOf(false) }
     var textDosageUnit by remember { mutableStateOf(uiState.dosageUnit) }
-    var textExpirationDate by remember(uiState) { mutableStateOf(uiState.expirationDate) }
+    val expirationDate by remember(uiState) { mutableLongStateOf(uiState.expirationDate) }
     var textQuantityInPackage by remember(uiState) { mutableStateOf(uiState.quantityInPackage) }
     var textMedName by remember(uiState) { mutableStateOf(uiState.medName) }
     val packageList by remember(uiState) {
         mutableStateOf(uiState.actualPackageList)
     }
-    Log.d("TAG", uiState.toString())
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -124,21 +133,20 @@ fun AddMedTrack(
         BottomInputFields(
             expanded = expanded,
             textDosageUnits = textDosageUnit,
-            textExpirationDate = textExpirationDate,
+            expirationDate = expirationDate,
             textQuantityInPackage = textQuantityInPackage,
             onValuesChangedDosageUnits = { newExpanded, newTextDosageUnit ->
                 expanded = newExpanded
                 textDosageUnit = newTextDosageUnit
                 viewModel.send(AddMedTrackEvent.UpdateState(uiState.copy(dosageUnit = textDosageUnit)))
             },
-            onValueChangedExpirationDate = { newTextExpirationDate ->
-                textExpirationDate = newTextExpirationDate
-                viewModel.send(AddMedTrackEvent.UpdateState(uiState.copy(expirationDate = newTextExpirationDate)))
-            },
             onValueChangedQuantityInPackage = { newTextQuantityInPackage ->
                 textQuantityInPackage = newTextQuantityInPackage
                 viewModel.send(AddMedTrackEvent.UpdateState(uiState.copy(quantityInPackage = newTextQuantityInPackage)))
-            }
+            },
+            onExpirationDateChanged = {
+                viewModel.send(AddMedTrackEvent.UpdateState(uiState.copy(expirationDate = it)))
+            },
         )
         AddMedButton(
             modifier = Modifier
@@ -148,7 +156,7 @@ fun AddMedTrack(
                 viewModel.send(AddMedTrackEvent.AddNewPackageButtonClicked)
             },
             iconId = R.drawable.button_icon_arrow_to_right,
-            stringId = R.string.add,
+            stringId = R.string.add_new_package,
         )
     }
 }
@@ -159,19 +167,35 @@ fun AddMedTrack(
 private fun BottomInputFields(
     expanded: Boolean,
     textDosageUnits: String,
-    textExpirationDate: String,
+    expirationDate: Long,
     textQuantityInPackage: String,
     onValuesChangedDosageUnits: (Boolean, String) -> Unit,
-    onValueChangedExpirationDate: (String) -> Unit,
     onValueChangedQuantityInPackage: (String) -> Unit,
+    onExpirationDateChanged: (Long) -> Unit,
 ) {
     val dosageArray = stringArrayResource(id = R.array.dosage_array)
+    val openDatePicker = remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
     InputTextField(
-        modifier = Modifier.fillMaxWidth(),
-        textValue = textExpirationDate,//todo DatePicker
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusable(enabled = false)
+            .onFocusChanged {
+                if (it.isFocused && !openDatePicker.value) {
+                    openDatePicker.value = true
+                    focusManager.clearFocus()
+                }
+            },
+        textValue = if (expirationDate == 0L) "" else Date(expirationDate).toDisplayString(),
         hint = stringResource(id = R.string.expiration_date_hint),
-        onValueChange = onValueChangedExpirationDate,
+        readOnly = true,
     )
+    if (openDatePicker.value) {
+        ExpirationDatePickerDialog(
+            openDatePicker = openDatePicker,
+            onDateChanged = onExpirationDateChanged
+        )
+    }
     Row {
         ExposedDropdownMenuBox(
             modifier = Modifier.weight(0.4f),
@@ -217,6 +241,43 @@ private fun BottomInputFields(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ExpirationDatePickerDialog(
+    openDatePicker: MutableState<Boolean>,
+    onDateChanged: (Long) -> Unit,
+) {
+    val datePickerState = rememberDatePickerState()
+    DatePickerDialog(
+        onDismissRequest = {
+            openDatePicker.value = false
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    datePickerState.selectedDateMillis?.let {
+                        onDateChanged(it)
+                    }
+                    openDatePicker.value = false
+                },
+            ) {
+                Text(stringResource(id = R.string.date_picker_confirm_button))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    openDatePicker.value = false
+                }
+            ) {
+                Text(stringResource(id = R.string.date_picker_dismiss_button))
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview(backgroundColor = 0xFFDBDBDB, showSystemUi = true, showBackground = true)
 @Composable
 fun PreviewAddMedTrack() {
@@ -247,3 +308,4 @@ fun PreviewAddMedTrackEditMode() {
         )
     }
 }
+

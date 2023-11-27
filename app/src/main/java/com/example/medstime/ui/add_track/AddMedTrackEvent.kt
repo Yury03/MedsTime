@@ -8,5 +8,4 @@ sealed class AddMedTrackEvent {
         val dosageUnits: String,
         val medsTrackModelId: String?,
     ) : AddMedTrackEvent()
-
 }

@@ -8,7 +8,7 @@ data class AddMedTrackState(
     val medTrack: MedsTrackModel? = null,
     val medsTrackId: String? = null,
     val actualPackageList: List<PackageItemModel> = emptyList(),
-    val expirationDate: String = "",
+    val expirationDate: Long = 0,
     val dosageUnit: String = "",
     val quantityInPackage: String = "",
     val errorCode: Int = VALID,

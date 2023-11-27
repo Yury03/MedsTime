@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.models.PackageItemModel
 import com.example.domain.usecase.meds_track.GetTrackById
 import com.example.medstime.ui.utils.generateStringId
-import com.example.medstime.ui.utils.toDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,22 +12,20 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
 
-class AddMedTrackViewModel(
-    private val getMedTrackByIdUseCase: GetTrackById
-) : ViewModel() {
+class AddMedTrackViewModel(private val getMedTrackByIdUseCase: GetTrackById) : ViewModel() {
     private val _state: MutableStateFlow<AddMedTrackState> =
         MutableStateFlow(AddMedTrackState())
     val state: StateFlow<AddMedTrackState> = _state.asStateFlow()
 
     private fun updateErrorCode(): Int {
         val stateValue = _state.value
-        val currentDate = Date()
+        val currentTimeLong = Date().time
         return when {
-            stateValue.expirationDate.isEmpty() -> {
+            stateValue.expirationDate == 0L -> {
                 AddMedTrackState.EXPIRATION_DATE_IS_EMPTY
             }
 
-            stateValue.expirationDate.toDate().after(currentDate) -> {
+            stateValue.expirationDate <= currentTimeLong -> {
                 AddMedTrackState.EXPIRATION_DATE_TOO_SMALL
             }
 
@@ -44,7 +41,6 @@ class AddMedTrackViewModel(
         when (event) {
             AddMedTrackEvent.AddNewPackageButtonClicked -> {
                 val errorCode = updateErrorCode()
-
                 val currentPackageList = mutableListOf<PackageItemModel>().apply {
                     addAll(_state.value.actualPackageList)
                 }
@@ -53,7 +49,7 @@ class AddMedTrackViewModel(
                     currentPackageList.add(
                         PackageItemModel(
                             id = generateStringId(),
-                            expirationDate = _state.value.expirationDate.toDate().time
+                            expirationDate = _state.value.expirationDate
                         )
                     )
                     //обновление состояния
@@ -61,7 +57,7 @@ class AddMedTrackViewModel(
                         currentState.copy(
                             errorCode = errorCode,
                             actualPackageList = currentPackageList,
-                            expirationDate = "",
+                            expirationDate = 0,
                             quantityInPackage = "",
                         )
                     }

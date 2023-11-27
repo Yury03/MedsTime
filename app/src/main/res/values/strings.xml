@@ -20,6 +20,7 @@
     <string name="tracking">Отслеживание</string>
     <string name="medicine">Прием</string>
     <string name="add">Добавить</string>
+    <string name="add_new_package">Добавить новую упаковку</string>
     <string name="med_name_hint">Название лекарства</string>
     <string name="med_daily_dosage_hint">Суточная дозировка</string>
     <string name="med_comment_hint">Комментарий</string>
@@ -84,6 +85,8 @@
     <string name="intakes_count_is_not_defined">Количество приемов не определено</string>
     <string name="package_end_date_is_not_defined">Дата конца упаковки не определена</string>
     <string name="package_list">Список упаковок:</string>
+    <string name="date_picker_confirm_button">Ок</string>
+    <string name="date_picker_dismiss_button">Отмена</string>
 
     <string-array name="dosage_array">
         <item>Мг</item>
