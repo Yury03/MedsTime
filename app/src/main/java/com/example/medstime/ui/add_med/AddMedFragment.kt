@@ -552,6 +552,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         else "$hour:$minute"
 
     private fun updateCurrentState() {
+        Log.d("Tag", binding.dosageUnits.text.toString())
         _currentState = _currentState.copy(
             medicationName = binding.medicationName.text.toString(),
             dosage = binding.dosage.text.toString(),

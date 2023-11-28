@@ -1,6 +1,6 @@
 package com.example.medstime.ui.add_track.components
 
-import android.os.Bundle
+import android.util.Log
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,7 +23,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,31 +42,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.medstime.R
-import com.example.medstime.ui.add_med.AddMedFragment
 import com.example.medstime.ui.add_track.AddMedTrackEvent
-import com.example.medstime.ui.add_track.AddMedTrackViewModel
+import com.example.medstime.ui.add_track.AddMedTrackState
 import com.example.medstime.ui.common_components.AddMedButton
 import com.example.medstime.ui.common_components.PackageList
 import com.example.medstime.ui.utils.toDisplayString
 import java.util.Date
 
-/**## Функция AddMedTrack реализует весь ui экрана добавления/редактирования упаковок
- * ## Параметры:
- * - medName - необязательный параметр, передается если **medicationModel.name** уже существует;
- * - dosageUnit - обязательный параметр, берется из **AddMedFragment SpinDosageUnits**;
- * - medsTrackModel - необязательный параметр, равен **null**, если экран открыт в режиме добавления.*/
 @ExperimentalMaterial3Api
 @Composable
 fun AddMedTrack(
-    navController: NavController,
-    viewModel: AddMedTrackViewModel = viewModel(),
-    addMedFragmentState: String,//argument for button click
+    uiState: AddMedTrackState,
+    onBackButtonClick: () -> Unit = {},
+    sendEvent: (AddMedTrackEvent) -> Unit = {},
 ) {
-    val uiState by viewModel.state.collectAsState()
     var expanded by remember { mutableStateOf(false) }
     var textDosageUnit by remember { mutableStateOf(uiState.dosageUnit) }
     val expirationDate by remember(uiState) { mutableLongStateOf(uiState.expirationDate) }
@@ -88,14 +77,7 @@ fun AddMedTrack(
         ) {
             IconButton(
                 onClick = {
-                    navController.navigate(
-                        R.id.addMedFragment,
-                        Bundle().apply {
-                            putString(
-                                AddMedFragment.ARG_KEY_STATE,
-                                addMedFragmentState
-                            )
-                        })
+                    onBackButtonClick()
                     /*TODO возврат на предыдущую страницу с сохранением всех данных*/
                 }) {
                 Icon(
@@ -136,16 +118,17 @@ fun AddMedTrack(
             expirationDate = expirationDate,
             textQuantityInPackage = textQuantityInPackage,
             onValuesChangedDosageUnits = { newExpanded, newTextDosageUnit ->
+                Log.d("Tag", "old: $textDosageUnit | new: $newTextDosageUnit")
                 expanded = newExpanded
-                textDosageUnit = newTextDosageUnit
-                viewModel.send(AddMedTrackEvent.UpdateState(uiState.copy(dosageUnit = textDosageUnit)))
+                if (newTextDosageUnit.isNotEmpty()) textDosageUnit = newTextDosageUnit
+                sendEvent(AddMedTrackEvent.UpdateState(uiState.copy(dosageUnit = textDosageUnit)))
             },
             onValueChangedQuantityInPackage = { newTextQuantityInPackage ->
                 textQuantityInPackage = newTextQuantityInPackage
-                viewModel.send(AddMedTrackEvent.UpdateState(uiState.copy(quantityInPackage = newTextQuantityInPackage)))
+                sendEvent(AddMedTrackEvent.UpdateState(uiState.copy(quantityInPackage = newTextQuantityInPackage)))
             },
-            onExpirationDateChanged = {
-                viewModel.send(AddMedTrackEvent.UpdateState(uiState.copy(expirationDate = it)))
+            onExpirationDateChanged = { newExpirationDate ->
+                sendEvent(AddMedTrackEvent.UpdateState(uiState.copy(expirationDate = newExpirationDate)))
             },
         )
         AddMedButton(
@@ -153,7 +136,7 @@ fun AddMedTrack(
                 .fillMaxWidth()
                 .padding(top = 18.dp),
             onClick = {
-                viewModel.send(AddMedTrackEvent.AddNewPackageButtonClicked)
+                sendEvent(AddMedTrackEvent.AddNewPackageButtonClicked)
             },
             iconId = R.drawable.button_icon_arrow_to_right,
             stringId = R.string.add_new_package,
@@ -203,7 +186,7 @@ private fun BottomInputFields(
             onExpandedChange = {
                 onValuesChangedDosageUnits(
                     !expanded,
-                    textDosageUnits
+                    ""
                 )
             },//инверсия expanded, textDosageUnits не меняется
         ) {
@@ -286,10 +269,7 @@ fun PreviewAddMedTrack() {
             .padding(horizontal = 8.dp)
             .fillMaxSize()
     ) {
-        AddMedTrack(
-            navController = rememberNavController(),
-            addMedFragmentState = "",
-        )
+        AddMedTrack(AddMedTrackState())
     }
 }
 
@@ -302,10 +282,7 @@ fun PreviewAddMedTrackEditMode() {
             .padding(horizontal = 8.dp)
             .fillMaxSize()
     ) {
-        AddMedTrack(
-            navController = rememberNavController(),
-            addMedFragmentState = "",
-        )
+        AddMedTrack(AddMedTrackState("test"))
     }
 }
 

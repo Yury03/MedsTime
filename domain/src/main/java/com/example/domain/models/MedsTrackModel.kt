@@ -7,5 +7,4 @@ data class MedsTrackModel(
     val packageCounter: Int,//количество оставшихся упаковок
     val recommendedPurchaseDate: Long,
     val packageItems: List<PackageItemModel>,
-
-    )
+)

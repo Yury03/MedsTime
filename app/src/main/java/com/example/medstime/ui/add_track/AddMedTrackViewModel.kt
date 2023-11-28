@@ -1,5 +1,6 @@
 package com.example.medstime.ui.add_track
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.models.PackageItemModel
@@ -15,7 +16,11 @@ import java.util.Date
 class AddMedTrackViewModel(private val getMedTrackByIdUseCase: GetTrackById) : ViewModel() {
     private val _state: MutableStateFlow<AddMedTrackState> =
         MutableStateFlow(AddMedTrackState())
-    val state: StateFlow<AddMedTrackState> = _state.asStateFlow()
+    val state: StateFlow<AddMedTrackState>
+        get() {
+            Log.d("Tag", _state.value.toString())
+            return _state.asStateFlow()
+        }
 
     private fun updateErrorCode(): Int {
         val stateValue = _state.value
@@ -82,6 +87,7 @@ class AddMedTrackViewModel(private val getMedTrackByIdUseCase: GetTrackById) : V
                     currentState.copy(
                         medName = event.medName,
                         medsTrackId = event.medsTrackModelId,
+                        dosageUnit = event.dosageUnits,
                     )
                 }
             }

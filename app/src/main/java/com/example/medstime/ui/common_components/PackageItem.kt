@@ -33,7 +33,6 @@ import java.util.Date
 
 @Composable
 fun PackageItem(packageModel: PackageItemModel) {
-
     Card(
         modifier = Modifier.padding(4.dp),
         border = BorderStroke(1.dp, colorResource(id = R.color.main_black_and_white)),
@@ -102,7 +101,7 @@ private fun RowWithIcon(drawableId: Int, text: String) {
     ) {
         Image(
             painter = painterResource(id = drawableId),
-            contentDescription = "",
+            contentDescription = null,
         )
         Text(text = text, modifier = Modifier.padding(4.dp))
     }
@@ -130,13 +129,21 @@ private fun dateToString(time: Long) =
 
 @Preview(showBackground = true)
 @Composable
-fun GeneralPreview() {
+private fun GeneralPreview() {
     Row {
         PackageItem(
             packageModel = PackageItemModel(
                 id = "101",
                 intakesCount = 90,
                 endDate = 1689333793000,
+                expirationDate = 1694690593000,
+            ),
+        )
+        PackageItem(
+            packageModel = PackageItemModel(
+                id = "101",
+                intakesCount = -1,
+                endDate = 0,
                 expirationDate = 1694690593000,
             ),
         )

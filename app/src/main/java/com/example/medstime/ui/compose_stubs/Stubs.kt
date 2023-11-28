@@ -11,7 +11,7 @@ fun getListTrackingModel() = listOf(
         endDate = 1683844600900,
         packageCounter = 90,
         recommendedPurchaseDate = 1683963600900,
-        packageItems = getListPackageModel()
+        packageItems = getListPackageModelTracking()
     ),
     MedsTrackModel(
         "111", "item 2",
@@ -22,8 +22,7 @@ fun getListTrackingModel() = listOf(
     ),
 )
 
-
-fun getListPackageModel() = listOf(
+fun getListPackageModelTracking() = listOf(
     PackageItemModel(
         id = "23480109",
         intakesCount = 343,
@@ -49,6 +48,7 @@ fun getListPackageModel() = listOf(
         expirationDate = 1683963600900
     ),
 )
+
 
 fun getListMedicationModel() = listOf(
     MedicationModel(

@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
@@ -62,18 +64,36 @@ class AddMedTrackFragment : Fragment() {
             }
         }
     }
-    
+
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun AddMedTrackScreen() {
+    fun AddMedTrackScreen() {
         Box(
             modifier = Modifier
                 .padding(horizontal = 8.dp)
                 .fillMaxSize()
         ) {
+            val navController = requireActivity().findNavController(R.id.fragmentContainerView)
+            val backToAddMedScreen =
+//todo вынести во viewModel, сделать инъекцию context, оформить как event
+                {
+                    navController.navigate(
+                        R.id.addMedFragment,
+                        Bundle().apply {
+                            putString(
+                                AddMedFragment.ARG_KEY_STATE,
+                                addMedState
+                            )
+                        }
+                    )
+                }
+            val uiState by viewModel.state.collectAsState()
             AddMedTrack(
-                navController = requireActivity().findNavController(R.id.fragmentContainerView),
-                addMedFragmentState = addMedState,
+                uiState = uiState,
+                onBackButtonClick = backToAddMedScreen,
+                sendEvent = { event ->
+                    viewModel.send(event)
+                }
             )
         }
     }
