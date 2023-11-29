@@ -57,14 +57,11 @@ fun AddMedTrack(
     onBackButtonClick: () -> Unit = {},
     sendEvent: (AddMedTrackEvent) -> Unit = {},
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    var textDosageUnit by remember { mutableStateOf(uiState.dosageUnit) }
-    val expirationDate by remember(uiState) { mutableLongStateOf(uiState.expirationDate) }
-    var textQuantityInPackage by remember(uiState) { mutableStateOf(uiState.quantityInPackage) }
-    var textMedName by remember(uiState) { mutableStateOf(uiState.medName) }
-    val packageList by remember(uiState) {
-        mutableStateOf(uiState.actualPackageList)
-    }
+    var textDosageUnit by remember(uiState.dosageUnit) { mutableStateOf(uiState.dosageUnit) }
+    val expirationDate by remember(uiState.expirationDate) { mutableLongStateOf(uiState.expirationDate) }
+    var textQuantityInPackage by remember(uiState.quantityInPackage) { mutableStateOf(uiState.quantityInPackage) }
+    var textMedName by remember(uiState.medName) { mutableStateOf(uiState.medName) }
+    val packageList by remember(uiState.actualPackageList) { mutableStateOf(uiState.actualPackageList) }
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -113,13 +110,11 @@ fun AddMedTrack(
             showBackground = false,
         )
         BottomInputFields(
-            expanded = expanded,
             textDosageUnits = textDosageUnit,
             expirationDate = expirationDate,
             textQuantityInPackage = textQuantityInPackage,
-            onValuesChangedDosageUnits = { newExpanded, newTextDosageUnit ->
-                Log.d("Tag", "old: $textDosageUnit | new: $newTextDosageUnit")
-                expanded = newExpanded
+            onValuesChangedDosageUnits = { newTextDosageUnit ->
+                Log.d("Tag", "dosageUnit: old - $textDosageUnit | new - $newTextDosageUnit")
                 if (newTextDosageUnit.isNotEmpty()) textDosageUnit = newTextDosageUnit
                 sendEvent(AddMedTrackEvent.UpdateState(uiState.copy(dosageUnit = textDosageUnit)))
             },
@@ -148,16 +143,16 @@ fun AddMedTrack(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BottomInputFields(
-    expanded: Boolean,
     textDosageUnits: String,
     expirationDate: Long,
     textQuantityInPackage: String,
-    onValuesChangedDosageUnits: (Boolean, String) -> Unit,
+    onValuesChangedDosageUnits: (String) -> Unit,
     onValueChangedQuantityInPackage: (String) -> Unit,
     onExpirationDateChanged: (Long) -> Unit,
 ) {
     val dosageArray = stringArrayResource(id = R.array.dosage_array)
     val openDatePicker = remember { mutableStateOf(false) }
+    var isExpanded by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     InputTextField(
         modifier = Modifier
@@ -182,13 +177,7 @@ private fun BottomInputFields(
     Row {
         ExposedDropdownMenuBox(
             modifier = Modifier.weight(0.4f),
-            expanded = expanded,
-            onExpandedChange = {
-                onValuesChangedDosageUnits(
-                    !expanded,
-                    ""
-                )
-            },//инверсия expanded, textDosageUnits не меняется
+            expanded = isExpanded, onExpandedChange = { isExpanded = !isExpanded },
         ) {
             OutlinedTextField(
                 modifier = Modifier
@@ -197,14 +186,15 @@ private fun BottomInputFields(
                 value = textDosageUnits,
                 onValueChange = {/*TODO send state in vm*/ },
                 label = { Text(text = stringResource(id = R.string.units_hint)) },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
             )
-            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { /*TODO*/ }) {
+            ExposedDropdownMenu(expanded = isExpanded, onDismissRequest = { /*TODO*/ }) {
                 dosageArray.forEach {
                     DropdownMenuItem(
                         text = { Text(it) },
                         onClick = {
-                            onValuesChangedDosageUnits(false, it)
+                            onValuesChangedDosageUnits(it)
+                            isExpanded = !isExpanded
                         }
                     )
                 }

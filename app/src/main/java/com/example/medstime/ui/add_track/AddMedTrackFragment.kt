@@ -1,6 +1,7 @@
 package com.example.medstime.ui.add_track
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -75,8 +76,7 @@ class AddMedTrackFragment : Fragment() {
         ) {
             val navController = requireActivity().findNavController(R.id.fragmentContainerView)
             val backToAddMedScreen =
-//todo вынести во viewModel, сделать инъекцию context, оформить как event
-                {
+                {//todo вынести во viewModel, сделать инъекцию context, оформить как event
                     navController.navigate(
                         R.id.addMedFragment,
                         Bundle().apply {
@@ -88,6 +88,7 @@ class AddMedTrackFragment : Fragment() {
                     )
                 }
             val uiState by viewModel.state.collectAsState()
+            Log.d("Tag", "UPDATE STATE: $uiState")
             AddMedTrack(
                 uiState = uiState,
                 onBackButtonClick = backToAddMedScreen,
