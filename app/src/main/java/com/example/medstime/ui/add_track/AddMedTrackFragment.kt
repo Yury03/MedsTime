@@ -1,20 +1,13 @@
 package com.example.medstime.ui.add_track
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.medstime.R
@@ -40,7 +33,6 @@ class AddMedTrackFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        hideBottomNavigationBar()
         arguments?.let { args ->
             medName = args.getString(ARG_KEY_MED_NAME) ?: ""
             dosageUnits = args.getString(ARG_KEY_DOSAGE_UNITS) ?: ""
@@ -56,27 +48,15 @@ class AddMedTrackFragment : Fragment() {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                AddMedTrackScreen()
-            }
-        }
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun AddMedTrackScreen() {
-        Box(
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .fillMaxSize()
-        ) {
-            val navController = requireActivity().findNavController(R.id.fragmentContainerView)
-            val backToAddMedScreen =
-                {//todo вынести во viewModel, сделать инъекцию context, оформить как event
+                val uiState by viewModel.state.collectAsState()
+                val navController = requireActivity().findNavController(R.id.fragmentContainerView)
+                val backToAddMedScreen = {
                     navController.navigate(
                         R.id.addMedFragment,
                         Bundle().apply {
@@ -87,16 +67,20 @@ class AddMedTrackFragment : Fragment() {
                         }
                     )
                 }
-            val uiState by viewModel.state.collectAsState()
-            Log.d("Tag", "UPDATE STATE: $uiState")
-            AddMedTrack(
-                uiState = uiState,
-                onBackButtonClick = backToAddMedScreen,
-                sendEvent = { event ->
-                    viewModel.send(event)
-                }
-            )
+                AddMedTrack(
+                    uiState = uiState,
+                    onBackButtonClick = backToAddMedScreen,
+                    sendEvent = { event ->
+                        viewModel.send(event)
+                    }
+                )
+            }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        hideBottomNavigationBar()
     }
 
     private fun hideBottomNavigationBar() {
@@ -111,5 +95,4 @@ class AddMedTrackFragment : Fragment() {
         super.onDestroyView()
         showBottomNavigationBar()
     }
-
 }

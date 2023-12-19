@@ -49,6 +49,8 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     companion object {
         private const val LOG_TAG = "AddMedFragment"
         private const val TIME_PICKER_TAG = "TimePickerAddMedFragment"
+        private const val DESTINATION_TO_MEDICATION_SCREEN = 1
+        private const val DESTINATION_TO_ADD_MED_TRACK_SCREEN = 2
         private const val CAMERA_PERMISSION_CODE = 300
         private const val SYSTEM_ALERT_WINDOW_CODE = 400
         const val ARG_KEY_STATE = "state"
@@ -118,7 +120,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     private fun medicationSaved() {
         val serviceIntent = Intent(requireContext(), ReminderService::class.java)
         requireContext().startService(serviceIntent)
-        closeFragment()
+
     }
 
     private fun initView() {
@@ -152,7 +154,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                 }
             }
             backButton.setOnClickListener {
-                closeFragment()
+                closeFragment(DESTINATION_TO_MEDICATION_SCREEN)
             }
             scanBarcode.setOnClickListener {
                 checkCameraPermission()
@@ -207,6 +209,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         }
         if (state.isSavedNewMedication) {
             medicationSaved()
+            closeFragment(DESTINATION_TO_MEDICATION_SCREEN)
         }
     }
 
@@ -250,9 +253,20 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         return Settings.canDrawOverlays(requireContext()) && systemAlertWindowIsGranted
     }
 
-    private fun closeFragment() {
-        requireActivity().findNavController(R.id.fragmentContainerView)
-            .navigate(R.id.medicationFragment)
+    /**## Метод closeFragment() обрабатывает все операции перехода с помощью **navController**.*/
+    private fun closeFragment(destination: Int, args: Bundle = Bundle()) {
+        when (destination) {
+            DESTINATION_TO_MEDICATION_SCREEN -> {
+                showBottomNavigationBar()
+                requireActivity().findNavController(R.id.fragmentContainerView)
+                    .navigate(R.id.medicationFragment)
+            }
+
+            DESTINATION_TO_ADD_MED_TRACK_SCREEN -> {
+                requireActivity().findNavController(R.id.fragmentContainerView)
+                    .navigate(R.id.addMedTrackFragment, args)
+            }
+        }
     }
 
     private fun openAddMedTrackFragment() {
@@ -268,8 +282,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                 args.putString(AddMedTrackFragment.ARG_KEY_MEDS_TRACK_MODEL_ID, it)
             }
         }
-        requireActivity().findNavController(R.id.fragmentContainerView)
-            .navigate(R.id.addMedTrackFragment, args)
+        closeFragment(DESTINATION_TO_ADD_MED_TRACK_SCREEN, args)
     }
 
     private fun showInfoAboutBannerDialog() =
@@ -414,12 +427,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        showBottomNavigationBar()
-    }
-
-
     private fun betaFunctions() {
         val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
         val defaultValue = resources.getBoolean(R.bool.sp_camera_beta_default)
@@ -552,7 +559,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         else "$hour:$minute"
 
     private fun updateCurrentState() {
-        Log.d("Tag", binding.dosageUnits.text.toString())
         _currentState = _currentState.copy(
             medicationName = binding.medicationName.text.toString(),
             dosage = binding.dosage.text.toString(),

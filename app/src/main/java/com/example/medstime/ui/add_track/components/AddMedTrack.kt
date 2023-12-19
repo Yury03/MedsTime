@@ -64,7 +64,8 @@ fun AddMedTrack(
     val packageList by remember(uiState.actualPackageList) { mutableStateOf(uiState.actualPackageList) }
     Column(
         modifier = Modifier
-            .fillMaxWidth(),
+            .padding(horizontal = 8.dp)
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
@@ -97,18 +98,6 @@ fun AddMedTrack(
             hint = stringResource(id = R.string.med_name_hint),
             onValueChange = { textMedName = it }
         )
-        Text(
-            modifier = Modifier.padding(top = 4.dp),
-            fontSize = dimensionResource(id = R.dimen.text_5_level).value.sp,
-            text = stringResource(id = R.string.package_list),
-        )
-        PackageList(
-            verticalPaddingBox = 8.dp,
-            height = 110.dp,
-            packageItems = packageList,
-            showAddItem = false,
-            showBackground = false,
-        )
         BottomInputFields(
             textDosageUnits = textDosageUnit,
             expirationDate = expirationDate,
@@ -135,6 +124,18 @@ fun AddMedTrack(
             },
             iconId = R.drawable.button_icon_arrow_to_right,
             stringId = R.string.add_new_package,
+        )
+        Text(
+            modifier = Modifier.padding(top = 4.dp),
+            fontSize = dimensionResource(id = R.dimen.text_5_level).value.sp,
+            text = stringResource(id = R.string.package_list),
+        )
+        PackageList(
+            verticalPaddingBox = 8.dp,
+            height = 110.dp,
+            packageItems = packageList,
+            showAddItem = false,
+            showBackground = false,
         )
     }
 }
