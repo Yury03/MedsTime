@@ -16,53 +16,41 @@ import com.example.medstime.ui.add_track.components.AddMedTrack
 import com.example.medstime.ui.main_activity.MainActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-
+/**Фрагмент **AddMedTrackFragment** в основном нужен, чтобы изменять поле ***medTrack***, принадлежащее
+ *  классу **AddMedState**. Это необходимо для упрощения UI. Фрагмент принимает в аргументы
+ *  весь **AddMedState** и может менять ***medName***, ***dosageUnits***, ***medTrack***.*/
 class AddMedTrackFragment : Fragment() {
     companion object {
-        const val ARG_KEY_MED_NAME = "med_name"
-        const val ARG_KEY_DOSAGE_UNITS = "dosage_units"
-        const val ARG_KEY_MEDS_TRACK_MODEL_ID = "meds_track_model_id"
+        const val ARG_KEY_TRACK_MODEL = "trackModel"
         const val LOG_TAG = "AddMedTrackFragment"
     }
 
     private val viewModel by viewModel<AddMedTrackViewModel>()
-    private var medsTrackModelId: String? = null
-    private lateinit var medName: String
-    private lateinit var dosageUnits: String
-    private lateinit var addMedState: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let { args ->
-            medName = args.getString(ARG_KEY_MED_NAME) ?: ""
-            dosageUnits = args.getString(ARG_KEY_DOSAGE_UNITS) ?: ""
-            medsTrackModelId = args.getString(ARG_KEY_MEDS_TRACK_MODEL_ID)
-            addMedState = args.getString(AddMedFragment.ARG_KEY_STATE)!!
-            viewModel.send(
-                AddMedTrackEvent.HandleArguments(
-                    medName = medName,
-                    dosageUnits = dosageUnits,
-                    medsTrackModelId = medsTrackModelId,
-                )
-            )
+            val addMedStateJson = args.getString(AddMedFragment.ARG_KEY_STATE)!!
+            viewModel.send(AddMedTrackEvent.HandleArguments(addMedStateJson))
         }
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
                 val uiState by viewModel.state.collectAsState()
                 val navController = requireActivity().findNavController(R.id.fragmentContainerView)
-                val backToAddMedScreen = {
+                val backToAddMedScreen = { addMedStateJson: String ->
                     navController.navigate(
-                        R.id.addMedFragment,
-                        Bundle().apply {
+                        R.id.addMedFragment, Bundle().apply {
                             putString(
+                                addMedStateJson,
                                 AddMedFragment.ARG_KEY_STATE,
-                                addMedState
                             )
                         }
                     )

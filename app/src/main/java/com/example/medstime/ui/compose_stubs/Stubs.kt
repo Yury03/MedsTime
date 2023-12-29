@@ -22,7 +22,7 @@ fun getListTrackingModel() = listOf(
     ),
 )
 
-fun getListPackageModelTracking() = listOf(
+fun getListPackageModelTracking() = mutableListOf(
     PackageItemModel(
         id = "23480109",
         intakesCount = 343,
@@ -60,14 +60,14 @@ fun getListMedicationModel() = listOf(
         reminderTime = 0,
         frequency = MedicationModel.Frequency.DAILY,
         selectedDays = listOf(),
-        startDate = Date(),
+        startDate = Date().time,
         intakeType = MedicationModel.IntakeType.NONE,
         comment = "",
         useBanner = false,
-        trackType = MedicationModel.TrackType.STOCK_OF_MEDICINE,
-        stockOfMedicine = null,
-        endDate = null,
-        numberOfDays = null
+        trackModel = MedsTrackModel(
+            trackType = MedsTrackModel.TrackType.STOCK_OF_MEDICINE,
+            stockOfMedicine = 105.5,
+        ),
     ), MedicationModel(
         id = "23",
         name = "Item2",
@@ -77,14 +77,14 @@ fun getListMedicationModel() = listOf(
         reminderTime = 0,
         frequency = MedicationModel.Frequency.DAILY,
         selectedDays = listOf(),
-        startDate = Date(),
+        startDate = Date().time,
         intakeType = MedicationModel.IntakeType.NONE,
         comment = "",
         useBanner = false,
-        trackType = MedicationModel.TrackType.NUMBER_OF_DAYS,
-        stockOfMedicine = null,
-        endDate = null,
-        numberOfDays = 320.0,
+        trackModel = MedsTrackModel(
+            trackType = MedsTrackModel.TrackType.NUMBER_OF_DAYS,
+            numberOfDays = 320
+        ),
     ), MedicationModel(
         id = "312",
         name = "Item3",
@@ -94,19 +94,18 @@ fun getListMedicationModel() = listOf(
         reminderTime = 0,
         frequency = MedicationModel.Frequency.DAILY,
         selectedDays = listOf(),
-        startDate = Date(),
+        startDate = Date().time,
         intakeType = MedicationModel.IntakeType.NONE,
         comment = "",
         useBanner = false,
-        trackType = MedicationModel.TrackType.NONE,
-        stockOfMedicine = null,
-        endDate = null,
-        numberOfDays = null
+        trackModel = MedsTrackModel(
+            trackType = MedsTrackModel.TrackType.NONE,
+        ),
     )
 )
 
 private fun getListEditPackageModel() =
-    listOf(
+    mutableListOf(
         PackageItemModel(
             id = "443943924",
             intakesCount = -1,

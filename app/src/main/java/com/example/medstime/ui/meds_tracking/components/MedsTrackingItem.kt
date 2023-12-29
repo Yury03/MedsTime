@@ -195,7 +195,7 @@ private fun getDisplayDate(date: Long): String {
 @Preview
 @Composable
 private fun MedsTrackingItemPreview() {
-    val packageItemsStub = listOf(
+    val packageItemsStub = mutableListOf(
         PackageItemModel(
             id = "fuisset",
             intakesCount = 343,

@@ -1,21 +1,22 @@
 package com.example.medstime.ui.add_track
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.domain.models.PackageItemModel
 import com.example.domain.usecase.meds_track.GetTrackById
+import com.example.medstime.ui.add_med.AddMedState
 import com.example.medstime.ui.utils.generateStringId
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import java.util.Date
 
 class AddMedTrackViewModel(private val getMedTrackByIdUseCase: GetTrackById) : ViewModel() {
     private val _state: MutableStateFlow<AddMedTrackState> =
         MutableStateFlow(AddMedTrackState())
     val state: StateFlow<AddMedTrackState> = _state.asStateFlow()
+    private lateinit var addMedState: AddMedState
 
     private fun updateErrorCode(): Int {
         val stateValue = _state.value
@@ -30,7 +31,7 @@ class AddMedTrackViewModel(private val getMedTrackByIdUseCase: GetTrackById) : V
             }
 
             stateValue.quantityInPackage.isEmpty() -> {
-                AddMedTrackState.QUANTITY_IN_PACKAGE
+                AddMedTrackState.QUANTITY_IN_PACKAGE_IS_EMPTY
             }
 
             else -> AddMedTrackState.VALID
@@ -75,30 +76,45 @@ class AddMedTrackViewModel(private val getMedTrackByIdUseCase: GetTrackById) : V
             }
 
             is AddMedTrackEvent.HandleArguments -> {
-                event.medsTrackModelId?.let { medsTrackModelId ->
-                    pullMedsTrackModelById(medsTrackModelId)
-                }
+                addMedState =
+                    Gson().fromJson(event.addMedStateJsonString, AddMedState::class.java)
                 _state.update { currentState ->//todo почистить
                     currentState.copy(
-                        medName = event.medName,
-                        medsTrackId = event.medsTrackModelId,
-                        dosageUnit = event.dosageUnits,
+                        medName = addMedState.medicationName,
+                        dosageUnit = addMedState.dosageUnits,
+//                        medTrack = addMedState.trackModel,
                     )
+                }
+            }
+            /***/
+            AddMedTrackEvent.BackButtonClicked -> {
+                _state.update { currentState ->
+                    //изменение состояния AddMedFragment
+                    addMedState = addMedState.copy(
+                        medicationName = currentState.medName,
+                        dosageUnits = currentState.dosageUnit,
+//                        trackModel = currentState.medTrack,
+                    )
+                    currentState.copy(addMedStateJson = getActualAddMedStateJson())
                 }
             }
         }
     }
 
-    private fun pullMedsTrackModelById(medsTrackModelId: String) {
-        viewModelScope.launch {
-            val medTrack = getMedTrackByIdUseCase.invoke(medsTrackModelId)
-            _state.update { currentState ->
-                currentState.copy(
-                    medTrack = medTrack,
-                    actualPackageList = medTrack.packageItems,//todo test
-                    medName = medTrack.name,//todo test
-                )
-            }
-        }
+    private fun getActualAddMedStateJson(): String {
+        return Gson().toJson(addMedState)
     }
+
+//    private fun pullMedsTrackModelById(medsTrackModelId: String) {
+//        viewModelScope.launch {
+//            val medTrack = getMedTrackByIdUseCase.invoke(medsTrackModelId)
+//            _state.update { currentState ->
+//                currentState.copy(
+//                    medTrack = medTrack,
+//                    actualPackageList = medTrack.packageItems,
+//                    medName = medTrack.name,
+//                )
+//            }
+//        }
+//    }
 }

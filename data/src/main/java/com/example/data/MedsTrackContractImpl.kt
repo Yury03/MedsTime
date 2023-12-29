@@ -18,7 +18,7 @@ class MedsTrackContractImpl(context: Context) : Repository.MedsTrackContract {
 //            MedsTrackMapper.mapToModel(it)
 //        }
 //        return emptyList()
-        val packageItemsStub = listOf(
+        val packageItemsStub = mutableListOf(
             PackageItemModel(
                 id = "56435382",
                 intakesCount = 343,

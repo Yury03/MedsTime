@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.models.MedicationModel
+import com.example.domain.models.MedsTrackModel
 import com.example.domain.usecase.common.GetMedicationById
 import com.example.domain.usecase.common.ReplaceMedicationModel
 import com.example.domain.usecase.common.SaveNewMedication
@@ -19,7 +20,6 @@ import com.example.medstime.ui.utils.toDisplayString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.util.Date
 
 class AddMedViewModel(
     private val saveNewMedicationUseCase: SaveNewMedication,
@@ -34,27 +34,7 @@ class AddMedViewModel(
     private var editMedicationModelId: String? = null
 
     init {
-        _state.value = AddMedState(
-            mode = ADD_MODE,
-            isSavedNewMedication = false,
-            inputError = 0,
-            medicationName = "",
-            dosage = "",
-            dosageUnits = "",
-            startIntakeDate = getCurrentDateString(),
-            medComment = "",
-            useBannerChBox = false,
-            intakeTimeList = listOf(),
-            medicationReminderTime = "",
-            intakeType = "",
-            frequency = "",
-            selectedDays = listOf(),
-            trackType = "",
-            stockOfMedicine = "",
-            numberOfDays = "",
-            endDate = "",
-            trackModelId = null
-        )
+        _state.value = AddMedState(startIntakeDate = getCurrentDateString())
     }
 
     private fun saveNewModelInRoom(medicationModel: MedicationModel) {
@@ -68,11 +48,15 @@ class AddMedViewModel(
 
     fun send(event: AddMedEvent) {
         when (event) {
-            AddMedEvent.ContinueButtonClicked -> {
+            is AddMedEvent.AddMedTrackButtonClicked -> {
+
+            }
+
+            is AddMedEvent.ContinueButtonClicked -> {
                 saveMedicationModel()
             }
 
-            AddMedEvent.ErrorWasShown -> {
+            is AddMedEvent.ErrorWasShown -> {
                 _state.value = _state.value!!.copy(inputError = 0)
             }
 
@@ -81,10 +65,6 @@ class AddMedViewModel(
                     editMedicationModelId = event.medicationModelId
                     getMedicationModelById(event.medicationModelId)
                 }
-            }
-
-            is AddMedEvent.AddMedTrackButtonClicked -> {
-
             }
 
             is AddMedEvent.UpdateState -> {
@@ -112,8 +92,10 @@ class AddMedViewModel(
         }
     }
 
-    private fun makeMedicationModel()
-            : Pair<MedicationModel?, Int> {
+
+    //todo протестировать и перепроверить
+    //todo получение данных происходит из фрагмента? Добавляется поле medsTrackModel через другой фрагмент?
+    private fun makeMedicationModel(): Pair<MedicationModel?, Int> {
         with(state.value!!) {
             var errorCode = 0
             val id = if (state.value!!.mode == ADD_MODE) {
@@ -124,6 +106,7 @@ class AddMedViewModel(
             val trackingType = getTrackingType()
             val medicationReminderTime = extractIntFromString(medicationReminderTime)
             val medicationFrequency = getFrequency()
+            val trackModel = MedsTrackModel()
             if (!trackingDataIsCorrect(trackingType)) errorCode = 5
             if (!medicationFrequency.isCorrect()) errorCode = 4
             if (intakeTimeList.isEmpty()) errorCode = 3
@@ -140,14 +123,11 @@ class AddMedViewModel(
                         reminderTime = medicationReminderTime,
                         frequency = medicationFrequency,
                         selectedDays = selectedDays,
-                        startDate = startIntakeDate.toDate(),
+                        startDate = startIntakeDate.toDate().time,
                         intakeType = getIntakeType(),
                         comment = medComment,
                         useBanner = useBannerChBox,
-                        trackType = trackingType,
-                        stockOfMedicine = getTrackingData().first,
-                        numberOfDays = getTrackingData().second,
-                        endDate = getTrackingData().third,
+                        trackModel = trackModel,
                     ), errorCode
                 )
             } else {
@@ -156,50 +136,48 @@ class AddMedViewModel(
         }
     }
 
-    private fun trackingDataIsCorrect(trackingType: MedicationModel.TrackType): Boolean {
+    private fun trackingDataIsCorrect(trackingType: MedsTrackModel.TrackType): Boolean {
         return when (trackingType) {
-            MedicationModel.TrackType.STOCK_OF_MEDICINE -> state.value!!.stockOfMedicine
+            MedsTrackModel.TrackType.STOCK_OF_MEDICINE -> state.value!!.stockOfMedicine != -1.0
+
+            MedsTrackModel.TrackType.DATE -> state.value!!.endDate.isNotEmpty()
+
+            MedsTrackModel.TrackType.NUMBER_OF_DAYS -> state.value!!.numberOfDays != -1
+
+            MedsTrackModel.TrackType.PACKAGES_TRACK -> state.value!!.packageItems
                 .isNotEmpty()
 
-            MedicationModel.TrackType.DATE -> state.value!!.endDate
-                .isNotEmpty()
-
-            MedicationModel.TrackType.NUMBER_OF_DAYS -> state.value!!.numberOfDays
-                .isNotEmpty()
-
-            MedicationModel.TrackType.NONE -> true
-        }
-
-    }
-
-    /**На момент вызова getTrackingData() гарантируется, что соответствующее поле не пустое.
-     *  Метод получает нужные данные, в зависимости от типа отслеживания*/
-    private fun getTrackingData()
-            : Triple<Double?, Double?, Date?> {
-        with(_state.value!!) {
-            val numberMedsStr = stockOfMedicine
-            val numberDaysStr = numberOfDays
-            val endIntakeDateStr = endDate
-            val trackArray = resources.getStringArray(R.array.track_array)
-            return when (trackType) {
-                trackArray[0] -> Triple(null, null, null)
-                trackArray[1] -> Triple(numberMedsStr.toDouble(), null, null)
-                trackArray[2] -> Triple(null, numberDaysStr.toDouble(), null)
-                trackArray[3] -> Triple(null, null, endIntakeDateStr.toDate())
-                else -> Triple(null, null, null)
-            }
+            MedsTrackModel.TrackType.NONE -> true
         }
     }
+
+//    /**На момент вызова getTrackingData() гарантируется, что соответствующее поле не пустое.
+//     *  Метод получает нужные данные, в зависимости от типа отслеживания*/
+//    private fun getTrackingData(): Triple<Double?, Double?, Date?> {
+//        with(_state.value!!) {
+//            val numberMedsStr = stockOfMedicine
+//            val numberDaysStr = numberOfDays
+//            val endIntakeDateStr = endDate
+//            val trackArray = resources.getStringArray(R.array.track_array)
+//            return when (trackType) {
+//                trackArray[0] -> Triple(null, null, null)
+//                trackArray[1] -> Triple(numberMedsStr.toDouble(), null, null)
+//                trackArray[2] -> Triple(null, numberDaysStr.toDouble(), null)
+//                trackArray[3] -> Triple(null, null, endIntakeDateStr.toDate())
+//                else -> Triple(null, null, null)
+//            }
+//        }
+//    }
 
     private fun getTrackingType()
-            : MedicationModel.TrackType {
+            : MedsTrackModel.TrackType {
         val trackingTypeArray = resources.getStringArray(R.array.track_array)
         return when (state.value!!.trackType) {
-            trackingTypeArray[0] -> MedicationModel.TrackType.NONE
-            trackingTypeArray[1] -> MedicationModel.TrackType.STOCK_OF_MEDICINE
-            trackingTypeArray[2] -> MedicationModel.TrackType.NUMBER_OF_DAYS
-            trackingTypeArray[3] -> MedicationModel.TrackType.DATE
-            else -> MedicationModel.TrackType.NONE
+            trackingTypeArray[0] -> MedsTrackModel.TrackType.NONE
+            trackingTypeArray[1] -> MedsTrackModel.TrackType.STOCK_OF_MEDICINE
+            trackingTypeArray[2] -> MedsTrackModel.TrackType.NUMBER_OF_DAYS
+            trackingTypeArray[3] -> MedsTrackModel.TrackType.DATE
+            else -> MedsTrackModel.TrackType.NONE
         }
     }
 
@@ -233,33 +211,56 @@ class AddMedViewModel(
         }
     }
 
+    /*****getMedicationModelById()*** получает **MedicationModel**, если фрагмент открыт в режиме редактирования.
+     * Также он парсит модель и изменяет ***_state***. */
     private fun getMedicationModelById(medicationModelId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val model = getMedicationModelUseCase.invoke(medicationModelId)
             val selectedDays = model.selectedDays ?: listOf()
-            val numberOfDays = model.numberOfDays?.toDisplayString() ?: ""
-            val stockOfMedicine = model.stockOfMedicine?.toString() ?: ""
-            val endDate = model.endDate?.toDisplayString() ?: ""
-            _state.postValue(
-                state.value!!.copy(
-                    medicationName = model.name,
-                    dosage = model.dosage.toDisplayString(),
-                    dosageUnits = model.dosageUnit,
-                    startIntakeDate = model.startDate.toDisplayString(),
-                    medComment = model.comment,
-                    useBannerChBox = model.useBanner,
-                    intakeTimeList = model.intakeTimes,
-                    medicationReminderTime = model.reminderTime.toAdapterString(),
-                    intakeType = model.intakeType.toAdapterString(),
-                    frequency = model.frequency.toAdapterString(),
-                    selectedDays = selectedDays,
-                    trackType = model.trackType.toAdapterString(),
-                    stockOfMedicine = stockOfMedicine,
-                    numberOfDays = numberOfDays,
-                    endDate = endDate,
-                    mode = EDIT_MODE
-                )
+            var newState = state.value!!
+            newState = newState.copy(
+                medicationName = model.name,
+                dosage = model.dosage.toDisplayString(),
+                dosageUnits = model.dosageUnit,
+                startIntakeDate = model.startDate.toDisplayString(),
+                medComment = model.comment,
+                useBannerChBox = model.useBanner,
+                intakeTimeList = model.intakeTimes,
+                medicationReminderTime = model.reminderTime.toAdapterString(),
+                intakeType = model.intakeType.toAdapterString(),
+                frequency = model.frequency.toAdapterString(),
+                selectedDays = selectedDays,
+                trackType = model.trackModel.trackType.toAdapterString(),
+                mode = EDIT_MODE,
+                packageItems = model.trackModel.packageItems,
+                packageCounter = model.trackModel.packageCounter,
+                stockOfMedicine = model.trackModel.stockOfMedicine,
+                numberOfDays = model.trackModel.numberOfDays,
+                endDate = model.trackModel.endDate.toDisplayString(),
             )
+
+//            when (model.trackType) {
+//                MedicationModel.TrackType.STOCK_OF_MEDICINE -> {
+//                    //todo
+//                }
+//
+//                MedicationModel.TrackType.DATE -> {
+//                    newState =
+//                        newState.copy(endDate = model.trackModel.endDate.toDisplayString())
+//                }
+//
+//                MedicationModel.TrackType.NUMBER_OF_DAYS -> {
+//                    newState =
+//                        newState.copy(numberOfDays = model.trackModel.numberOfDays.toString())
+//                }
+//
+//                MedicationModel.TrackType.NONE -> {
+//
+//                }
+//            }
+//            val stockOfMedicine = model.trackModel.stockOfMedicine.toDisplayString()
+
+            _state.postValue(newState)
         }
     }
 
@@ -292,13 +293,14 @@ class AddMedViewModel(
     }
 
     /**### Функция *MedicationModel.TrackType.toAdapterString()* переводит данные в строку из адаптера AutoCompleteTextView*/
-    private fun MedicationModel.TrackType.toAdapterString(): String {
+    private fun MedsTrackModel.TrackType.toAdapterString(): String {
         val trackTypeArray = resources.getStringArray(R.array.track_array)
         return when (this) {
-            MedicationModel.TrackType.NONE -> trackTypeArray[0]
-            MedicationModel.TrackType.STOCK_OF_MEDICINE -> trackTypeArray[1]
-            MedicationModel.TrackType.NUMBER_OF_DAYS -> trackTypeArray[2]
-            MedicationModel.TrackType.DATE -> trackTypeArray[3]
+            MedsTrackModel.TrackType.NONE -> trackTypeArray[0]
+            MedsTrackModel.TrackType.STOCK_OF_MEDICINE -> trackTypeArray[1]
+            MedsTrackModel.TrackType.NUMBER_OF_DAYS -> trackTypeArray[2]
+            MedsTrackModel.TrackType.DATE -> trackTypeArray[3]
+            MedsTrackModel.TrackType.PACKAGES_TRACK -> trackTypeArray[4]
         }
     }
 

@@ -32,7 +32,6 @@ import com.example.domain.models.MedicationModel
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentAddMedBinding
 import com.example.medstime.services.ReminderService
-import com.example.medstime.ui.add_track.AddMedTrackFragment
 import com.example.medstime.ui.main_activity.MainActivity
 import com.google.android.material.chip.Chip
 import com.google.android.material.textfield.TextInputEditText
@@ -199,7 +198,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                 frequency.updateAutoCompleteText(state.frequency)
                 updateSelectedDays(state.selectedDays)
                 trackingType.updateAutoCompleteText(state.trackType)
-                numberDays.updateText(state.numberOfDays)
+                numberDays.updateText(state.numberOfDays.toString())
                 endIntakeDate.updateText(state.endDate)
             }
         }
@@ -273,14 +272,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         updateCurrentState()
         val stateJson = Gson().toJson(_currentState)
         val args = Bundle().apply {
-            putString(AddMedTrackFragment.ARG_KEY_MED_NAME, _currentState.medicationName)
-            putString(AddMedTrackFragment.ARG_KEY_DOSAGE_UNITS, _currentState.dosageUnits)
             putString(ARG_KEY_STATE, stateJson)
-        }
-        if (_currentState.mode == AddMedState.EDIT_MODE) {
-            _currentState.trackModelId?.let {
-                args.putString(AddMedTrackFragment.ARG_KEY_MEDS_TRACK_MODEL_ID, it)
-            }
         }
         closeFragment(DESTINATION_TO_ADD_MED_TRACK_SCREEN, args)
     }
@@ -565,13 +557,14 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             dosageUnits = binding.dosageUnits.text.toString(),
             startIntakeDate = binding.startIntakeDate.text.toString(),
             medComment = binding.medComment.text.toString(),
-            medicationReminderTime = binding.reminderType.text.toString(),
             useBannerChBox = binding.useBannerChBox.isChecked,
+            intakeTimeList = getIntakeTime(),
+            medicationReminderTime = binding.reminderType.text.toString(),
             frequency = binding.frequency.text.toString(),
             selectedDays = getSelectedDays(),
-            intakeTimeList = getIntakeTime(),
             trackType = binding.trackingType.text.toString(),
-            numberOfDays = binding.numberDays.text.toString(),
+            stockOfMedicine = binding.numberMeds.text.toString().toDouble(),//todo test
+            numberOfDays = binding.numberDays.text.toString().toInt(),//todo test
             endDate = binding.endIntakeDate.text.toString(),
         )
     }

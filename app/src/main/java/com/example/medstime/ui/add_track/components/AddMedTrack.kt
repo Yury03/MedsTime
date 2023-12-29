@@ -54,7 +54,7 @@ import java.util.Date
 @Composable
 fun AddMedTrack(
     uiState: AddMedTrackState,
-    onBackButtonClick: () -> Unit = {},
+    onBackButtonClick: (String) -> Unit = {},
     sendEvent: (AddMedTrackEvent) -> Unit = {},
 ) {
     var textDosageUnit by remember(uiState.dosageUnit) { mutableStateOf(uiState.dosageUnit) }
@@ -75,8 +75,8 @@ fun AddMedTrack(
         ) {
             IconButton(
                 onClick = {
-                    onBackButtonClick()
-                    /*TODO возврат на предыдущую страницу с сохранением всех данных*/
+                    sendEvent(AddMedTrackEvent.BackButtonClicked)
+                    onBackButtonClick(uiState.addMedStateJson)
                 }) {
                 Icon(
                     modifier = Modifier

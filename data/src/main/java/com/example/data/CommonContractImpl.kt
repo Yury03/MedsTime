@@ -7,13 +7,16 @@ import com.example.data.mappers.MedicationMapper
 import com.example.data.mappers.ReminderMapper
 import com.example.data.room.MedicationDatabase
 import com.example.data.room.MedicationIntakeDatabase
+import com.example.data.room.MedsTrackDatabase
 import com.example.data.room.ReminderDatabase
 import com.example.data.room.dao.MedicationDao
 import com.example.data.room.dao.MedicationIntakeDao
+import com.example.data.room.dao.MedsTrackDao
 import com.example.data.room.dao.ReminderDao
 import com.example.domain.Repository
 import com.example.domain.models.MedicationIntakeModel
 import com.example.domain.models.MedicationModel
+import com.example.domain.models.MedsTrackModel
 import com.example.domain.models.ReminderModel
 import java.time.LocalDate
 import java.time.ZoneId
@@ -45,14 +48,21 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
     private val reminderDatabase: ReminderDatabase by lazy {
         ReminderDatabase.getDatabase(context)
     }
+    private val medsTrackDatabase: MedsTrackDatabase by lazy {
+        MedsTrackDatabase.getDatabase(context)
+    }
     private val medicationDao: MedicationDao by lazy { medicationDatabase.medicationDao() }
     private val medicationIntakeDao: MedicationIntakeDao by lazy { medicationIntakeDatabase.medicationIntakeDao() }
     private val reminderDao: ReminderDao by lazy { reminderDatabase.reminderDao() }
+    private val medsTrackDao: MedsTrackDao by lazy { medsTrackDatabase.medsTrackDao() }
 
-    /**Функция сохраняет новую модель medication, а затем получает и сохраняет сгенерированные модели приемов и уведомлений*/
+    /**Функция маппит medicationModel (которая содержит medsTrackModel) в val (medicationEntity, medsTrackEntity),
+     *  затем эти entity добавляются в соответствующие таблицы базы данных,
+     *  затем происходит получение и сохранение сгенерированных моделей приемов и уведомлений*/
     override suspend fun saveNewMedication(medicationModel: MedicationModel) {
-        val entity = MedicationMapper.mapToEntity(medicationModel)
-        medicationDao.insert(entity)
+        val (medicationEntity, medsTrackEntity) = MedicationMapper.mapToEntity(medicationModel)
+        medicationDao.insert(medicationEntity)
+        medsTrackDao.insert(medsTrackEntity)
         val medicationIntakeList = generateMedicationIntakeModels(medicationModel)
         val reminderList = generateReminderModels(medicationIntakeList, medicationModel)
         reminderList.map {
@@ -73,18 +83,19 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
     }
 
     private fun getNumberDays(model: MedicationModel): Int {
-        return when (model.trackType) {
-            MedicationModel.TrackType.STOCK_OF_MEDICINE -> calculateDaysForStockMedicine(model)
-            MedicationModel.TrackType.DATE -> TimeUnit.MILLISECONDS
-                .toDays(model.endDate!!.time - model.startDate.time).toInt()
+        return when (model.trackModel.trackType) {
+            MedsTrackModel.TrackType.STOCK_OF_MEDICINE -> calculateDaysForStockMedicine(model)
+            MedsTrackModel.TrackType.DATE -> TimeUnit.MILLISECONDS
+                .toDays(model.trackModel.endDate - model.startDate).toInt()
 
-            MedicationModel.TrackType.NUMBER_OF_DAYS -> model.numberOfDays!!.toInt()
-            MedicationModel.TrackType.NONE -> DEFAULT_NUMBER_DAYS_GENERATE
+            MedsTrackModel.TrackType.NUMBER_OF_DAYS -> model.trackModel.numberOfDays
+            MedsTrackModel.TrackType.NONE -> DEFAULT_NUMBER_DAYS_GENERATE
+            MedsTrackModel.TrackType.PACKAGES_TRACK -> TODO()
         }
     }
 
     private fun calculateDaysForStockMedicine(model: MedicationModel): Int {
-        val stock = model.stockOfMedicine!!//todo?
+        val stock = model.trackModel.stockOfMedicine//todo?
         val dayDosage = model.dosage * model.intakeTimes.size
         Log.d(LOG_TAG, "Calculate days for stock medicine: ${(stock / dayDosage).toInt()}")
         return (stock / dayDosage).toInt()
@@ -180,9 +191,9 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
         }.timeInMillis - reminderTime.minutes.inWholeMilliseconds
     }
 
-
-    private fun getDateForDay(startDate: Date, dayIndex: Int): LocalDate {
-        val dateIntake = Date(startDate.time + TimeUnit.DAYS.toMillis(dayIndex.toLong()))
+    //todo test getDateForDay
+    private fun getDateForDay(startDate: Long, dayIndex: Int): LocalDate {
+        val dateIntake = Date(startDate + TimeUnit.DAYS.toMillis(dayIndex.toLong()))
         return dateIntake.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
     }
 
@@ -216,7 +227,9 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
     private fun generateUniqueId() = UUID.randomUUID().toString()
 
     override suspend fun getMedicationById(id: String): MedicationModel {
-        return MedicationMapper.mapToModel(medicationDao.getById(id))
+        val medicationEntity = medicationDao.getById(id)
+        val medsTrackEntity = medsTrackDao.getById(medicationEntity.medsTrackModelId)
+        return MedicationMapper.mapToModel(medicationEntity, medsTrackEntity)
     }
 
     override suspend fun replaceMedicationModel(medicationModel: MedicationModel) {

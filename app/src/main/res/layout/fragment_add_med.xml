@@ -423,7 +423,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="4dp"
                         android:hint="@string/end_intake_date_hint"
-                        android:visibility="gone">
+                        android:visibility="visible">
                         <!--todo заменить android:editable="false"-->
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/endIntakeDate"
@@ -441,8 +441,24 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="4dp"
                         android:text="@string/add_med_track"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         app:icon="@drawable/button_icon_add_med_track" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textFieldNumberMeds"
+                        style="@style/AddMedTextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:hint="@string/number_meds_hint"
+                        android:visibility="visible">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/numberMeds"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textFieldNumberDays"
@@ -451,13 +467,13 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="4dp"
                         android:hint="@string/number_days_hint"
-                        android:visibility="gone">
+                        android:visibility="visible">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/numberDays"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="numberDecimal" />
+                            android:inputType="number" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </net.cachapa.expandablelayout.ExpandableLayout>

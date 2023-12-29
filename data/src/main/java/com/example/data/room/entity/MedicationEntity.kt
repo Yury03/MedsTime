@@ -15,14 +15,11 @@ data class MedicationEntity(
     val reminderTime: Int,
     val frequency: String,
     @TypeConverters(IntListConverter::class) val selectedDays: List<Int>?,
+    val startDate: String,//todo Long
     val intakeType: String,
-    val startDate: String,
     val comment: String,
     val useBanner: Boolean,
-    val trackType: String,
-    val stockOfMedicine: Double?,
-    val endDate: String?,
-    val numberOfDays: Double?,
+    val medsTrackModelId: String,
 ) {
     class IntListConverter {
         @TypeConverter

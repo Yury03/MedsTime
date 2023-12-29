@@ -58,6 +58,7 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":domain"))
 
+
     //data
     implementation("com.google.code.gson:gson:2.10.1")
 
