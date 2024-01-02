@@ -60,7 +60,11 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
      *  затем эти entity добавляются в соответствующие таблицы базы данных,
      *  затем происходит получение и сохранение сгенерированных моделей приемов и уведомлений*/
     override suspend fun saveNewMedication(medicationModel: MedicationModel) {
-        val (medicationEntity, medsTrackEntity) = MedicationMapper.mapToEntity(medicationModel)
+        val (medicationEntity, medsTrackEntity) = MedicationMapper.mapToEntity(
+            medicationModel.copy(
+                trackModel = generateTrackModel(medicationModel)
+            )
+        )
         medicationDao.insert(medicationEntity)
         medsTrackDao.insert(medsTrackEntity)
         val medicationIntakeList = generateMedicationIntakeModels(medicationModel)
@@ -71,6 +75,12 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
         medicationIntakeList.map {
             medicationIntakeDao.insert(MedicationIntakeMapper.mapToEntity(it))
         }
+        Log.e(LOG_TAG, medicationModel.toString())
+    }
+
+    /***/
+    private fun generateTrackModel(medicationModel: MedicationModel): MedsTrackModel {
+        TODO("Not yet implemented")
     }
 
     private fun generateMedicationIntakeModels(model: MedicationModel): List<MedicationIntakeModel> {

@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.medstime.R
 import com.example.medstime.ui.add_track.AddMedTrackEvent
+import com.example.medstime.ui.add_track.AddMedTrackFragment
 import com.example.medstime.ui.add_track.AddMedTrackState
 import com.example.medstime.ui.common_components.AddMedButton
 import com.example.medstime.ui.common_components.PackageList
@@ -54,7 +55,7 @@ import java.util.Date
 @Composable
 fun AddMedTrack(
     uiState: AddMedTrackState,
-    onBackButtonClick: (String) -> Unit = {},
+    onBackButtonClick: () -> Unit = {},
     sendEvent: (AddMedTrackEvent) -> Unit = {},
 ) {
     var textDosageUnit by remember(uiState.dosageUnit) { mutableStateOf(uiState.dosageUnit) }
@@ -75,8 +76,9 @@ fun AddMedTrack(
         ) {
             IconButton(
                 onClick = {
-                    sendEvent(AddMedTrackEvent.BackButtonClicked)
-                    onBackButtonClick(uiState.addMedStateJson)
+                    sendEvent(AddMedTrackEvent.BackButtonClicked)//TODO change field uiState.addMedStateJson
+                    Log.e(AddMedTrackFragment.LOG_TAG, uiState.addMedStateJson)//TODO [?] empty
+                    onBackButtonClick()
                 }) {
                 Icon(
                     modifier = Modifier
@@ -96,7 +98,10 @@ fun AddMedTrack(
             modifier = Modifier.fillMaxWidth(),
             textValue = textMedName,
             hint = stringResource(id = R.string.med_name_hint),
-            onValueChange = { textMedName = it }
+            onValueChange = {
+                textMedName = it
+                sendEvent(AddMedTrackEvent.UpdateState(uiState.copy(medName = textMedName)))
+            }
         )
         BottomInputFields(
             textDosageUnits = textDosageUnit,
@@ -154,7 +159,7 @@ private fun BottomInputFields(
     val dosageArray = stringArrayResource(id = R.array.dosage_array)
     val openDatePicker = remember { mutableStateOf(false) }
     var isExpanded by remember { mutableStateOf(false) }
-    val focusManager = LocalFocusManager.current
+    val focusManager = LocalFocusManager.current //TODO проблемы с фокусом
     InputTextField(
         modifier = Modifier
             .fillMaxWidth()

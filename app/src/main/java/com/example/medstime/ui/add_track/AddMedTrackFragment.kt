@@ -32,6 +32,7 @@ class AddMedTrackFragment : Fragment() {
         arguments?.let { args ->
             val addMedStateJson = args.getString(AddMedFragment.ARG_KEY_STATE)!!
             viewModel.send(AddMedTrackEvent.HandleArguments(addMedStateJson))
+
         }
     }
 
@@ -45,13 +46,10 @@ class AddMedTrackFragment : Fragment() {
             setContent {
                 val uiState by viewModel.state.collectAsState()
                 val navController = requireActivity().findNavController(R.id.fragmentContainerView)
-                val backToAddMedScreen = { addMedStateJson: String ->
+                val backToAddMedScreen = {
                     navController.navigate(
                         R.id.addMedFragment, Bundle().apply {
-                            putString(
-                                addMedStateJson,
-                                AddMedFragment.ARG_KEY_STATE,
-                            )
+                            putString(AddMedFragment.ARG_KEY_STATE, viewModel.state.value.addMedStateJson)
                         }
                     )
                 }

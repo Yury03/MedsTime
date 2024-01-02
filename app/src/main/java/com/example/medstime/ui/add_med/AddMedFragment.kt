@@ -112,7 +112,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         with(binding) {
             title.setText(R.string.edit_med)
             reminderLayoutButton.setText(R.string.edit_reminder)
-            continueButton.setText(R.string.edit_med)
+            addMedTrackButton.setText(R.string.edit_med)
         }
     }
 
@@ -145,7 +145,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             endIntakeDate.setOnClickListener {
                 showDatePickerDialog(endIntakeDate)
             }
-            continueButton.setOnClickListener {
+            addMedTrackButton.setOnClickListener {
                 with(viewModel) {
                     updateCurrentState()
                     send(AddMedEvent.UpdateState(_currentState))
@@ -179,10 +179,13 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     private fun observeViewModelData() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             _currentState = state
+            Log.e(LOG_TAG, state.toString())
             updateAllData(state)
         }
     }
 
+    /**Функция updateAllData() обновляет все данные в случае редактирования модели или isForcedUpdate == true,
+     * в остальных случаях обновляется только дата начала приема, код ошибки и факт сохранения новой модели. */
     private fun updateAllData(state: AddMedState, isForcedUpdate: Boolean = false) {
         with(binding) {
             startIntakeDate.updateText(state.startIntakeDate)
@@ -487,25 +490,36 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
                 trackArray[0] -> {//интерфейс "Не добавлять"
                     textFieldEndIntakeDate.visibility = View.GONE
                     textFieldNumberDays.visibility = View.GONE
+                    textFieldNumberMeds.visibility = View.GONE
                     buttonAddMedTrack.visibility = View.GONE
                 }
 
-                trackArray[1] -> {//интерфейс "Запас лекарств"
-                    textFieldNumberDays.visibility = View.GONE
+                trackArray[1] -> {//интерфейс "Курс (количество лекарств)"
                     textFieldEndIntakeDate.visibility = View.GONE
-                    buttonAddMedTrack.visibility = View.VISIBLE
+                    textFieldNumberDays.visibility = View.GONE
+                    textFieldNumberMeds.visibility = View.VISIBLE
+                    buttonAddMedTrack.visibility = View.GONE
                 }
 
-                trackArray[2] -> {//интерфейс "Количество дней"
-                    textFieldNumberDays.visibility = View.VISIBLE
+                trackArray[2] -> {//интерфейс "Курс (количество дней)"
                     textFieldEndIntakeDate.visibility = View.GONE
+                    textFieldNumberDays.visibility = View.VISIBLE
+                    textFieldNumberMeds.visibility = View.GONE
                     buttonAddMedTrack.visibility = View.GONE
                 }
 
                 trackArray[3] -> {//интерфейс "Дата"
                     textFieldEndIntakeDate.visibility = View.VISIBLE
                     textFieldNumberDays.visibility = View.GONE
+                    textFieldNumberMeds.visibility = View.GONE
                     buttonAddMedTrack.visibility = View.GONE
+                }
+
+                trackArray[4] -> {//интерфейс "Запас лекарств"
+                    textFieldEndIntakeDate.visibility = View.GONE
+                    textFieldNumberDays.visibility = View.GONE
+                    textFieldNumberMeds.visibility = View.GONE
+                    buttonAddMedTrack.visibility = View.VISIBLE
                 }
 
                 frequencyArray[0] -> {//интерфейс "выбранные дни"
@@ -551,6 +565,10 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         else "$hour:$minute"
 
     private fun updateCurrentState() {
+        val stockOfMedicine =
+            binding.numberMeds.text.toString().takeIf { it.isNotBlank() }?.toDouble()
+        val numberOfDays = binding.numberDays.text.toString().takeIf { it.isNotBlank() }?.toInt()
+        Log.e(LOG_TAG, _currentState.toString())
         _currentState = _currentState.copy(
             medicationName = binding.medicationName.text.toString(),
             dosage = binding.dosage.text.toString(),
@@ -563,8 +581,8 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             frequency = binding.frequency.text.toString(),
             selectedDays = getSelectedDays(),
             trackType = binding.trackingType.text.toString(),
-            stockOfMedicine = binding.numberMeds.text.toString().toDouble(),//todo test
-            numberOfDays = binding.numberDays.text.toString().toInt(),//todo test
+            stockOfMedicine = stockOfMedicine ?: 0.0, //todo test
+            numberOfDays = numberOfDays ?: 0, //todo test
             endDate = binding.endIntakeDate.text.toString(),
         )
     }
