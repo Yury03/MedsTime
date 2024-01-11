@@ -6,14 +6,16 @@ import java.io.Serializable
 data class MedsTrackModel(
     var id: String = "",
     var name: String = "",
-    var recommendedPurchaseDate: Long = 0,
-    val packageItems: MutableList<PackageItemModel> = mutableListOf(),
-    var packageCounter: Int = -1, // количество оставшихся упаковок
-    var stockOfMedicine: Double = -1.0, // запас лекарств
-    var numberOfDays: Int = -1, // количество дней курса приема
+    val packageItems: MutableList<PackageItemModel> = mutableListOf(), // список упаковок
+    var stockOfMedicine: Double = -1.0, // запас лекарств [у всех типов отслеживания, кроме NONE]
+    var numberOfDays: Int = -1, // количество дней курса приема [только у NUMBER_OF_DAYS, остальные типы используют totalDays]//todo исправить(оставить только totalDays)
     var endDate: Long = -1, // конечная дата отслеживания
+    var remainingDoses: Int = -1, // количество оставшихся приемов [у всех типов отслеживания, кроме NONE]
+    var recommendedPurchaseDate: Long = 0, // рекомендованная дата покупки [только у PACKAGES_TRACK]
+    var packageCounter: Int = -1, // количество оставшихся упаковок [только у PACKAGES_TRACK]
+    var totalDays: Int = -1, // [У всех типов отслеживания]
     var trackType: TrackType = TrackType.NONE,
-) : Serializable {
+    ) : Serializable {
     enum class TrackType {
         PACKAGES_TRACK,     // Отслеживание добавленных упаковок
         STOCK_OF_MEDICINE,  // Курс (количество лекарств)

@@ -27,25 +27,37 @@ fun getListPackageModelTracking() = mutableListOf(
         id = "23480109",
         intakesCount = 343,
         endDate = 1683963600900,
-        expirationDate = 1683963600900
+        expirationDate = 1683963600900,
+        durationInDays = 34,
+        startDate = 1683962690900,
+        quantityInPackage = 704.0,
     ),
     PackageItemModel(
         id = "23410029",
         intakesCount = 33,
         endDate = 1683963600900,
-        expirationDate = 1683963600900
+        expirationDate = 1683963600900,
+        durationInDays = 34,
+        startDate = 1683962690900,
+        quantityInPackage = 704.0,
     ),
     PackageItemModel(
         id = "21048029",
         intakesCount = 33,
         endDate = 1683963600900,
-        expirationDate = 1683963600900
+        expirationDate = 1683963600900,
+        durationInDays = 34,
+        startDate = 1683962690900,
+        quantityInPackage = 704.0,
     ),
     PackageItemModel(
         id = "10348029",
         intakesCount = 33,
         endDate = 1683963600900,
-        expirationDate = 1683963600900
+        expirationDate = 1683963600900,
+        durationInDays = 34,
+        startDate = 1683962690900,
+        quantityInPackage = 704.0,
     ),
 )
 
@@ -110,12 +122,18 @@ private fun getListEditPackageModel() =
             id = "443943924",
             intakesCount = -1,
             endDate = 0,
-            expirationDate = 1683963600900
+            expirationDate = 1683963600900,
+            durationInDays = 34,
+            startDate = 1683962690900,
+            quantityInPackage = 704.0,
         ),
         PackageItemModel(
             id = "443942124",
             intakesCount = -1,
             endDate = 0,
-            expirationDate = 1683963600900
+            expirationDate = 1683963600900,
+            durationInDays = 34,
+            startDate = 1683962690900,
+            quantityInPackage = 704.0,
         ),
     )

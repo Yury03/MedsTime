@@ -40,9 +40,7 @@ val appModule = module {
         )
     }
     viewModel<AddMedTrackViewModel> {
-        AddMedTrackViewModel(
-            getMedTrackByIdUseCase = get()
-        )
+        AddMedTrackViewModel()
     }
     single<Resources> { androidContext().resources }
     single<GetRemindersWithStatus> {

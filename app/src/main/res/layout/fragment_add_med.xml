@@ -480,7 +480,7 @@
     </ScrollView>
 
     <Button
-        android:id="@+id/addMedTrackButton"
+        android:id="@+id/addMedButton"
         style="@style/AddMedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

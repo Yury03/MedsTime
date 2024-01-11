@@ -137,6 +137,9 @@ private fun GeneralPreview() {
                 intakesCount = 90,
                 endDate = 1689333793000,
                 expirationDate = 1694690593000,
+                durationInDays = 34,
+                startDate = 1683962690900,
+                quantityInPackage = 704.0,
             ),
         )
         PackageItem(
@@ -145,6 +148,9 @@ private fun GeneralPreview() {
                 intakesCount = -1,
                 endDate = 0,
                 expirationDate = 1694690593000,
+                durationInDays = 34,
+                startDate = 1683962690900,
+                quantityInPackage = 704.0,
             ),
         )
         AddPackageItem(96.dp)

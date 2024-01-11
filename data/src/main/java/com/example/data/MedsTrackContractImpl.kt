@@ -23,25 +23,37 @@ class MedsTrackContractImpl(context: Context) : Repository.MedsTrackContract {
                 id = "56435382",
                 intakesCount = 343,
                 endDate = 1683963600900,
-                expirationDate = 1683963600900
+                expirationDate = 1683963600900,
+                durationInDays = 34,
+                startDate = 1683962690900,
+                quantityInPackage = 704.0,
             ),
             PackageItemModel(
                 id = "58264353",
                 intakesCount = 33,
                 endDate = 1683963600900,
-                expirationDate = 1683963600900
+                expirationDate = 1683963600900,
+                durationInDays = 34,
+                startDate = 1683962690900,
+                quantityInPackage = 704.0,
             ),
             PackageItemModel(
                 id = "56482353",
                 intakesCount = 33,
                 endDate = 1683963600900,
-                expirationDate = 1683963600900
+                expirationDate = 1683963600900,
+                durationInDays = 34,
+                startDate = 1683962690900,
+                quantityInPackage = 704.0,
             ),
             PackageItemModel(
                 id = "56824353",
                 intakesCount = 33,
                 endDate = 1683963600900,
-                expirationDate = 1683963600900
+                expirationDate = 1683963600900,
+                durationInDays = 34,
+                startDate = 1683962690900,
+                quantityInPackage = 704.0,
             ),
         )
         return listOf(

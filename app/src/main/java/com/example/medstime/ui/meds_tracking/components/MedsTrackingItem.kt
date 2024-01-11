@@ -200,25 +200,37 @@ private fun MedsTrackingItemPreview() {
             id = "fuisset",
             intakesCount = 343,
             endDate = 1683963600900,
-            expirationDate = 1683963600900
+            expirationDate = 1683963600900,
+            durationInDays = 34,
+            startDate = 1683962690900,
+            quantityInPackage = 704.0,
         ),
         PackageItemModel(
             id = "fuisset",
             intakesCount = 33,
             endDate = 1683963600900,
-            expirationDate = 1683963600900
+            expirationDate = 1683963600900,
+            durationInDays = 34,
+            startDate = 1683962690900,
+            quantityInPackage = 704.0,
         ),
         PackageItemModel(
             id = "fuisset",
             intakesCount = 33,
             endDate = 1683963600900,
-            expirationDate = 1683963600900
+            expirationDate = 1683963600900,
+            durationInDays = 34,
+            startDate = 1683962690900,
+            quantityInPackage = 704.0,
         ),
         PackageItemModel(
             id = "fuisset",
             intakesCount = 33,
             endDate = 1683963600900,
-            expirationDate = 1683963600900
+            expirationDate = 1683963600900,
+            durationInDays = 34,
+            startDate = 1683962690900,
+            quantityInPackage = 704.0,
         ),
     )
     Box(modifier = Modifier.fillMaxSize()) {

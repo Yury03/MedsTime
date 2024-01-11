@@ -1,6 +1,7 @@
 package com.example.medstime.ui.add_med
 
 import android.content.res.Resources
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -69,6 +70,7 @@ class AddMedViewModel(
 
             is AddMedEvent.UpdateState -> {
                 _state.value = event.state
+                Log.i("11.01.24", _state.value.toString())
             }
         }
     }
@@ -92,21 +94,19 @@ class AddMedViewModel(
         }
     }
 
-
-    //todo протестировать и перепроверить
-    //todo получение данных происходит из фрагмента? Добавляется поле medsTrackModel через другой фрагмент?
     private fun makeMedicationModel(): Pair<MedicationModel?, Int> {
         with(state.value!!) {
             var errorCode = 0
-            val id = if (state.value!!.mode == ADD_MODE) {
+            val medTrackID = generateStringId()
+            val medicationID = if (state.value!!.mode == ADD_MODE) {
                 generateStringId()
             } else {
                 editMedicationModelId!!//todo?
             }
             val trackingType = getTrackingType()
+            val trackModel = getTrackModel(trackingType)
             val medicationReminderTime = extractIntFromString(medicationReminderTime)
             val medicationFrequency = getFrequency()
-            val trackModel = MedsTrackModel()
             if (!trackingDataIsCorrect(trackingType)) errorCode = 5
             if (!medicationFrequency.isCorrect()) errorCode = 4
             if (intakeTimeList.isEmpty()) errorCode = 3
@@ -115,7 +115,7 @@ class AddMedViewModel(
             if (errorCode == 0) {
                 return Pair(
                     MedicationModel(
-                        id = id,
+                        id = medicationID,
                         name = medicationName,
                         dosage = dosage.toDouble(),
                         dosageUnit = dosageUnits,
@@ -136,6 +136,40 @@ class AddMedViewModel(
         }
     }
 
+    private fun getTrackModel(trackingType: MedsTrackModel.TrackType): MedsTrackModel {
+        with(state.value!!) {
+            val trackModel = MedsTrackModel(
+                id = generateStringId(),
+                name = medicationName,
+                trackType = trackingType,
+            )
+            return when (trackingType) {
+                MedsTrackModel.TrackType.PACKAGES_TRACK -> {
+                    trackModel.copy(
+                        packageItems = packageItems,
+                        packageCounter = packageItems.size,
+                    )
+                }
+
+                MedsTrackModel.TrackType.STOCK_OF_MEDICINE -> {
+                    trackModel.copy(stockOfMedicine = stockOfMedicine)
+                }
+
+                MedsTrackModel.TrackType.DATE -> {
+                    trackModel.copy(numberOfDays = numberOfDays)
+                }
+
+                MedsTrackModel.TrackType.NUMBER_OF_DAYS -> {
+                    trackModel.copy(endDate = endDate.toDate().time)
+                }
+
+                MedsTrackModel.TrackType.NONE -> {
+                    trackModel
+                }
+            }
+        }
+    }
+
     private fun trackingDataIsCorrect(trackingType: MedsTrackModel.TrackType): Boolean {
         return when (trackingType) {
             MedsTrackModel.TrackType.STOCK_OF_MEDICINE -> state.value!!.stockOfMedicine != -1.0
@@ -151,24 +185,6 @@ class AddMedViewModel(
         }
     }
 
-//    /**На момент вызова getTrackingData() гарантируется, что соответствующее поле не пустое.
-//     *  Метод получает нужные данные, в зависимости от типа отслеживания*/
-//    private fun getTrackingData(): Triple<Double?, Double?, Date?> {
-//        with(_state.value!!) {
-//            val numberMedsStr = stockOfMedicine
-//            val numberDaysStr = numberOfDays
-//            val endIntakeDateStr = endDate
-//            val trackArray = resources.getStringArray(R.array.track_array)
-//            return when (trackType) {
-//                trackArray[0] -> Triple(null, null, null)
-//                trackArray[1] -> Triple(numberMedsStr.toDouble(), null, null)
-//                trackArray[2] -> Triple(null, numberDaysStr.toDouble(), null)
-//                trackArray[3] -> Triple(null, null, endIntakeDateStr.toDate())
-//                else -> Triple(null, null, null)
-//            }
-//        }
-//    }
-
     private fun getTrackingType()
             : MedsTrackModel.TrackType {
         val trackingTypeArray = resources.getStringArray(R.array.track_array)
@@ -177,7 +193,11 @@ class AddMedViewModel(
             trackingTypeArray[1] -> MedsTrackModel.TrackType.STOCK_OF_MEDICINE
             trackingTypeArray[2] -> MedsTrackModel.TrackType.NUMBER_OF_DAYS
             trackingTypeArray[3] -> MedsTrackModel.TrackType.DATE
-            else -> MedsTrackModel.TrackType.NONE
+            trackingTypeArray[4] -> MedsTrackModel.TrackType.PACKAGES_TRACK
+            else -> {
+                Log.e("ERROR", "Tracking type is not defined")
+                MedsTrackModel.TrackType.NONE
+            }
         }
     }
 
@@ -238,28 +258,6 @@ class AddMedViewModel(
                 numberOfDays = model.trackModel.numberOfDays,
                 endDate = model.trackModel.endDate.toDisplayString(),
             )
-
-//            when (model.trackType) {
-//                MedicationModel.TrackType.STOCK_OF_MEDICINE -> {
-//                    //todo
-//                }
-//
-//                MedicationModel.TrackType.DATE -> {
-//                    newState =
-//                        newState.copy(endDate = model.trackModel.endDate.toDisplayString())
-//                }
-//
-//                MedicationModel.TrackType.NUMBER_OF_DAYS -> {
-//                    newState =
-//                        newState.copy(numberOfDays = model.trackModel.numberOfDays.toString())
-//                }
-//
-//                MedicationModel.TrackType.NONE -> {
-//
-//                }
-//            }
-//            val stockOfMedicine = model.trackModel.stockOfMedicine.toDisplayString()
-
             _state.postValue(newState)
         }
     }

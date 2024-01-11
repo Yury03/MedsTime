@@ -49,7 +49,8 @@ class AddMedTrackViewModel : ViewModel() {
                     currentPackageList.add(
                         PackageItemModel(
                             id = generateStringId(),
-                            expirationDate = _state.value.expirationDate
+                            expirationDate = _state.value.expirationDate,
+                            quantityInPackage = _state.value.quantityInPackage.toDouble(),//todo cast testing
                         )
                     )
                     //обновление состояния

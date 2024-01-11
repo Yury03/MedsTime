@@ -112,7 +112,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         with(binding) {
             title.setText(R.string.edit_med)
             reminderLayoutButton.setText(R.string.edit_reminder)
-            addMedTrackButton.setText(R.string.edit_med)
+            addMedButton.setText(R.string.edit_med)
         }
     }
 
@@ -145,7 +145,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             endIntakeDate.setOnClickListener {
                 showDatePickerDialog(endIntakeDate)
             }
-            addMedTrackButton.setOnClickListener {
+            addMedButton.setOnClickListener {
                 with(viewModel) {
                     updateCurrentState()
                     send(AddMedEvent.UpdateState(_currentState))

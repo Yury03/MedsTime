@@ -13,6 +13,9 @@ import com.example.data.room.dao.MedicationDao
 import com.example.data.room.dao.MedicationIntakeDao
 import com.example.data.room.dao.MedsTrackDao
 import com.example.data.room.dao.ReminderDao
+import com.example.data.utils.calculateDayDifference
+import com.example.data.utils.daysToMilliseconds
+import com.example.data.utils.generateStringId
 import com.example.domain.Repository
 import com.example.domain.models.MedicationIntakeModel
 import com.example.domain.models.MedicationModel
@@ -22,8 +25,8 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Calendar
 import java.util.Date
-import java.util.UUID
 import java.util.concurrent.TimeUnit
+import kotlin.math.floor
 import kotlin.time.Duration.Companion.minutes
 
 /**Класс реализует общие юзкейсы. Используются MedicationDatabase, MedicationIntakeDatabase, ReminderDatabase.
@@ -56,15 +59,14 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
     private val reminderDao: ReminderDao by lazy { reminderDatabase.reminderDao() }
     private val medsTrackDao: MedsTrackDao by lazy { medsTrackDatabase.medsTrackDao() }
 
-    /**Функция маппит medicationModel (которая содержит medsTrackModel) в val (medicationEntity, medsTrackEntity),
+    /**Функция готовит medicationModel (вычисляет все нужные данные), маппит ее в val (medicationEntity, medsTrackEntity),
      *  затем эти entity добавляются в соответствующие таблицы базы данных,
      *  затем происходит получение и сохранение сгенерированных моделей приемов и уведомлений*/
     override suspend fun saveNewMedication(medicationModel: MedicationModel) {
-        val (medicationEntity, medsTrackEntity) = MedicationMapper.mapToEntity(
-            medicationModel.copy(
-                trackModel = generateTrackModel(medicationModel)
-            )
-        )
+        fillTrackModel(medicationModel)
+        Log.i(LOG_TAG, medicationModel.toString())
+        val (medicationEntity, medsTrackEntity) =
+            MedicationMapper.mapToEntity(medicationModel)
         medicationDao.insert(medicationEntity)
         medsTrackDao.insert(medsTrackEntity)
         val medicationIntakeList = generateMedicationIntakeModels(medicationModel)
@@ -75,48 +77,190 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
         medicationIntakeList.map {
             medicationIntakeDao.insert(MedicationIntakeMapper.mapToEntity(it))
         }
-        Log.e(LOG_TAG, medicationModel.toString())
     }
 
-    /***/
-    private fun generateTrackModel(medicationModel: MedicationModel): MedsTrackModel {
-        TODO("Not yet implemented")
+    /**Функция fillTrackModel() вычисляет все необходимые данные для trackModel*/
+    private fun fillTrackModel(medicationModel: MedicationModel) {
+        with(medicationModel.trackModel) {
+            when (medicationModel.trackModel.trackType) {
+                MedsTrackModel.TrackType.PACKAGES_TRACK -> {
+                    stockOfMedicine = packageItems.sumOf {
+                        it.quantityInPackage
+                    }
+                    fillPackageItemModels(medicationModel)
+                    calculateRemainingDoses(medicationModel)
+                    totalDays = packageItems.sumOf {
+                        it.durationInDays
+                    }
+//todo                    calculateTotalDays(medicationModel)[?]
+                }
+
+                MedsTrackModel.TrackType.STOCK_OF_MEDICINE -> {
+                    calculateRemainingDoses(medicationModel)
+                    calculateTotalDays(medicationModel)
+                }
+
+                MedsTrackModel.TrackType.DATE -> {
+                    totalDays = medicationModel.startDate.calculateDayDifference(endDate)
+                    calculateStockWithTotalDays(medicationModel)
+                    calculateRemainingDoses(medicationModel)
+                }
+
+                MedsTrackModel.TrackType.NUMBER_OF_DAYS -> {
+                    totalDays = numberOfDays
+                    calculateStockWithTotalDays(medicationModel)
+                    calculateRemainingDoses(medicationModel)
+                }
+
+                MedsTrackModel.TrackType.NONE -> {
+                    totalDays = DEFAULT_NUMBER_DAYS_GENERATE
+                }
+            }
+        }
+
     }
+
+    private fun calculateStockWithTotalDays(medication: MedicationModel) {
+        var stockOfMedicine = -1.0
+        val dailyDosage = getDailyDosage(medication)
+        var totalDays = medication.trackModel.totalDays
+        when (medication.frequency) {
+            MedicationModel.Frequency.DAILY -> {
+                while (totalDays > 0) {
+                    stockOfMedicine += dailyDosage
+                    totalDays--
+                }
+            }
+
+            MedicationModel.Frequency.EVERY_OTHER_DAY -> {
+                while (totalDays > 0) {
+                    if (totalDays % 2 == 0) {
+                        stockOfMedicine += dailyDosage
+                        totalDays--
+                    }
+                }
+            }
+
+            MedicationModel.Frequency.SELECTED_DAYS -> {
+                val frequencyArray = getFrequencyArray(medication.selectedDays!!)
+                var currentDay = getDayOfWeek(medication.startDate)
+                while (totalDays > 0) {
+                    if (frequencyArray[currentDay]) {
+                        stockOfMedicine += dailyDosage
+                        totalDays--
+                    }
+                    currentDay = (currentDay + 1) % 7
+                }
+            }
+
+        }
+        medication.trackModel.stockOfMedicine = stockOfMedicine
+    }
+
+    /**### Функция calculateTotalDays() вычисляет количество дней на протяжении которых пользователь будет принимать лекарства. ***ДЛЯ ВЫЗОВА НЕОБХОДИМО ПОЛЕ trackModel.stockOfMedicine*** */
+    private fun calculateTotalDays(medication: MedicationModel) {
+        if (medication.trackModel.stockOfMedicine >= 0) return//todo?
+        with(medication) {
+            val dailyDosage = getDailyDosage(this)
+            var currentDay = getDayOfWeek(startDate) //от 0 до 6
+            var totalDays = 0
+            var stock = trackModel.stockOfMedicine
+            when (frequency) {
+                MedicationModel.Frequency.DAILY -> {
+                    while (trackModel.stockOfMedicine - dailyDosage >= 0) {
+                        stock -= dailyDosage
+                        totalDays++
+                    }
+                }
+
+                MedicationModel.Frequency.EVERY_OTHER_DAY -> {
+                    while (trackModel.stockOfMedicine - dailyDosage >= 0) {
+                        if (totalDays % 2 == 0) {
+                            stock -= dailyDosage
+                        }
+                        currentDay = (currentDay + 1) % 7
+                        totalDays++
+                    }
+                }
+
+                MedicationModel.Frequency.SELECTED_DAYS -> {
+                    val frequencyArray = getFrequencyArray(selectedDays!!)
+                    while (trackModel.stockOfMedicine - dailyDosage >= 0) {
+                        if (frequencyArray[currentDay]) {
+                            stock -= dailyDosage
+                        }
+                        currentDay = (currentDay + 1) % 7
+                        totalDays++
+                    }
+                }
+            }
+            trackModel.totalDays = totalDays
+        }
+    }
+
+    /**Функция getDayOfWeek() возвращает день недели в формате Int.
+     * - Monday - 0;
+     * - Sunday - 6.*/
+    private fun getDayOfWeek(startDate: Long): Int {
+        return (Calendar.getInstance().apply {
+            timeInMillis = startDate
+        }.get(Calendar.DAY_OF_WEEK) + 5) % 7
+    }
+
+    private fun getFrequencyArray(selectedDays: List<Int>): List<Boolean> = List(7) { index ->
+        index in selectedDays
+    }
+
+    private fun calculateRemainingDoses(medication: MedicationModel) {
+        with(medication) {
+            trackModel.remainingDoses =
+                floor(trackModel.stockOfMedicine / dosage).toInt()
+        }
+    }
+
+    //todo добавить генерацию recommendedPurchaseDate, startDate и учесть expirationDate
+    /**Функция editPackageItemModels вычисляет количество приемов, на сколько дней хватит упаковки
+     *  и дату начала и окончания упаковки */
+    private fun fillPackageItemModels(medication: MedicationModel) {
+        val dailyDosage = getDailyDosage(medication)
+        medication.trackModel.packageItems.forEachIndexed { i, packageItem ->
+            val quantityInPackage = packageItem.quantityInPackage
+            val dosesInPackage = floor(quantityInPackage / medication.dosage).toInt()
+            val durationInDays =
+                floor(packageItem.quantityInPackage / dailyDosage).toInt()
+
+            packageItem.intakesCount = dosesInPackage
+            packageItem.durationInDays = durationInDays
+
+            if (i > 0) {
+                val previousPackageItem = medication.trackModel.packageItems[i - 1]
+                packageItem.startDate = previousPackageItem.endDate
+                packageItem.endDate = packageItem.startDate + durationInDays.daysToMilliseconds()
+            } else {
+                packageItem.startDate = medication.startDate
+                packageItem.endDate = packageItem.startDate + durationInDays.daysToMilliseconds()
+            }
+        }
+    }
+
 
     private fun generateMedicationIntakeModels(model: MedicationModel): List<MedicationIntakeModel> {
-        val days = getNumberDays(model)
         return when (model.frequency) {
-            MedicationModel.Frequency.DAILY -> generateModelsForDaily(model, days)
-            MedicationModel.Frequency.EVERY_OTHER_DAY -> generateModelsForEveryOtherDay(model, days)
-            MedicationModel.Frequency.SELECTED_DAYS -> generateModelsForSelectedDays(model, days)
+            MedicationModel.Frequency.DAILY -> generateModelsForDaily(model)
+            MedicationModel.Frequency.EVERY_OTHER_DAY -> generateModelsForEveryOtherDay(model)
+            MedicationModel.Frequency.SELECTED_DAYS -> generateModelsForSelectedDays(model)
         }
     }
 
-    private fun getNumberDays(model: MedicationModel): Int {
-        return when (model.trackModel.trackType) {
-            MedsTrackModel.TrackType.STOCK_OF_MEDICINE -> calculateDaysForStockMedicine(model)
-            MedsTrackModel.TrackType.DATE -> TimeUnit.MILLISECONDS
-                .toDays(model.trackModel.endDate - model.startDate).toInt()
+    private fun getDailyDosage(medicationModel: MedicationModel) =
+        medicationModel.dosage * medicationModel.intakeTimes.size
 
-            MedsTrackModel.TrackType.NUMBER_OF_DAYS -> model.trackModel.numberOfDays
-            MedsTrackModel.TrackType.NONE -> DEFAULT_NUMBER_DAYS_GENERATE
-            MedsTrackModel.TrackType.PACKAGES_TRACK -> TODO()
-        }
-    }
-
-    private fun calculateDaysForStockMedicine(model: MedicationModel): Int {
-        val stock = model.trackModel.stockOfMedicine//todo?
-        val dayDosage = model.dosage * model.intakeTimes.size
-        Log.d(LOG_TAG, "Calculate days for stock medicine: ${(stock / dayDosage).toInt()}")
-        return (stock / dayDosage).toInt()
-    }
 
     /**Функция генерирует список приемов на *days* дней с частотой **DAILY**.
      * (0 until days).flatMap используется как замена создания листа и перебора через for со
      * счетчиком.*/
-    private fun generateModelsForDaily(model: MedicationModel, days: Int):
-            List<MedicationIntakeModel> {
-        return (0 until days).flatMap { dayIndex ->
+    private fun generateModelsForDaily(model: MedicationModel): List<MedicationIntakeModel> {
+        return (0 until model.trackModel.totalDays).flatMap { dayIndex ->
             val localDate = getDateForDay(model.startDate, dayIndex)
             model.intakeTimes.map { intakeTime ->
                 createMedicationIntakeModel(model, intakeTime, localDate)
@@ -128,9 +272,8 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
      * (0 until days).flatMap используется как замена создания листа и перебора через for со
      * счетчиком. Каждый второй проход в коллекцию добавляется *emptyList()*, чтобы обеспечить
      * нужную частоту дат.*/
-    private fun generateModelsForEveryOtherDay(model: MedicationModel, days: Int):
-            List<MedicationIntakeModel> {
-        return (0 until days).flatMap { dayIndex ->
+    private fun generateModelsForEveryOtherDay(model: MedicationModel): List<MedicationIntakeModel> {
+        return (0 until model.trackModel.totalDays).flatMap { dayIndex ->
             if (dayIndex % 2 == 0) {
                 val localDate = getDateForDay(model.startDate, dayIndex)
                 model.intakeTimes.map { intakeTime ->
@@ -146,10 +289,9 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
      * (0 until days).flatMap используется как замена создания листа и перебора через for со
      * счетчиком. Переменная *selectedDays* содержит массив с числами от 1 до 7 с понедельника
      * по воскресенье.*/
-    private fun generateModelsForSelectedDays(model: MedicationModel, days: Int):
-            List<MedicationIntakeModel> {
-        val selectedDays = model.selectedDays ?: emptyList()//todo model.selectedDays!!
-        return (0 until days).flatMap { dayIndex ->
+    private fun generateModelsForSelectedDays(model: MedicationModel): List<MedicationIntakeModel> {
+        val selectedDays = model.selectedDays!!
+        return (0 until model.trackModel.totalDays).flatMap { dayIndex ->
             val localDate = getDateForDay(model.startDate, dayIndex)
             if (selectedDays.contains(localDate.dayOfWeek.value)) {
                 model.intakeTimes.map { intakeTime ->
@@ -162,20 +304,18 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
     }
 
     private fun generateReminderModels(
-        intakeList: List<MedicationIntakeModel>,
-        medicationModel: MedicationModel
+        intakeList: List<MedicationIntakeModel>, medicationModel: MedicationModel
     ): List<ReminderModel> {
         val reminderList = mutableListOf<ReminderModel>()
-        val type =
-            if (medicationModel.useBanner) {
-                ReminderModel.Type.BANNER
-            } else {
-                ReminderModel.Type.PUSH_NOTIFICATION
-            }
+        val type = if (medicationModel.useBanner) {
+            ReminderModel.Type.BANNER
+        } else {
+            ReminderModel.Type.PUSH_NOTIFICATION
+        }
         for (intake in intakeList) {
             reminderList.add(
                 ReminderModel(
-                    id = generateUniqueId(),
+                    id = generateStringId(),
                     medicationIntakeId = intake.id,
                     type = type,
                     status = ReminderModel.Status.NONE,
@@ -187,9 +327,7 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
     }
 
     private fun getTime(
-        time: MedicationIntakeModel.Time,
-        date: MedicationIntakeModel.Date,
-        reminderTime: Int
+        time: MedicationIntakeModel.Time, date: MedicationIntakeModel.Date, reminderTime: Int
     ): Long {
         return Calendar.getInstance().apply {
             set(Calendar.YEAR, date.year)
@@ -208,12 +346,10 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
     }
 
     private fun createMedicationIntakeModel(
-        model: MedicationModel,
-        intakeTime: MedicationModel.Time,
-        localDate: LocalDate
+        model: MedicationModel, intakeTime: MedicationModel.Time, localDate: LocalDate
     ): MedicationIntakeModel {
         return MedicationIntakeModel(
-            id = generateUniqueId(),
+            id = generateStringId(),
             name = model.name,
             dosage = model.dosage,
             dosageUnit = model.dosageUnit,
@@ -221,9 +357,7 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
             medicationId = model.id,
             intakeTime = MedicationIntakeModel.Time(intakeTime.hour, intakeTime.minute),
             intakeDate = MedicationIntakeModel.Date(
-                localDate.dayOfMonth,
-                localDate.monthValue,
-                localDate.year
+                localDate.dayOfMonth, localDate.monthValue, localDate.year
             ),
             intakeType = when (model.intakeType) {
                 MedicationModel.IntakeType.NONE -> MedicationIntakeModel.IntakeType.NONE
@@ -234,7 +368,6 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
         )
     }
 
-    private fun generateUniqueId() = UUID.randomUUID().toString()
 
     override suspend fun getMedicationById(id: String): MedicationModel {
         val medicationEntity = medicationDao.getById(id)
