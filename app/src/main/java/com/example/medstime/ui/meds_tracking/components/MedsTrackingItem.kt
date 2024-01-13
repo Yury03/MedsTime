@@ -39,6 +39,7 @@ import androidx.core.content.ContextCompat
 import com.example.domain.models.MedsTrackModel
 import com.example.domain.models.PackageItemModel
 import com.example.medstime.R
+import com.example.medstime.ui.common_components.PackageList
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
 import java.text.SimpleDateFormat
@@ -181,7 +182,7 @@ fun ExpandablePart(
     PackageList(
         verticalPaddingBox = verticalPaddingBox,
         height = height,
-        trackModel = trackModel
+        packageItems = trackModel.packageItems,
     )
 }
 
@@ -194,34 +195,42 @@ private fun getDisplayDate(date: Long): String {
 @Preview
 @Composable
 private fun MedsTrackingItemPreview() {
-    val packageItemsStub = listOf(
+    val packageItemsStub = mutableListOf(
         PackageItemModel(
             id = "fuisset",
-            idMedsTrackModel = "verterem",
             intakesCount = 343,
             endDate = 1683963600900,
-            expirationDate = 1683963600900
+            expirationDate = 1683963600900,
+            durationInDays = 34,
+            startDate = 1683962690900,
+            quantityInPackage = 704.0,
         ),
         PackageItemModel(
             id = "fuisset",
-            idMedsTrackModel = "verterem",
             intakesCount = 33,
             endDate = 1683963600900,
-            expirationDate = 1683963600900
+            expirationDate = 1683963600900,
+            durationInDays = 34,
+            startDate = 1683962690900,
+            quantityInPackage = 704.0,
         ),
         PackageItemModel(
             id = "fuisset",
-            idMedsTrackModel = "verterem",
             intakesCount = 33,
             endDate = 1683963600900,
-            expirationDate = 1683963600900
+            expirationDate = 1683963600900,
+            durationInDays = 34,
+            startDate = 1683962690900,
+            quantityInPackage = 704.0,
         ),
         PackageItemModel(
             id = "fuisset",
-            idMedsTrackModel = "verterem",
             intakesCount = 33,
             endDate = 1683963600900,
-            expirationDate = 1683963600900
+            expirationDate = 1683963600900,
+            durationInDays = 34,
+            startDate = 1683962690900,
+            quantityInPackage = 704.0,
         ),
     )
     Box(modifier = Modifier.fillMaxSize()) {

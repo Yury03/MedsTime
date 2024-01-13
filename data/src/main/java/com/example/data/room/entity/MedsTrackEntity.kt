@@ -11,4 +11,7 @@ data class MedsTrackEntity(
     val packageCounter: Int,
     val recommendedPurchaseDate: Long,
     val packageItems: String,
+    val stockOfMedicine: Double,
+    val numberOfDays: Int,
+    val trackType: String,
 )

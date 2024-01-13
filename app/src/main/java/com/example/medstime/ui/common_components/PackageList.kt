@@ -1,7 +1,8 @@
-package com.example.medstime.ui.meds_tracking.components
+package com.example.medstime.ui.common_components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,30 +15,35 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.domain.models.MedsTrackModel
+import com.example.domain.models.PackageItemModel
 import com.example.medstime.R
+import com.example.medstime.ui.compose_stubs.getListTrackingModel
 
 @Composable
 fun PackageList(
     verticalPaddingBox: Dp,
     height: Dp,
-    trackModel: MedsTrackModel
+    packageItems: List<PackageItemModel>,
+    showAddItem: Boolean = true,
+    showBackground: Boolean = true,
 ) {
     Box(
         modifier = Modifier
-            .background(colorResource(id = R.color.light_grey_background))
+            .background(
+                if (showBackground) colorResource(id = R.color.light_grey_background)
+                else colorResource(id = R.color.local_transparent)
+            )
             .padding(vertical = verticalPaddingBox)
             .height(height)
             .fillMaxWidth(),
         contentAlignment = Alignment.TopStart,
     ) {
         LazyRow {
-            itemsIndexed(trackModel.packageItems) { position, item ->
+            itemsIndexed(packageItems) { position, item ->
                 PackageItem(packageModel = item)
-                if (position == trackModel.packageItems.size - 1) AddPackageItem(height = 96.dp)
+                if (position == packageItems.size - 1 && showAddItem) AddPackageItem(height = 96.dp)
             }
         }
-
     }
 }
 
@@ -45,9 +51,17 @@ fun PackageList(
 @Preview
 @Composable
 private fun PreviewPackageList() {
-    PackageList(
-        verticalPaddingBox = 8.dp,
-        height = 110.dp,
-        trackModel = getListTrackingModel()[0]
-    )
+    Column {
+        PackageList(
+            verticalPaddingBox = 8.dp,
+            height = 110.dp,
+            packageItems = getListTrackingModel()[0].packageItems,
+        )
+        PackageList(
+            verticalPaddingBox = 8.dp,
+            height = 110.dp,
+            packageItems = getListTrackingModel()[1].packageItems,
+            showAddItem = false,
+        )
+    }
 }

@@ -20,13 +20,14 @@
     <string name="tracking">Отслеживание</string>
     <string name="medicine">Прием</string>
     <string name="add">Добавить</string>
+    <string name="add_new_package">Добавить новую упаковку</string>
     <string name="med_name_hint">Название лекарства</string>
     <string name="med_daily_dosage_hint">Суточная дозировка</string>
     <string name="med_comment_hint">Комментарий</string>
     <string name="dosage_units_hint">Ед. дозировки</string>
     <string name="default_dosage_unit">Таблетки</string>
     <string name="current_stock">Текущий запас</string>
-    <string name="spinner_units_hint">Вид</string>
+    <string name="units_hint">Вид</string>
     <string name="spinner_tracking_hint">Тип отслеживания</string>
     <string name="default_tracking_type">Не добавлять</string>
     <string name="add_reminder">Добавить напоминания</string>
@@ -47,8 +48,8 @@
     <string name="spinner_frequency_hint">Когда принимать</string>
     <string name="start_intake_date_hint">Начало приема</string>
     <string name="end_intake_date_hint">Конец приема</string>
-    <string name="number_meds_hint">Количество лекарств</string>
-    <string name="number_days_hint">Количество дней</string>
+    <string name="number_meds_hint">Курс (количество лекарств)</string>
+    <string name="number_days_hint">Курс (количество дней)</string>
     <string name="single_dosage">Разовая доза</string>
     <string name="add_med">Добавить отслеживание</string>
     <string name="select_range_dates">Выберите диапазон дат</string>
@@ -75,6 +76,18 @@
     <string name="intakes">приемов</string>
     <string name="before">до</string>
     <string name="placeholder_meds_track_fragment">Здесь будут показаны все ваши лекарства</string>
+    <string name="add_med_track">Добавить лекарство</string>
+    <string name="number_of_meds_per_package">в одной упаковке</string>
+    <string name="expiration_date_hint">Срок годности</string>
+    <string name="back">Назад</string>
+    <string name="save">Сохранить</string>
+    <string name="add_package">Добавить упаковку</string>
+    <string name="intakes_count_is_not_defined">Количество приемов не определено</string>
+    <string name="package_end_date_is_not_defined">Дата конца упаковки не определена</string>
+    <string name="package_list">Список упаковок:</string>
+    <string name="date_picker_confirm_button">Ок</string>
+    <string name="date_picker_dismiss_button">Отмена</string>
+
     <string-array name="dosage_array">
         <item>Мг</item>
         <item>Капсулы</item>
@@ -82,9 +95,10 @@
     </string-array>
     <string-array name="track_array">
         <item>Не добавлять</item>
-        <item>Запас лекарств</item>
-        <item>Количество дней</item>
+        <item>Курс (количество лекарств)</item>
+        <item>Курс (количество дней)</item>
         <item>Дата</item>
+        <item>Запас лекарств</item>
     </string-array>
     <string-array name="reminder_array">
         <item>В момент события</item>

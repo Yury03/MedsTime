@@ -19,9 +19,9 @@ class MedicationListPagerAdapter(
     override fun createFragment(position: Int): Fragment {
         val fragment = MedicationListFragment()
         fragment.arguments = Bundle().apply {
-            this.putInt("day", list[position].day)
-            this.putInt("month", list[position].month)
-            this.putInt("year", list[position].year)
+            putInt("day", list[position].day)
+            putInt("month", list[position].month)
+            putInt("year", list[position].year)
         }
         return fragment
     }

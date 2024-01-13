@@ -4,6 +4,7 @@ import android.content.res.Resources
 import com.example.domain.usecase.medication_intake.GetMedicationIntakeModel
 import com.example.domain.usecase.reminder.GetRemindersWithStatus
 import com.example.medstime.ui.add_med.AddMedViewModel
+import com.example.medstime.ui.add_track.AddMedTrackViewModel
 import com.example.medstime.ui.main_activity.MainViewModel
 import com.example.medstime.ui.medication.MedicationListViewModel
 import com.example.medstime.ui.meds_tracking.MedsTrackViewModel
@@ -37,6 +38,9 @@ val appModule = module {
         MedsTrackViewModel(
             getAllTracksUseCase = get()
         )
+    }
+    viewModel<AddMedTrackViewModel> {
+        AddMedTrackViewModel()
     }
     single<Resources> { androidContext().resources }
     single<GetRemindersWithStatus> {

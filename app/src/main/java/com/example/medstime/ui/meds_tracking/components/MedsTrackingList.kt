@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.domain.models.MedsTrackModel
+import com.example.medstime.ui.compose_stubs.getListTrackingModel
 
 @Composable
 fun MedsTrackingList(trackingList: List<MedsTrackModel>) {

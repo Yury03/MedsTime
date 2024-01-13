@@ -46,5 +46,6 @@ interface Repository {
 
     interface MedsTrackContract {
         suspend fun getAllTracks(): List<MedsTrackModel>
+        suspend fun getTrackById(medsTrackModelId: String): MedsTrackModel
     }
 }

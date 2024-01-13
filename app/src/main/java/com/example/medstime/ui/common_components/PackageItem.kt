@@ -1,4 +1,4 @@
-package com.example.medstime.ui.meds_tracking.components
+package com.example.medstime.ui.common_components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
@@ -34,8 +34,7 @@ import java.util.Date
 @Composable
 fun PackageItem(packageModel: PackageItemModel) {
     Card(
-        modifier = Modifier
-            .padding(4.dp),
+        modifier = Modifier.padding(4.dp),
         border = BorderStroke(1.dp, colorResource(id = R.color.main_black_and_white)),
         colors = CardDefaults.cardColors(
             containerColor = Color(
@@ -51,8 +50,7 @@ fun PackageItem(packageModel: PackageItemModel) {
         ) {
             RowWithIcon(
                 drawableId = R.drawable.icon_calendar,
-                text = "${packageModel.intakesCount} " +
-                        stringResource(id = R.string.intakes).padStart(0),
+                text = getIntakeText(packageModel),
             )
             RowWithIcon(
                 drawableId = R.drawable.icon_box_plus,
@@ -65,6 +63,7 @@ fun PackageItem(packageModel: PackageItemModel) {
         }
     }
 }
+
 
 @Composable
 fun AddPackageItem(height: Dp) {
@@ -84,9 +83,7 @@ fun AddPackageItem(height: Dp) {
         ),
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
+            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
         ) {
             Image(
                 modifier = Modifier.clickable { /*todo переход на фрагмент добавления */ },
@@ -97,39 +94,63 @@ fun AddPackageItem(height: Dp) {
     }
 }
 
-
 @Composable
 private fun RowWithIcon(drawableId: Int, text: String) {
     Row(
-        modifier = Modifier.padding(vertical = 2.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier.padding(vertical = 2.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             painter = painterResource(id = drawableId),
-            contentDescription = "",
+            contentDescription = null,
         )
         Text(text = text, modifier = Modifier.padding(4.dp))
     }
 }
 
-@SuppressLint("SimpleDateFormat")
-private fun dateToString(time: Long): String {
-    val formatter = SimpleDateFormat("dd.MM.yyyy")
-    val date = Date(time)
-    return formatter.format(date)
+@Composable
+fun getIntakeText(packageModel: PackageItemModel): String {
+    return if (packageModel.intakesCount == -1) stringResource(id = R.string.intakes_count_is_not_defined)
+    else "${packageModel.intakesCount} " + stringResource(id = R.string.intakes).padStart(
+        0
+    )
 }
+
+@Composable
+@SuppressLint("SimpleDateFormat")
+private fun dateToString(time: Long) =
+    if (time == 0L) {
+        stringResource(id = R.string.package_end_date_is_not_defined)
+    } else {
+        val formatter = SimpleDateFormat("dd.MM.yyyy")
+        val date = Date(time)
+        formatter.format(date)
+    }
+
 
 @Preview(showBackground = true)
 @Composable
-fun GeneralPreview() {
+private fun GeneralPreview() {
     Row {
         PackageItem(
             packageModel = PackageItemModel(
                 id = "101",
-                idMedsTrackModel = "102",
                 intakesCount = 90,
                 endDate = 1689333793000,
                 expirationDate = 1694690593000,
+                durationInDays = 34,
+                startDate = 1683962690900,
+                quantityInPackage = 704.0,
+            ),
+        )
+        PackageItem(
+            packageModel = PackageItemModel(
+                id = "101",
+                intakesCount = -1,
+                endDate = 0,
+                expirationDate = 1694690593000,
+                durationInDays = 34,
+                startDate = 1683962690900,
+                quantityInPackage = 704.0,
             ),
         )
         AddPackageItem(96.dp)
