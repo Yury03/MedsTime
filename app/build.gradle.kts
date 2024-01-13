@@ -28,7 +28,7 @@ android {
             )
         }
         getByName("debug") {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles("proguard-rules.pro")
         }
     }
@@ -58,6 +58,10 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":domain"))
 
+
+    //data
+    implementation("com.google.code.gson:gson:2.10.1")
+
     //dependency injection
     implementation("io.insert-koin:koin-core:3.5.0")
     implementation("io.insert-koin:koin-android:3.5.0")
@@ -77,6 +81,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
 
+
     //Compose
     implementation("androidx.compose.foundation:foundation-layout-android:1.5.4")
     implementation("androidx.compose.material3:material3:1.1.2")
@@ -93,6 +98,7 @@ dependencies {
     implementation("androidx.compose.runtime:runtime:1.5.4")
     implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
     implementation("androidx.compose.runtime:runtime-rxjava2:1.5.4")
+    implementation("androidx.navigation:navigation-compose:2.7.5")
 
     implementation("me.saket.swipe:swipe:1.2.0")
 

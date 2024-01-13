@@ -1,75 +1,91 @@
 package com.example.data.mappers
 
 import com.example.data.room.entity.MedicationEntity
+import com.example.data.room.entity.MedsTrackEntity
 import com.example.domain.models.MedicationModel
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import com.example.domain.models.MedsTrackModel
+import com.example.domain.models.PackageItemModel
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 object MedicationMapper {
-    fun mapToEntity(model: MedicationModel): MedicationEntity {
+    fun mapToEntity(model: MedicationModel): Pair<MedicationEntity, MedsTrackEntity> {
         val intakeTimes = model.intakeTimes.map { it.hour to it.minute }
-        return MedicationEntity(
-            id = model.id,
-            name = model.name,
-            dosage = model.dosage,
-            dosageUnit = model.dosageUnit,
-            intakeTimes = intakeTimes,
-            reminderTime = model.reminderTime,
-            frequency = model.frequency.name,
-            selectedDays = model.selectedDays,
-            intakeType = model.intakeType.name,
-            startDate = dateToString(model.startDate)!!,
-            endDate = dateToString(model.endDate),
-            comment = model.comment,
-            useBanner = model.useBanner,
-            trackType = model.trackType.name,
-            stockOfMedicine = model.stockOfMedicine,
-            numberOfDays = model.numberOfDays,
+
+        return Pair(
+            MedicationEntity(
+                id = model.id,
+                name = model.name,
+                dosage = model.dosage,
+                dosageUnit = model.dosageUnit,
+                intakeTimes = intakeTimes,
+                reminderTime = model.reminderTime,
+                frequency = model.frequency.name,
+                selectedDays = model.selectedDays,
+                intakeType = model.intakeType.name,
+                startDate = model.startDate.toString(),//todo change String to Long
+                comment = model.comment,
+                useBanner = model.useBanner,
+                medsTrackModelId = model.trackModel.id,
+            ),
+            MedsTrackEntity(
+                id = model.trackModel.id,
+                name = model.trackModel.name,
+                endDate = model.trackModel.endDate,
+                packageCounter = model.trackModel.packageItems.size,
+                recommendedPurchaseDate = model.trackModel.recommendedPurchaseDate,
+                packageItems = mapListToString(model.trackModel.packageItems),
+                stockOfMedicine = model.trackModel.stockOfMedicine,
+                numberOfDays = model.trackModel.numberOfDays,
+                trackType = model.trackModel.trackType.toString()
+            )
         )
     }
 
-    fun mapToModel(entity: MedicationEntity): MedicationModel {
-        val intakeTimes = entity.intakeTimes.map { MedicationModel.Time(it.first, it.second) }
-        val frequency = MedicationModel.Frequency.valueOf(entity.frequency)
-        val trackType = MedicationModel.TrackType.valueOf(entity.trackType)
-        val intakeType = MedicationModel.IntakeType.valueOf(entity.intakeType)
-        val startDate = stringToDate(entity.startDate)!!
-        val endDate = stringToDate(entity.endDate)
+    fun mapToModel(
+        medicationEntity: MedicationEntity,
+        medsTrackEntity: MedsTrackEntity,
+    ): MedicationModel {
+        val intakeTimes =
+            medicationEntity.intakeTimes.map { MedicationModel.Time(it.first, it.second) }
+        val frequency = MedicationModel.Frequency.valueOf(medicationEntity.frequency)
+        val intakeType = MedicationModel.IntakeType.valueOf(medicationEntity.intakeType)
+        val packageItems = mapStringToList(medsTrackEntity.packageItems)
         return MedicationModel(
-            id = entity.id,
-            name = entity.name,
-            dosage = entity.dosage,
-            dosageUnit = entity.dosageUnit,
+            id = medicationEntity.id,
+            name = medicationEntity.name,
+            dosage = medicationEntity.dosage,
+            dosageUnit = medicationEntity.dosageUnit,
             intakeTimes = intakeTimes,
-            reminderTime = entity.reminderTime,
+            reminderTime = medicationEntity.reminderTime,
             frequency = frequency,
-            selectedDays = entity.selectedDays,
+            selectedDays = medicationEntity.selectedDays,
             intakeType = intakeType,
-            startDate = startDate,
-            endDate = endDate,
-            comment = entity.comment,
-            useBanner = entity.useBanner,
-            trackType = trackType,
-            stockOfMedicine = entity.stockOfMedicine,
-            numberOfDays = entity.numberOfDays,
+            startDate = medicationEntity.startDate.toLong(),
+            comment = medicationEntity.comment,
+            useBanner = medicationEntity.useBanner,
+            trackModel = MedsTrackModel(
+                id = medicationEntity.medsTrackModelId,
+                name = medicationEntity.name,
+                recommendedPurchaseDate = 0,
+                packageItems = packageItems,
+                packageCounter = packageItems.size,
+                stockOfMedicine = medsTrackEntity.stockOfMedicine,
+                numberOfDays = medsTrackEntity.numberOfDays,
+                endDate = medsTrackEntity.endDate,
+                trackType = MedsTrackModel.TrackType.valueOf(medsTrackEntity.trackType)
+            ),
         )
     }
 
-    private val dateFormatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-    private fun stringToDate(dateString: String?): Date? {
-        return dateString?.let {
-            try {
-                dateFormatter.parse(it)
-            } catch (e: Exception) {
-                null
-            }
-        }
+    private fun mapStringToList(list: String): MutableList<PackageItemModel> {
+        val gson = Gson()
+        val type = object : TypeToken<List<PackageItemModel>>() {}.type
+        return gson.fromJson(list, type)
     }
 
-    private fun dateToString(date: Date?): String? {
-        return date?.let {
-            dateFormatter.format(it)
-        }
+    private fun mapListToString(packageItems: List<PackageItemModel>): String {
+        val gson = Gson()
+        return gson.toJson(packageItems)
     }
 }

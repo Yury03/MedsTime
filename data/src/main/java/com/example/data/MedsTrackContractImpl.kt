@@ -1,6 +1,7 @@
 package com.example.data
 
 import android.content.Context
+import com.example.data.mappers.MedsTrackMapper
 import com.example.data.room.MedsTrackDatabase
 import com.example.data.room.dao.MedsTrackDao
 import com.example.domain.Repository
@@ -17,34 +18,42 @@ class MedsTrackContractImpl(context: Context) : Repository.MedsTrackContract {
 //            MedsTrackMapper.mapToModel(it)
 //        }
 //        return emptyList()
-        val packageItemsStub = listOf(
+        val packageItemsStub = mutableListOf(
             PackageItemModel(
-                id = "fuisset",
-                idMedsTrackModel = "verterem",
+                id = "56435382",
                 intakesCount = 343,
                 endDate = 1683963600900,
-                expirationDate = 1683963600900
+                expirationDate = 1683963600900,
+                durationInDays = 34,
+                startDate = 1683962690900,
+                quantityInPackage = 704.0,
             ),
             PackageItemModel(
-                id = "fuisset",
-                idMedsTrackModel = "verterem",
+                id = "58264353",
                 intakesCount = 33,
                 endDate = 1683963600900,
-                expirationDate = 1683963600900
+                expirationDate = 1683963600900,
+                durationInDays = 34,
+                startDate = 1683962690900,
+                quantityInPackage = 704.0,
             ),
             PackageItemModel(
-                id = "fuisset",
-                idMedsTrackModel = "verterem",
+                id = "56482353",
                 intakesCount = 33,
                 endDate = 1683963600900,
-                expirationDate = 1683963600900
+                expirationDate = 1683963600900,
+                durationInDays = 34,
+                startDate = 1683962690900,
+                quantityInPackage = 704.0,
             ),
             PackageItemModel(
-                id = "fuisset",
-                idMedsTrackModel = "verterem",
+                id = "56824353",
                 intakesCount = 33,
                 endDate = 1683963600900,
-                expirationDate = 1683963600900
+                expirationDate = 1683963600900,
+                durationInDays = 34,
+                startDate = 1683962690900,
+                quantityInPackage = 704.0,
             ),
         )
         return listOf(
@@ -64,4 +73,9 @@ class MedsTrackContractImpl(context: Context) : Repository.MedsTrackContract {
             ),
         )
     }
+
+    override suspend fun getTrackById(medsTrackModelId: String): MedsTrackModel {
+        return MedsTrackMapper.mapToModel(medsTrackDao.getById(medsTrackModelId))
+    }
+
 }

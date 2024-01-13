@@ -15,6 +15,9 @@ object MedsTrackMapper {
             packageCounter = model.packageCounter,
             recommendedPurchaseDate = model.recommendedPurchaseDate,
             packageItems = mapListToString(model.packageItems),
+            stockOfMedicine = model.stockOfMedicine,
+            numberOfDays = model.numberOfDays,
+            trackType = model.trackType.toString(),
         )
     }
 
@@ -22,8 +25,6 @@ object MedsTrackMapper {
         val gson = Gson()
         return gson.toJson(packageItems)
     }
-
-
 
     fun mapToModel(entity: MedsTrackEntity): MedsTrackModel {
         return MedsTrackModel(
@@ -33,10 +34,13 @@ object MedsTrackMapper {
             packageCounter = entity.packageCounter,
             recommendedPurchaseDate = entity.recommendedPurchaseDate,
             packageItems = mapStringToList(entity.packageItems),
-        )
+            stockOfMedicine = entity.stockOfMedicine,
+            numberOfDays = entity.numberOfDays,
+            trackType = MedsTrackModel.TrackType.valueOf(entity.trackType),
+            )
     }
 
-    private fun mapStringToList(list: String): List<PackageItemModel> {
+    private fun mapStringToList(list: String): MutableList<PackageItemModel> {
         val gson = Gson()
         val type = object : TypeToken<List<PackageItemModel>>() {}.type
         return gson.fromJson(list, type)

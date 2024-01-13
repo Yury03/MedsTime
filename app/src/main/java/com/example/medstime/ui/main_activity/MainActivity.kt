@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -105,9 +106,11 @@ class MainActivity : AppCompatActivity() {
 
     fun hideBottomNavigationBar() {
         findViewById<BottomNavigationView>(R.id.bottomNavigationBar).visibility = View.GONE
+        Log.d(LOG_TAG, "hideBottomNavigationBar")
     }
 
     fun showBottomNavigationBar() {
         findViewById<BottomNavigationView>(R.id.bottomNavigationBar).visibility = View.VISIBLE
+        Log.d(LOG_TAG, "showBottomNavigationBar")
     }
 }
