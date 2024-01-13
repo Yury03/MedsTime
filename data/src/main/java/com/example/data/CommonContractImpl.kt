@@ -16,6 +16,7 @@ import com.example.data.room.dao.ReminderDao
 import com.example.data.utils.calculateDayDifference
 import com.example.data.utils.daysToMilliseconds
 import com.example.data.utils.generateStringId
+import com.example.data.utils.roundWithStep
 import com.example.domain.Repository
 import com.example.domain.models.MedicationIntakeModel
 import com.example.domain.models.MedicationModel
@@ -29,6 +30,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.floor
 import kotlin.time.Duration.Companion.minutes
 
+
 /**Класс реализует общие юзкейсы. Используются MedicationDatabase, MedicationIntakeDatabase, ReminderDatabase.
  * - **remove medication model** удаляет модель Medication и все связанные с ней данные(уведомления, модели приемов);
  * - **save new medication** добавляет модель Medication в базу данных и генерирует модели MedicationIntake и Reminder на **DEFAULT_NUMBER_DAYS_GENERATE** дней, а затем добавляет их в базу данных **MedicationIntakeDatabase** и **ReminderDatabase**;
@@ -39,6 +41,7 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
     private companion object {
         //по дефолту генерируем приемы только на 14 дней
         const val DEFAULT_NUMBER_DAYS_GENERATE = 14
+        const val DEFAULT_PURCHASE_REMINDER_DAYS = 3
         const val LOG_TAG = "Common contract implementation"
     }
 
@@ -92,12 +95,13 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
                     totalDays = packageItems.sumOf {
                         it.durationInDays
                     }
-//todo                    calculateTotalDays(medicationModel)[?]
+                    endDate = medicationModel.startDate + totalDays.daysToMilliseconds()
                 }
 
                 MedsTrackModel.TrackType.STOCK_OF_MEDICINE -> {
                     calculateRemainingDoses(medicationModel)
                     calculateTotalDays(medicationModel)
+                    endDate = medicationModel.startDate + totalDays.daysToMilliseconds()
                 }
 
                 MedsTrackModel.TrackType.DATE -> {
@@ -110,14 +114,18 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
                     totalDays = numberOfDays
                     calculateStockWithTotalDays(medicationModel)
                     calculateRemainingDoses(medicationModel)
+                    endDate = medicationModel.startDate + totalDays.daysToMilliseconds()
                 }
 
                 MedsTrackModel.TrackType.NONE -> {
                     totalDays = DEFAULT_NUMBER_DAYS_GENERATE
                 }
             }
+            if (trackType != MedsTrackModel.TrackType.NONE) {
+                recommendedPurchaseDate =
+                    endDate - DEFAULT_PURCHASE_REMINDER_DAYS.daysToMilliseconds()
+            }
         }
-
     }
 
     private fun calculateStockWithTotalDays(medication: MedicationModel) {
@@ -218,31 +226,44 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
         }
     }
 
-    //todo добавить генерацию recommendedPurchaseDate, startDate и учесть expirationDate
     /**Функция editPackageItemModels вычисляет количество приемов, на сколько дней хватит упаковки
-     *  и дату начала и окончания упаковки */
+     * и дату начала и окончания упаковки. Если срок годности истекает раньше чем упаковка
+     * закончится то поля  durationInDays, intakesCount и endDate пересчитываются.*/
     private fun fillPackageItemModels(medication: MedicationModel) {
         val dailyDosage = getDailyDosage(medication)
-        medication.trackModel.packageItems.forEachIndexed { i, packageItem ->
-            val quantityInPackage = packageItem.quantityInPackage
-            val dosesInPackage = floor(quantityInPackage / medication.dosage).toInt()
-            val durationInDays =
-                floor(packageItem.quantityInPackage / dailyDosage).toInt()
+        medication.trackModel.packageItems.sortBy { it.expirationDate }
+        medication.trackModel.packageItems.forEachIndexed { i, item ->
+            val dosesInPackage = floor(item.quantityInPackage / medication.dosage).toInt()
+            val duration = floor(item.quantityInPackage / dailyDosage).toInt()
 
-            packageItem.intakesCount = dosesInPackage
-            packageItem.durationInDays = durationInDays
+            item.intakesCount = dosesInPackage
+            item.durationInDays = duration
 
             if (i > 0) {
                 val previousPackageItem = medication.trackModel.packageItems[i - 1]
-                packageItem.startDate = previousPackageItem.endDate
-                packageItem.endDate = packageItem.startDate + durationInDays.daysToMilliseconds()
+                item.startDate = previousPackageItem.endDate
+                item.endDate = item.startDate + duration.daysToMilliseconds()
             } else {
-                packageItem.startDate = medication.startDate
-                packageItem.endDate = packageItem.startDate + durationInDays.daysToMilliseconds()
+                item.startDate = medication.startDate
+                item.endDate = item.startDate + duration.daysToMilliseconds()
+            }
+
+            if (item.endDate > item.expirationDate) {
+                recalculatePackageItem(medication, i)
             }
         }
     }
 
+    private fun recalculatePackageItem(medication: MedicationModel, packageIndex: Int) {
+        val item = medication.trackModel.packageItems[packageIndex]
+        val diffDays = item.endDate.calculateDayDifference(item.expirationDate)
+        val oldDuration = item.durationInDays
+        item.durationInDays -= diffDays
+        item.quantityInPackage =
+            ((item.quantityInPackage * oldDuration) / item.durationInDays).roundWithStep(0.5)
+        item.intakesCount = floor(item.quantityInPackage / medication.dosage).toInt()
+        item.endDate -= diffDays.daysToMilliseconds()
+    }
 
     private fun generateMedicationIntakeModels(model: MedicationModel): List<MedicationIntakeModel> {
         return when (model.frequency) {
@@ -386,7 +407,7 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
      * - удаляет все *приемы лекарств по id модели Medication*
      * - удаляет модель Medication*/
     override suspend fun removeMedicationModel(medicationModelId: String) {
-        val status = ReminderModel.Status.DEPRECATED.toString()//todo?
+        val status = ReminderModel.Status.DEPRECATED.toString()//todo возможно стоит просто удалять эти модели из бд?
         medicationIntakeDao.getByMedicationModelId(medicationModelId).forEach {
             reminderDao.updateStatusByMedicationIntakeId(it.id, status)
         }
