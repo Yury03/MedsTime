@@ -25,9 +25,6 @@ import com.example.medstime.ui.meds_tracking.components.MedsTrackingList
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MedsTrackingFragment : Fragment() {
-    companion object {
-        private const val TAG = "MedsTrackingFragment"
-    }
 
     //todo при полной миграции оставить только MedsTrackingScreen()
     private val viewModel by viewModel<MedsTrackViewModel>()
@@ -67,5 +64,10 @@ class MedsTrackingFragment : Fragment() {
                 }
             }
         }
+    }
+
+    companion object {
+
+        private const val TAG = "MedsTrackingFragment"
     }
 }

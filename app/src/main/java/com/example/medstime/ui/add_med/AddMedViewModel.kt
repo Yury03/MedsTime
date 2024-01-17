@@ -28,6 +28,7 @@ class AddMedViewModel(
     private val replaceMedicationModelUseCase: ReplaceMedicationModel,
     private val resources: Resources,
 ) : ViewModel() {
+
     private val _state: MutableLiveData<AddMedState> =
         MutableLiveData()
     val state: LiveData<AddMedState>

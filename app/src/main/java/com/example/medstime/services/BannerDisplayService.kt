@@ -27,6 +27,7 @@ import kotlin.time.Duration.Companion.minutes
 
 
 class BannerDisplayService : Service() {
+
     private val getMedicationIntakeModel: GetMedicationIntakeModel by inject()
     private val changeIsTakenStatus: ChangeMedicationIntakeIsTaken by inject()
     private val getReminderModel: GetReminderModelById by inject()

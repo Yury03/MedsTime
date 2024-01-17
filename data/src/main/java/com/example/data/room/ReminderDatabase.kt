@@ -10,9 +10,11 @@ import com.example.data.room.entity.ReminderEntity
 
 @Database(entities = [ReminderEntity::class], version = 1)
 abstract class ReminderDatabase : RoomDatabase() {
+
     abstract fun reminderDao(): ReminderDao
 
     companion object {
+
         @Volatile
         private var INSTANCE: ReminderDatabase? = null
         fun getDatabase(context: Context): ReminderDatabase {

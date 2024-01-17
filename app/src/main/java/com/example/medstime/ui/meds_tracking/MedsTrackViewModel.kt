@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 class MedsTrackViewModel(
     private val getAllTracksUseCase: GetAllTracks,
 ) : ViewModel() {
+
     private val _state: MutableLiveData<MedsTrackState> =
         MutableLiveData()
     val state: LiveData<MedsTrackState>

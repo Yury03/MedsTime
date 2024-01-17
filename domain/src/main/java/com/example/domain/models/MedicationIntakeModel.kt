@@ -14,10 +14,12 @@ data class MedicationIntakeModel(
     val actualIntakeDate: Date? = null, // Дата фактического приема лекарства
     val intakeType: IntakeType,         // Тип приема
 ) {
+
     data class Time(
         val hour: Int,  // Час
         val minute: Int,// Минуты
     ) {
+
         fun toEntityString(): String {
             return "${hour},${minute}"
         }

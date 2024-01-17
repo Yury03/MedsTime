@@ -45,17 +45,6 @@ import java.util.Locale
 
 
 class AddMedFragment : Fragment(R.layout.fragment_add_med) {
-    companion object {
-        private const val LOG_TAG = "AddMedFragment"
-        private const val TIME_PICKER_TAG = "TimePickerAddMedFragment"
-        private const val DESTINATION_TO_MEDICATION_SCREEN = 1
-        private const val DESTINATION_TO_ADD_MED_TRACK_SCREEN = 2
-        private const val CAMERA_PERMISSION_CODE = 300
-        private const val SYSTEM_ALERT_WINDOW_CODE = 400
-        const val ARG_KEY_STATE = "state"
-        const val ARG_KEY_MODE = "mode"
-        const val ARG_KEY_MEDICATION_MODEL_ID = "medication_model_id"
-    }
 
     private val viewModel by viewModel<AddMedViewModel>()
     private lateinit var binding: FragmentAddMedBinding
@@ -585,5 +574,18 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             numberOfDays = numberOfDays ?: 0, //todo test
             endDate = binding.endIntakeDate.text.toString(),
         )
+    }
+
+    companion object {
+
+        private const val LOG_TAG = "AddMedFragment"
+        private const val TIME_PICKER_TAG = "TimePickerAddMedFragment"
+        private const val DESTINATION_TO_MEDICATION_SCREEN = 1
+        private const val DESTINATION_TO_ADD_MED_TRACK_SCREEN = 2
+        private const val CAMERA_PERMISSION_CODE = 300
+        private const val SYSTEM_ALERT_WINDOW_CODE = 400
+        const val ARG_KEY_STATE = "state"
+        const val ARG_KEY_MODE = "mode"
+        const val ARG_KEY_MEDICATION_MODEL_ID = "medication_model_id"
     }
 }

@@ -24,12 +24,9 @@ class MedicationListViewModel(
     private val changeNotificationStatusUseCase: ChangeNotificationStatusByReminderId,
     private val changeActualTimeIntakeUseCase: ChangeActualTimeIntake,
 ) : ViewModel() {
+
     /**Все существующие приемы, сортировка происходит внутри фрагмента*/
     lateinit var intakeListToday: LiveData<List<MedicationIntakeModel>>
-
-    companion object {
-        const val LOG_TAG = "MedicationListViewModel"
-    }
 
     fun initIntakeListToday() {
         runBlocking {//TODO!!!!!
@@ -76,5 +73,10 @@ class MedicationListViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             changeActualTimeIntakeUseCase.invoke(medicationIntakeId, time)
         }
+    }
+
+    companion object {
+
+        const val LOG_TAG = "MedicationListViewModel"
     }
 }

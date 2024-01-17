@@ -23,10 +23,6 @@ import java.util.concurrent.TimeUnit
 
 
 class MedicationFragment : Fragment(R.layout.fragment_medication) {
-    companion object {
-        const val MAX_NUMBER_DAYS: Long = 14
-        const val MIN_NUMBER_DAYS: Long = 14
-    }
 
     private var _binding: FragmentMedicationBinding? = null
     private val binding get() = _binding!!
@@ -156,5 +152,11 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    companion object {
+
+        const val MAX_NUMBER_DAYS: Long = 14
+        const val MIN_NUMBER_DAYS: Long = 14
     }
 }

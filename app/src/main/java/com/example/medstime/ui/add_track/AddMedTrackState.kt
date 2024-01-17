@@ -15,7 +15,9 @@ data class AddMedTrackState(
     val errorCode: Int = VALID, // код ошибки
     val addMedStateJson: String = "", // json состояния AddMedFragment, существует после обработки аргументов, после всех изменений отправляется обратно в AddMedFragment
 ) {
+
     companion object ERROR {
+
         const val VALID = 0
         const val EXPIRATION_DATE_IS_EMPTY = 1
         const val EXPIRATION_DATE_TOO_SMALL = 2

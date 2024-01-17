@@ -8,6 +8,7 @@ import com.example.data.room.entity.MedicationEntity
 
 @Dao
 interface MedicationDao {
+
     @Query("SELECT * FROM medication_database")
     fun getAll(): List<MedicationEntity>
 

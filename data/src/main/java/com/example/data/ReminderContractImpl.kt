@@ -13,6 +13,7 @@ import com.example.domain.models.ReminderModel
  * - **change notification status by medication intake id** меняет статус уведомления по id модели MedicationIntake;
  * - **get reminder model by id** получает модель напоминания по id.*/
 class ReminderContractImpl(private val context: Context) : Repository.ReminderContract {
+
     private val reminderDatabase: ReminderDatabase by lazy {
         ReminderDatabase.getDatabase(context)
     }

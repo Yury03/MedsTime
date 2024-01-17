@@ -20,10 +20,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  *  классу **AddMedState**. Это необходимо для упрощения UI. Фрагмент принимает в аргументы
  *  весь **AddMedState** и может менять ***medName***, ***dosageUnits***, ***medTrack***.*/
 class AddMedTrackFragment : Fragment() {
-    companion object {
-        const val ARG_KEY_TRACK_MODEL = "trackModel"
-        const val LOG_TAG = "AddMedTrackFragment"
-    }
 
     private val viewModel by viewModel<AddMedTrackViewModel>()
 
@@ -49,7 +45,10 @@ class AddMedTrackFragment : Fragment() {
                 val backToAddMedScreen = {
                     navController.navigate(
                         R.id.addMedFragment, Bundle().apply {
-                            putString(AddMedFragment.ARG_KEY_STATE, viewModel.state.value.addMedStateJson)
+                            putString(
+                                AddMedFragment.ARG_KEY_STATE,
+                                viewModel.state.value.addMedStateJson
+                            )
                         }
                     )
                 }
@@ -80,5 +79,11 @@ class AddMedTrackFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         showBottomNavigationBar()
+    }
+
+    companion object {
+
+        const val ARG_KEY_TRACK_MODEL = "trackModel"
+        const val LOG_TAG = "AddMedTrackFragment"
     }
 }

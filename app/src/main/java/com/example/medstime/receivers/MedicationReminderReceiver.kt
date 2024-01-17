@@ -23,9 +23,6 @@ import java.util.Calendar
 
 
 class MedicationReminderReceiver : BroadcastReceiver() {
-    companion object {
-        private const val LOG_TAG = "MedicationReminderReceiver"
-    }
 
     private val getMedicationIntakeModel: GetMedicationIntakeModel by KoinJavaComponent.inject(
         GetMedicationIntakeModel::class.java
@@ -133,5 +130,10 @@ class MedicationReminderReceiver : BroadcastReceiver() {
             calendar.get(Calendar.HOUR_OF_DAY),
             calendar.get(Calendar.MINUTE)
         )
+    }
+
+    companion object {
+
+        private const val LOG_TAG = "MedicationReminderReceiver"
     }
 }

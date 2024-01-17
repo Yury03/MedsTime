@@ -5,6 +5,7 @@ import com.example.domain.models.MedicationIntakeModel
 
 
 class ChangeMedicationIntakeIsTaken(private val repository: Repository.MedicationIntakeContract) {
+
     suspend fun invoke(
         medicationIntakeId: String,
         newIsTaken: Boolean,

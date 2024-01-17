@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.update
 import java.util.Date
 
 class AddMedTrackViewModel : ViewModel() {
+
     private val _state: MutableStateFlow<AddMedTrackState> =
         MutableStateFlow(AddMedTrackState())
     val state: StateFlow<AddMedTrackState> = _state.asStateFlow()

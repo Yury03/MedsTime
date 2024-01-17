@@ -17,14 +17,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
+
     private val viewModel by viewModel<MedicationListViewModel>()
     private var _binding: FragmentMedicationListBinding? = null
     private val binding get() = _binding!!
     private lateinit var _date: MedicationIntakeModel.Date
-
-    companion object {
-        private const val TIME_PICKER_TAG = "TimePickerMedicationListFragment"
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -122,5 +119,10 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    companion object {
+
+        private const val TIME_PICKER_TAG = "TimePickerMedicationListFragment"
     }
 }

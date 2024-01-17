@@ -10,9 +10,11 @@ import com.example.data.room.entity.MedsTrackEntity
 
 @Database(entities = [MedsTrackEntity::class], version = 1)
 abstract class MedsTrackDatabase : RoomDatabase() {
+
     abstract fun medsTrackDao(): MedsTrackDao
 
     companion object {
+
         @Volatile
         private var INSTANCE: MedsTrackDatabase? = null
         fun getDatabase(context: Context): MedsTrackDatabase {

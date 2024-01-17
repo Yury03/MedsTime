@@ -15,9 +15,11 @@ import com.example.data.room.entity.MedicationEntity
 )
 @Database(entities = [MedicationEntity::class], version = 1)
 abstract class MedicationDatabase : RoomDatabase() {
+
     abstract fun medicationDao(): MedicationDao
 
     companion object {
+
         @Volatile
         private var INSTANCE: MedicationDatabase? = null
         fun getDatabase(context: Context): MedicationDatabase {

@@ -17,9 +17,6 @@ import org.koin.android.ext.android.inject
 
 
 class ReminderService : Service() {
-    companion object {
-        private const val TAG = "ReminderService"
-    }
 
     private val getRemindersWithStatus: GetRemindersWithStatus by inject()
     private val coroutineDispatcher: CoroutineDispatcher by inject()
@@ -55,5 +52,10 @@ class ReminderService : Service() {
             )
             alarmManager.set(AlarmManager.RTC_WAKEUP, reminder.timeShow, pendingIntent)
         }
+    }
+
+    companion object {
+
+        private const val TAG = "ReminderService"
     }
 }

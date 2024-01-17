@@ -22,11 +22,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class MainActivity : AppCompatActivity() {
-    private companion object {
-        const val LOG_TAG = "MainActivity"
-        private const val NECESSARY_PERMISSIONS_CODE = 100
-        private const val SCHEDULE_EXACT_ALARM_PERMISSION_CODE = 200
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,5 +107,12 @@ class MainActivity : AppCompatActivity() {
     fun showBottomNavigationBar() {
         findViewById<BottomNavigationView>(R.id.bottomNavigationBar).visibility = View.VISIBLE
         Log.d(LOG_TAG, "showBottomNavigationBar")
+    }
+
+    private companion object {
+
+        const val LOG_TAG = "MainActivity"
+        private const val NECESSARY_PERMISSIONS_CODE = 100
+        private const val SCHEDULE_EXACT_ALARM_PERMISSION_CODE = 200
     }
 }

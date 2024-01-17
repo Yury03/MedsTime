@@ -8,6 +8,7 @@ import com.example.data.room.entity.ReminderEntity
 
 @Dao
 interface ReminderDao {
+
     @Query("SELECT * FROM medication_reminder_database")
     fun getAll(): List<ReminderEntity>
 

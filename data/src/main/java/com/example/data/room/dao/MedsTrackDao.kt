@@ -8,6 +8,7 @@ import com.example.data.room.entity.MedsTrackEntity
 
 @Dao
 interface MedsTrackDao {
+
     @Query("SELECT * FROM meds_track_database")
     fun getAll(): List<MedsTrackEntity>
 

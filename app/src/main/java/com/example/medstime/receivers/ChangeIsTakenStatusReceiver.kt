@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
 
 class ChangeIsTakenStatusReceiver : BroadcastReceiver() {
+
     private val changeMedicationIntakeIsTaken: ChangeMedicationIntakeIsTaken by KoinJavaComponent.inject(
         ChangeMedicationIntakeIsTaken::class.java
     )
