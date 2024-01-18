@@ -12,7 +12,7 @@ import com.example.data.room.entity.MedicationIntakeEntity
     MedicationIntakeEntity.IntPairConverter::class,
     MedicationIntakeEntity.IntTripleConverter::class
 )
-@Database(entities = [MedicationIntakeEntity::class], version = 1)
+@Database(entities = [MedicationIntakeEntity::class], version = 1, exportSchema = false)
 abstract class MedicationIntakeDatabase : RoomDatabase() {
 
     abstract fun medicationIntakeDao(): MedicationIntakeDao

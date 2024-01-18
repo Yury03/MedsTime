@@ -1,18 +1,13 @@
 package com.example.medstime.ui.main_activity
 
 import android.Manifest
-import android.app.AlarmManager
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -65,11 +60,11 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             permissionsToRequest.add(Manifest.permission.FOREGROUND_SERVICE)
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (!requestScheduleExactAlarmPermission()) {
                 //TODO:1 Dialog
             }
-        }
+        }*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
         }
@@ -83,21 +78,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.S)
-    private fun requestScheduleExactAlarmPermission(): Boolean {
-        val alarmManager: AlarmManager = ContextCompat.getSystemService(
-            this, AlarmManager::class.java
-        ) as AlarmManager
-        if (!alarmManager.canScheduleExactAlarms()) {
-            val settingsIntent = Intent(
-                Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
-                Uri.parse("package:$packageName")
-            )
-            //TODO:2 Dialog
-            startActivity(settingsIntent)
-        }
-        return alarmManager.canScheduleExactAlarms()
-    }
+//    @RequiresApi(Build.VERSION_CODES.S)
+//    private fun requestScheduleExactAlarmPermission(): Boolean {
+//        val alarmManager: AlarmManager = ContextCompat.getSystemService(
+//            this, AlarmManager::class.java
+//        ) as AlarmManager
+//        if (!alarmManager.canScheduleExactAlarms()) {
+//            val settingsIntent = Intent(
+//                Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+//                Uri.parse("package:$packageName")
+//            )
+//            //TODO:2 Dialog
+//            startActivity(settingsIntent)
+//        }
+//        return alarmManager.canScheduleExactAlarms()
+//    }
 
     fun hideBottomNavigationBar() {
         findViewById<BottomNavigationView>(R.id.bottomNavigationBar).visibility = View.GONE
@@ -113,6 +108,6 @@ class MainActivity : AppCompatActivity() {
 
         const val LOG_TAG = "MainActivity"
         private const val NECESSARY_PERMISSIONS_CODE = 100
-        private const val SCHEDULE_EXACT_ALARM_PERMISSION_CODE = 200
+//        private const val SCHEDULE_EXACT_ALARM_PERMISSION_CODE = 200
     }
 }

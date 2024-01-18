@@ -8,7 +8,7 @@ import com.example.data.room.dao.MedsTrackDao
 import com.example.data.room.entity.MedsTrackEntity
 
 
-@Database(entities = [MedsTrackEntity::class], version = 1)
+@Database(entities = [MedsTrackEntity::class], version = 1, exportSchema = false)
 abstract class MedsTrackDatabase : RoomDatabase() {
 
     abstract fun medsTrackDao(): MedsTrackDao

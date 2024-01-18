@@ -8,7 +8,7 @@ import com.example.data.room.dao.ReminderDao
 import com.example.data.room.entity.ReminderEntity
 
 
-@Database(entities = [ReminderEntity::class], version = 1)
+@Database(entities = [ReminderEntity::class], version = 1, exportSchema = false)
 abstract class ReminderDatabase : RoomDatabase() {
 
     abstract fun reminderDao(): ReminderDao
