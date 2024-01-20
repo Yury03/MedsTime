@@ -87,6 +87,7 @@
     <string name="package_list">Список упаковок:</string>
     <string name="date_picker_confirm_button">Ок</string>
     <string name="date_picker_dismiss_button">Отмена</string>
+    <string name="error_date_is_empty">Дата была инициализирована нулями</string>
 
     <string-array name="dosage_array">
         <item>Мг</item>

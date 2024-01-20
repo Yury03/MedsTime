@@ -2,6 +2,7 @@ package com.example.medstime.ui.medication
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation.findNavController
@@ -21,19 +22,22 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
     private val viewModel by viewModel<MedicationListViewModel>()
     private var _binding: FragmentMedicationListBinding? = null
     private val binding get() = _binding!!
-    private lateinit var _date: MedicationIntakeModel.Date
+    private var _date = MedicationIntakeModel.Date()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMedicationListBinding.bind(view)
-        val day = arguments?.getInt("day")!!                //todo обработка ошибок
-        val month = arguments?.getInt("month")!!
-        val year = arguments?.getInt("year")!!
-        _date = (MedicationIntakeModel.Date(day, month, year))
+        val day = arguments?.getInt("day")
+        val month = arguments?.getInt("month")
+        val year = arguments?.getInt("year")
+        if (day != null && month != null && year != null) {
+            _date = _date.copy(day = day, month = month, year = year)
+        } else {
+            Toast.makeText(requireContext(), R.string.error_date_is_empty, Toast.LENGTH_LONG).show()
+        }
         val medicationClick = { model: MedicationIntakeModel ->
             createItemButtonClickMap(model)
         }
-        viewModel.initIntakeListToday()
         viewModel.intakeListToday.observe(viewLifecycleOwner) {
             val sortedList = splitIntakeList(it)
             if (sortedList.isEmpty()) {

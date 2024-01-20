@@ -92,19 +92,18 @@
                     android:visibility="gone" />
             </LinearLayout>
 
+<!--            <net.cachapa.expandablelayout.ExpandableLayout-->
+<!--                android:id="@+id/scanBarcodeLayout"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginHorizontal="4dp"-->
+<!--                app:el_expanded="false">-->
 
-            <net.cachapa.expandablelayout.ExpandableLayout
-                android:id="@+id/scanBarcodeLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="4dp"
-                app:el_expanded="false">
-
-                <androidx.camera.view.PreviewView
-                    android:id="@+id/previewView"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp" />
-            </net.cachapa.expandablelayout.ExpandableLayout>
+<!--                <androidx.camera.view.PreviewView-->
+<!--                    android:id="@+id/previewView"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="150dp" />-->
+<!--            </net.cachapa.expandablelayout.ExpandableLayout>-->
 
             <LinearLayout
                 android:layout_width="match_parent"

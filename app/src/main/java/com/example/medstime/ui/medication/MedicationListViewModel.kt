@@ -2,6 +2,7 @@ package com.example.medstime.ui.medication
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -13,6 +14,8 @@ import com.example.domain.usecase.medication_intake.ChangeMedicationIntakeIsTake
 import com.example.domain.usecase.medication_intake.GetIntakeList
 import com.example.domain.usecase.reminder.ChangeNotificationStatusByReminderId
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.Calendar
@@ -26,14 +29,19 @@ class MedicationListViewModel(
 ) : ViewModel() {
 
     /**Все существующие приемы, сортировка происходит внутри фрагмента*/
-    lateinit var intakeListToday: LiveData<List<MedicationIntakeModel>>
+    private val _intakeListToday = MutableLiveData<List<MedicationIntakeModel>>()
+    val intakeListToday: LiveData<List<MedicationIntakeModel>> get() = _intakeListToday
 
-    fun initIntakeListToday() {
-        runBlocking {//TODO!!!!!
-            intakeListToday = getIntakeListUseCase.invoke().asLiveData(Dispatchers.Main)
+    init {
+        viewModelScope.launch {
+            getIntakeListUseCase.invoke()
+                .collect { result ->
+                    _intakeListToday.value = result
+                }
         }
-        Log.d(LOG_TAG, intakeListToday.value.toString())
     }
+
+
 
 
     fun changeIsTakenStatus(medicationIntakeId: String, isTaken: Boolean) {
