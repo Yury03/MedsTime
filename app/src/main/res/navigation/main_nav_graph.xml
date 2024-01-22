@@ -8,7 +8,21 @@
         android:id="@+id/medicationFragment"
         android:name="com.example.medstime.ui.medication.MedicationFragment"
         android:label="fragment_medication"
-        tools:layout="@layout/fragment_medication" />
+        tools:layout="@layout/fragment_medication">
+        <action
+            android:id="@+id/action_medicationFragment_to_addMedFragment"
+            app:destination="@id/addMedFragment" />
+        <action
+            android:id="@+id/action_medicationFragment_to_addMedFragment_edit"
+            app:destination="@id/addMedFragment">
+            <argument
+                android:name="mode"
+                app:argType="string" />
+            <argument
+                android:name="medication_model_id"
+                app:argType="string" />
+        </action>
+    </fragment>
     <fragment
         android:id="@+id/medsTrackingFragment"
         android:name="com.example.medstime.ui.meds_tracking.MedsTrackingFragment"
@@ -25,10 +39,25 @@
         tools:layout="@layout/fragment_add_med">
         <action
             android:id="@+id/action_addMedFragment_to_addMedTrackFragment"
-            app:destination="@id/addMedTrackFragment" />
+            app:destination="@id/addMedTrackFragment">
+            <argument
+                android:name="state"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_addMedFragment_to_medicationFragment"
+            app:destination="@id/medicationFragment" />
     </fragment>
     <fragment
         android:id="@+id/addMedTrackFragment"
         android:name="com.example.medstime.ui.add_track.AddMedTrackFragment"
-        android:label="AddMedTrackFragment" />
+        android:label="fragment_add_med_track">
+        <action
+            android:id="@+id/action_addMedTrackFragment_to_addMedFragment"
+            app:destination="@id/addMedFragment">
+            <argument
+                android:name="state"
+                app:argType="string" />
+        </action>
+    </fragment>
 </navigation>

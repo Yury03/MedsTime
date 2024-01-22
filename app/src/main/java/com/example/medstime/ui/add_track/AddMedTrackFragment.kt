@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -11,9 +12,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.medstime.R
-import com.example.medstime.ui.add_med.AddMedFragment
 import com.example.medstime.ui.add_track.components.AddMedTrack
-import com.example.medstime.ui.main_activity.MainActivity
+import com.example.medstime.ui.utils.ARG_KEY_STATE
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**Фрагмент **AddMedTrackFragment** в основном нужен, чтобы изменять поле ***medTrack***, принадлежащее
@@ -25,60 +25,43 @@ class AddMedTrackFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let { args ->
-            val addMedStateJson = args.getString(AddMedFragment.ARG_KEY_STATE)!!
+        requireArguments().getString(ARG_KEY_STATE)?.let { addMedStateJson ->
             viewModel.send(AddMedTrackEvent.HandleArguments(addMedStateJson))
-
         }
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
+            val navController = requireActivity().findNavController(R.id.fragmentContainerView)
+            val backToAddMedScreen: () -> Unit = {
+                val state = viewModel.state.value.addMedStateJson
+                val action =
+                    AddMedTrackFragmentDirections.actionAddMedTrackFragmentToAddMedFragment(state = state)
+                navController.navigate(action)
+            }
+            setOnBackButtonCallback(backToAddMedScreen)
             setContent {
                 val uiState by viewModel.state.collectAsState()
-                val navController = requireActivity().findNavController(R.id.fragmentContainerView)
-                val backToAddMedScreen = {
-                    navController.navigate(
-                        R.id.addMedFragment, Bundle().apply {
-                            putString(
-                                AddMedFragment.ARG_KEY_STATE,
-                                viewModel.state.value.addMedStateJson
-                            )
-                        }
-                    )
-                }
-                AddMedTrack(
-                    uiState = uiState,
+                AddMedTrack(uiState = uiState,
                     onBackButtonClick = backToAddMedScreen,
                     sendEvent = { event ->
                         viewModel.send(event)
-                    }
-                )
+                    })
             }
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        hideBottomNavigationBar()
-    }
-
-    private fun hideBottomNavigationBar() {
-        (requireActivity() as MainActivity).hideBottomNavigationBar()
-    }
-
-    private fun showBottomNavigationBar() {
-        (requireActivity() as MainActivity).showBottomNavigationBar()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        showBottomNavigationBar()
+    private fun setOnBackButtonCallback(backToAddMedScreen: () -> Unit) {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    viewModel.send(AddMedTrackEvent.BackButtonClicked)
+                    backToAddMedScreen()
+                }
+            })
     }
 
     companion object {

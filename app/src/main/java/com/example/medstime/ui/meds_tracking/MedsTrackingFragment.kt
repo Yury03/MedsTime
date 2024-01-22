@@ -29,9 +29,7 @@ class MedsTrackingFragment : Fragment() {
     //todo при полной миграции оставить только MedsTrackingScreen()
     private val viewModel by viewModel<MedsTrackViewModel>()
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
@@ -45,8 +43,7 @@ class MedsTrackingFragment : Fragment() {
     private fun MedsTrackingScreen() {
         val state by viewModel.state.asFlow().collectAsState(
             initial = MedsTrackState(
-                isLoading = true,
-                medsTrackList = listOf()
+                isLoading = true, medsTrackList = listOf()
             )
         )
         Box(

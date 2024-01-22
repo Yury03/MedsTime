@@ -1,10 +1,8 @@
 package com.example.medstime.ui.medication
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.domain.models.MedicationIntakeModel
 import com.example.domain.models.ReminderModel
@@ -14,10 +12,7 @@ import com.example.domain.usecase.medication_intake.ChangeMedicationIntakeIsTake
 import com.example.domain.usecase.medication_intake.GetIntakeList
 import com.example.domain.usecase.reminder.ChangeNotificationStatusByReminderId
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.util.Calendar
 
 class MedicationListViewModel(
@@ -40,8 +35,6 @@ class MedicationListViewModel(
                 }
         }
     }
-
-
 
 
     fun changeIsTakenStatus(medicationIntakeId: String, isTaken: Boolean) {

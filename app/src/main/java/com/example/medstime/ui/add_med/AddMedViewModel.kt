@@ -57,11 +57,9 @@ class AddMedViewModel(
                 _state.value = _state.value.copy(inputError = 0)
             }
 
-            is AddMedEvent.Mode -> {
-                if (event.mode == EDIT_MODE) {
-                    editMedicationModelId = event.medicationModelId
-                    getMedicationModelById(event.medicationModelId)
-                }
+            is AddMedEvent.SetEditMode -> {
+                editMedicationModelId = event.medicationModelId
+                getMedicationModelById(event.medicationModelId)
             }
 
             is AddMedEvent.UpdateState -> {

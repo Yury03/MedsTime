@@ -78,6 +78,7 @@ fun AddMedTrack(
                 onClick = {
                     sendEvent(AddMedTrackEvent.BackButtonClicked)
                     Log.e(AddMedTrackFragment.LOG_TAG, uiState.addMedStateJson)//TODO [?] empty test
+                    //uiState.addMedStateJson пустой но val state = viewModel.state.value.addMedStateJson содержит данные
                     onBackButtonClick()
                 }) {
                 Icon(

@@ -13,6 +13,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -24,7 +25,10 @@ import com.example.domain.models.MedicationModel
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentAddMedBinding
 import com.example.medstime.services.ReminderService
-import com.example.medstime.ui.main_activity.MainActivity
+import com.example.medstime.ui.add_med.AddMedState.Companion.EDIT_MODE
+import com.example.medstime.ui.utils.ARG_KEY_MEDICATION_MODEL_ID
+import com.example.medstime.ui.utils.ARG_KEY_MODE
+import com.example.medstime.ui.utils.ARG_KEY_STATE
 import com.google.android.material.chip.Chip
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -50,7 +54,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     ): View {
         //cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext()) //ошибка с библиотекой камеры? Появилась после изменения грэдл. Приложение крашится
         _binding = FragmentAddMedBinding.inflate(inflater, container, false)
-        hideBottomNavigationBar()
         return binding.root
     }
 
@@ -65,27 +68,37 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         setAdapterSpinFrequency()
 //        betaFunctions()
         initView()
+        setOnBackButtonCallback()
     }
 
-    private fun hideBottomNavigationBar() {
-        (requireActivity() as MainActivity).hideBottomNavigationBar()
+    private fun setOnBackButtonCallback() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    closeFragment(DESTINATION_TO_MEDICATION_SCREEN)
+                }
+            })
     }
 
-    private fun showBottomNavigationBar() {
-        (requireActivity() as MainActivity).showBottomNavigationBar()
-    }
-
+    /**
+     * ### Функция handleArguments() обрабатывает входящие аргументы от MedicationFragment(MedicationListFragment) и AddMedTrackFragment.
+     * *stateJson* приходит из **AddMedTrackFragment**, отвечает за восстановление состояния **AddMedFragment** после редактирования **AddMedState** внутри **AddMedTrackFragment**.
+     *
+     * *mode* приходит из **MedicationFragment**:
+     * - в случае **EDIT_MODE**, viewModel получает модель по *medicationModelId*, а фрагмент открывается в режиме редактирования;
+     * - в случае **ADD_MODE** *medicationModelId* не будет существовать.
+     * */
     private fun handleArguments() {
         arguments?.let { args ->
-            if (args.getString(ARG_KEY_MODE).equals(AddMedState.EDIT_MODE)) {
-                val id = args.getString(ARG_KEY_MEDICATION_MODEL_ID)!!
-                viewModel.send(AddMedEvent.Mode(AddMedState.EDIT_MODE, id))
+            val mode = args.getString(ARG_KEY_MODE)
+            val medicationModelId = args.getString(ARG_KEY_MEDICATION_MODEL_ID)
+            val stateJson = args.getString(ARG_KEY_STATE, "")//todo?
+
+            if (mode.equals(EDIT_MODE) && medicationModelId != null) {
+                viewModel.send(AddMedEvent.SetEditMode(medicationModelId))
                 changeViewTextToEditMode()
-            }
-            //передача текущего состояния фрагмента, для последующего восстановления
-            val stateJson = args.getString(ARG_KEY_STATE)
-            stateJson?.let {
-                val addMedState = Gson().fromJson(it, AddMedState::class.java)
+            } else if (stateJson?.isNotEmpty() == true) {
+                val addMedState = Gson().fromJson(stateJson, AddMedState::class.java)
                 updateAllData(state = addMedState, isForcedUpdate = true)
                 viewModel.send(AddMedEvent.UpdateState(addMedState))
             }
@@ -103,7 +116,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     private fun medicationSaved() {
         val serviceIntent = Intent(requireContext(), ReminderService::class.java)
         requireContext().startService(serviceIntent)
-
     }
 
     private fun initView() {
@@ -177,7 +189,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     private fun updateAllData(state: AddMedState, isForcedUpdate: Boolean = false) {
         with(binding) {
             startIntakeDate.updateText(state.startIntakeDate)
-            if (state.mode == AddMedState.EDIT_MODE || isForcedUpdate) {
+            if (state.mode == EDIT_MODE || isForcedUpdate) {
                 medicationName.updateText(state.medicationName)
                 dosage.updateText(state.dosage)
                 dosageUnits.updateAutoCompleteText(state.dosageUnits)
@@ -244,17 +256,17 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
 //    }
 
     /**## Метод closeFragment() обрабатывает все операции перехода с помощью **navController**.*/
-    private fun closeFragment(destination: Int, args: Bundle = Bundle()) {
+    private fun closeFragment(destination: Int, stateArg: String = "") {
+        val navController = requireActivity().findNavController(R.id.fragmentContainerView)
         when (destination) {
             DESTINATION_TO_MEDICATION_SCREEN -> {
-                showBottomNavigationBar()
-                requireActivity().findNavController(R.id.fragmentContainerView)
-                    .navigate(R.id.medicationFragment)
+                navController.navigate(R.id.action_addMedFragment_to_medicationFragment)
             }
 
             DESTINATION_TO_ADD_MED_TRACK_SCREEN -> {
-                requireActivity().findNavController(R.id.fragmentContainerView)
-                    .navigate(R.id.addMedTrackFragment, args)
+                val action =
+                    AddMedFragmentDirections.actionAddMedFragmentToAddMedTrackFragment(state = stateArg)
+                navController.navigate(action)
             }
         }
     }
@@ -262,10 +274,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     private fun openAddMedTrackFragment() {
         updateCurrentState()
         val stateJson = Gson().toJson(_currentState)
-        val args = Bundle().apply {
-            putString(ARG_KEY_STATE, stateJson)
-        }
-        closeFragment(DESTINATION_TO_ADD_MED_TRACK_SCREEN, args)
+        closeFragment(DESTINATION_TO_ADD_MED_TRACK_SCREEN, stateJson)
     }
 
 //    private fun showInfoAboutBannerDialog() =
@@ -577,9 +586,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         private const val TIME_PICKER_TAG = "TimePickerAddMedFragment"
         private const val DESTINATION_TO_MEDICATION_SCREEN = 1
         private const val DESTINATION_TO_ADD_MED_TRACK_SCREEN = 2
-        const val ARG_KEY_STATE = "state"
-        const val ARG_KEY_MODE = "mode"
-        const val ARG_KEY_MEDICATION_MODEL_ID = "medication_model_id"
         //private const val CAMERA_PERMISSION_CODE = 300
         //private const val SYSTEM_ALERT_WINDOW_CODE = 400
     }

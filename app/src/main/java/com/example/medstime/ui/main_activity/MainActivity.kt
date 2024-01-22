@@ -11,7 +11,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.example.medstime.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -24,43 +26,76 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         val navController = navHostFragment.navController
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationBar)
-        bottomNavigationView.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.menu_medication -> navController.navigate(R.id.medicationFragment)
+        val bottomNavBar = getBottomNavBar(navController)
 
-                R.id.menu_medsTracking -> navController.navigate(R.id.medsTrackingFragment)
+        setNavigationListener(navController, bottomNavBar)
+        setBottomNavBarListener(navController, bottomNavBar)
+        setBetaListener(bottomNavBar)
+        checkAndRequestNecessaryPermissions()
+    }
 
-                R.id.menu_notifications -> navController.navigate(R.id.notificationsFragment)
-            }
-            true
+    private fun getBottomNavBar(navController: NavController) =
+        findViewById<BottomNavigationView>(R.id.bottomNavigationBar).apply {
+            setupWithNavController(navController)
         }
+
+    private fun setBetaListener(bottomNavBar: BottomNavigationView) {
         val listenerForBeta = View.OnLongClickListener { _ ->
             val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
             val cameraBeta = sharedPref.getBoolean(getString(R.string.sp_key_camera_beta), false)
             with(sharedPref.edit()) {
                 if (!cameraBeta) {
                     putBoolean(getString(R.string.sp_key_camera_beta), true)
-                    apply()
                 } else {
                     putBoolean(getString(R.string.sp_key_camera_beta), false)
-                    apply()
                 }
+                apply()
             }
             Toast.makeText(this, R.string.beta_mode_activated, Toast.LENGTH_SHORT).show()
             true
         }
-        bottomNavigationView.findViewById<View>(R.id.menu_notifications)
+        bottomNavBar.findViewById<View>(R.id.notificationsFragment)
             .setOnLongClickListener(listenerForBeta)
-        checkAndRequestNecessaryPermissions()
+    }
+
+    private fun setBottomNavBarListener(
+        navController: NavController,
+        bottomNavBar: BottomNavigationView,
+    ) {
+        bottomNavBar.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.medicationFragment -> navController.navigate(R.id.medicationFragment)
+
+                R.id.medsTrackingFragment -> navController.navigate(R.id.medsTrackingFragment)
+
+                R.id.notificationsFragment -> navController.navigate(R.id.notificationsFragment)
+            }
+            true
+        }
+    }
+
+    private fun setNavigationListener(
+        navController: NavController,
+        bottomNavBar: BottomNavigationView,
+    ) {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.medicationFragment, R.id.medsTrackingFragment, R.id.notificationsFragment -> showBottomNavigationBar(
+                    bottomNavBar
+                )
+
+                R.id.addMedTrackFragment, R.id.addMedFragment -> hideBottomNavigationBar(
+                    bottomNavBar
+                )
+            }
+        }
     }
 
     private fun checkAndRequestNecessaryPermissions() {
         val permissionsToRequest = mutableListOf<String>()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             permissionsToRequest.add(Manifest.permission.FOREGROUND_SERVICE)
-        }
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        }/*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (!requestScheduleExactAlarmPermission()) {
                 //TODO:1 Dialog
             }
@@ -94,13 +129,17 @@ class MainActivity : AppCompatActivity() {
 //        return alarmManager.canScheduleExactAlarms()
 //    }
 
-    fun hideBottomNavigationBar() {
-        findViewById<BottomNavigationView>(R.id.bottomNavigationBar).visibility = View.GONE
+    private fun hideBottomNavigationBar(bottomNavBar: BottomNavigationView) {
         Log.d(LOG_TAG, "hideBottomNavigationBar")
+        with(bottomNavBar) {
+            if (visibility == View.VISIBLE) visibility = View.GONE
+        }
     }
 
-    fun showBottomNavigationBar() {
-        findViewById<BottomNavigationView>(R.id.bottomNavigationBar).visibility = View.VISIBLE
+    private fun showBottomNavigationBar(bottomNavBar: BottomNavigationView) {
+        with(bottomNavBar) {
+            if (visibility == View.GONE) visibility = View.VISIBLE
+        }
         Log.d(LOG_TAG, "showBottomNavigationBar")
     }
 
