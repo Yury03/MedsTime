@@ -40,7 +40,7 @@ class BannerDisplayService : Service() {
         val intakeModelId = intent?.getStringExtra("intakeModelId")!!//todo
         val reminderModelId = intent.getStringExtra("reminderModelId")!!//todo
         CoroutineScope(Dispatchers.IO).launch {
-            val intakeModel = getMedicationIntakeModel.invoke(intakeModelId)
+            val intakeModel = getMedicationIntakeModel(intakeModelId)
             withContext(Dispatchers.Main) {
                 showAlertDialog(intakeModel, reminderModelId)
             }
@@ -61,13 +61,13 @@ class BannerDisplayService : Service() {
             val remindFiveMin = findViewById<Button>(R.id.AD_remindFiveMinButton)
             skip.setOnClickListener {
                 scope.launch {
-                    changeIsTakenStatus.invoke(intake.id, false, null)
+                    changeIsTakenStatus(intake.id, false, null)
                 }
                 dismiss()
             }
             taken.setOnClickListener {
                 scope.launch {
-                    changeIsTakenStatus.invoke(intake.id, true, getActualTime())
+                    changeIsTakenStatus(intake.id, true, getActualTime())
                 }
                 dismiss()
             }
@@ -84,7 +84,7 @@ class BannerDisplayService : Service() {
     }
 
     private suspend fun callPendingReceiver(reminderModelId: String) {
-        val reminder = getReminderModel.invoke(reminderModelId)
+        val reminder = getReminderModel(reminderModelId)
         reminder.timeShow = Calendar.getInstance().timeInMillis + 5.minutes.inWholeMilliseconds
         val alarmManager = ContextCompat.getSystemService(
             this,

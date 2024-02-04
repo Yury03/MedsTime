@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 class GetIntakeList(private val repository: Repository.MedicationIntakeContract) {
 
-    suspend fun invoke(): Flow<List<MedicationIntakeModel>> {
+    suspend operator fun invoke(): Flow<List<MedicationIntakeModel>> {
         return repository.getIntakeList()
     }
 }

@@ -27,7 +27,7 @@ class ReminderService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val scope = CoroutineScope(coroutineDispatcher)
         scope.launch {
-            val reminders = getRemindersWithStatus.invoke(ReminderModel.Status.NONE)
+            val reminders = getRemindersWithStatus(ReminderModel.Status.NONE)
             Log.d(TAG, reminders.toString())
             generateAlarms(reminders)
         }

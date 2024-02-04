@@ -5,7 +5,7 @@ import com.example.domain.models.ReminderModel
 
 class GetRemindersWithStatus(private val repository: Repository.ReminderContract) {
 
-    suspend fun invoke(reminderStatus: ReminderModel.Status): List<ReminderModel> {
+    suspend operator fun invoke(reminderStatus: ReminderModel.Status): List<ReminderModel> {
         return repository.getRemindersWithStatus(reminderStatus)
     }
 }

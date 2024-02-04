@@ -42,7 +42,7 @@ class AddMedViewModel(
 
     private fun saveNewModelInRoom(medicationModel: MedicationModel) {
         viewModelScope.launch(Dispatchers.IO) {
-            saveNewMedicationUseCase.invoke(medicationModel)//todo return true or false
+            saveNewMedicationUseCase(medicationModel)//todo return true or false
             _state.update { it.copy(isSavedNewMedication = true) }
         }
     }
@@ -80,7 +80,7 @@ class AddMedViewModel(
 
     private fun replaceModelInRoom(medicationModel: MedicationModel) {
         viewModelScope.launch(Dispatchers.IO) {
-            replaceMedicationModelUseCase.invoke(medicationModel)//todo return true or false
+            replaceMedicationModelUseCase(medicationModel)//todo return true or false
             _state.update { it.copy(isSavedNewMedication = true) }
         }
     }
@@ -225,7 +225,7 @@ class AddMedViewModel(
      * Также он парсит модель и изменяет ***_state***. */
     private fun getMedicationModelById(medicationModelId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val model = getMedicationModelUseCase.invoke(medicationModelId)
+            val model = getMedicationModelUseCase(medicationModelId)
             val selectedDays = model.selectedDays ?: listOf()
             var newState = state.value
             newState = newState.copy(

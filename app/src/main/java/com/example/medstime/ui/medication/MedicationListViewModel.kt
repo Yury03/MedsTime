@@ -29,7 +29,7 @@ class MedicationListViewModel(
 
     init {
         viewModelScope.launch {
-            getIntakeListUseCase.invoke()
+            getIntakeListUseCase()
                 .collect { result ->
                     _intakeListToday.value = result
                 }
@@ -44,13 +44,13 @@ class MedicationListViewModel(
             null
         }
         viewModelScope.launch(Dispatchers.IO) {
-            changeMedicationIntakeIsTakenUseCase.invoke(medicationIntakeId, isTaken, time)
+            changeMedicationIntakeIsTakenUseCase(medicationIntakeId, isTaken, time)
             val newReminderStatus = if (isTaken) {
                 ReminderModel.Status.TAKEN
             } else {
                 ReminderModel.Status.SKIP
             }
-            changeNotificationStatusUseCase.invoke(medicationIntakeId, newReminderStatus)
+            changeNotificationStatusUseCase(medicationIntakeId, newReminderStatus)
         }
     }
 
@@ -67,12 +67,12 @@ class MedicationListViewModel(
     }
 
     private suspend fun callRemoveMedication(medicationModelId: String) {
-        removeMedicationModelUseCase.invoke(medicationModelId)
+        removeMedicationModelUseCase(medicationModelId)
     }
 
     fun changeActualTime(medicationIntakeId: String, time: MedicationIntakeModel.Time) {
         viewModelScope.launch(Dispatchers.IO) {
-            changeActualTimeIntakeUseCase.invoke(medicationIntakeId, time)
+            changeActualTimeIntakeUseCase(medicationIntakeId, time)
         }
     }
 

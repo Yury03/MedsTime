@@ -39,9 +39,9 @@ class MedicationReminderReceiver : BroadcastReceiver() {
         val reminderModelId = intent.getStringExtra("reminderModelId")!!//todo
         val type = intent.getStringExtra("type")!!
         CoroutineScope(Dispatchers.IO).launch {
-            val reminderModel = getReminderModelById.invoke(reminderModelId)
+            val reminderModel = getReminderModelById(reminderModelId)
             if (reminderModel.status == ReminderModel.Status.NONE) {
-                changeNotificationStatus.invoke(reminderModelId, ReminderModel.Status.SHOWN)
+                changeNotificationStatus(reminderModelId, ReminderModel.Status.SHOWN)
                 when (type) {
                     ReminderModel.Type.PUSH_NOTIFICATION.toString() -> sendNotification(
                         context = context!!,
@@ -72,7 +72,7 @@ class MedicationReminderReceiver : BroadcastReceiver() {
     private fun sendNotification(context: Context, medicationIntakeId: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val requestCode = System.currentTimeMillis().toInt()
-            val intake = getMedicationIntakeModel.invoke(medicationIntakeId)
+            val intake = getMedicationIntakeModel(medicationIntakeId)
             val notificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val channel = NotificationChannel(

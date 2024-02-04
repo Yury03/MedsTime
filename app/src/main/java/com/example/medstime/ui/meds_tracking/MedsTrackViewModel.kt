@@ -23,7 +23,7 @@ class MedsTrackViewModel(
             _state.postValue(
                 MedsTrackState(
                     isLoading = false,
-                    medsTrackList = getAllTracksUseCase.invoke()
+                    medsTrackList = getAllTracksUseCase()
                 )
             )
         }

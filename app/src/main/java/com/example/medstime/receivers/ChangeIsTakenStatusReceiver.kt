@@ -28,7 +28,7 @@ class ChangeIsTakenStatusReceiver : BroadcastReceiver() {
             null
         }
         CoroutineScope(Dispatchers.IO).launch {
-            changeMedicationIntakeIsTaken.invoke(
+            changeMedicationIntakeIsTaken(
                 medicationIntakeId = medicationIntakeId,
                 newIsTaken = isTaken,
                 actualIntakeTime = actualIntakeTime,
