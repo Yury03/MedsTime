@@ -14,6 +14,8 @@ import com.example.medstime.ui.add_med.AddMedState
 import com.example.medstime.ui.medication.adapters.TimesListAdapter
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -27,14 +29,17 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMedicationListBinding.bind(view)
-        val day = arguments?.getInt("day")
-        val month = arguments?.getInt("month")
-        val year = arguments?.getInt("year")
-        if (day != null && month != null && year != null) {
-            _date = _date.copy(day = day, month = month, year = year)
-        } else {
+        arguments?.getString("date")?.let {
+            val medicationDate = Json.decodeFromString<MedicationIntakeModel.Date>(it)
+            _date = MedicationIntakeModel.Date(
+                medicationDate.day,
+                medicationDate.month,
+                medicationDate.year,
+            )
+        } ?: run {
             Toast.makeText(requireContext(), R.string.error_date_is_empty, Toast.LENGTH_LONG).show()
         }
+
         val medicationClick = { model: MedicationIntakeModel ->
             createItemButtonClickMap(model)
         }

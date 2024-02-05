@@ -1,5 +1,7 @@
 package com.example.domain.models
 
+import kotlinx.serialization.Serializable
+
 data class MedicationIntakeModel(
     val id: String,
     val name: String,                   // Название лекарства
@@ -33,6 +35,10 @@ data class MedicationIntakeModel(
         }
     }
 
+    /*todo WARNING! kotlinx.serialization compiler plugin is not applied to the module,
+       so this annotation would not be processed. Make sure that you've setup
+       your buildscript correctly and re-import project.*/
+    @Serializable
     data class Date(
         val day: Int = 0,   // День
         val month: Int = 0, // Месяц

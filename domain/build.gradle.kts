@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.jetbrains.kotlin.jvm)
     id("java-library")
+    kotlin("plugin.serialization")
 }
 
 java {

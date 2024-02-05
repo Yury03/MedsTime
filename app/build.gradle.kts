@@ -79,6 +79,9 @@ dependencies {
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.swipe)
 
+    //---
+    implementation(libs.kotlinx.serialization.json)
+
     //Compose
     implementation(libs.androidx.foundation.layout.android)
     implementation(libs.androidx.material3)

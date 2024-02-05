@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +14,8 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.medstime.R
+import com.example.medstime.ui.utils.hide
+import com.example.medstime.ui.utils.show
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
@@ -80,13 +81,9 @@ class MainActivity : AppCompatActivity() {
     ) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.medicationFragment, R.id.medsTrackingFragment, R.id.notificationsFragment -> showBottomNavigationBar(
-                    bottomNavBar
-                )
+                R.id.medicationFragment, R.id.medsTrackingFragment, R.id.notificationsFragment -> bottomNavBar.show()
 
-                R.id.addMedTrackFragment, R.id.addMedFragment -> hideBottomNavigationBar(
-                    bottomNavBar
-                )
+                R.id.addMedTrackFragment, R.id.addMedFragment -> bottomNavBar.hide()
             }
         }
     }
@@ -128,20 +125,6 @@ class MainActivity : AppCompatActivity() {
 //        }
 //        return alarmManager.canScheduleExactAlarms()
 //    }
-
-    private fun hideBottomNavigationBar(bottomNavBar: BottomNavigationView) {
-        Log.d(LOG_TAG, "hideBottomNavigationBar")
-        with(bottomNavBar) {
-            if (visibility == View.VISIBLE) visibility = View.GONE
-        }
-    }
-
-    private fun showBottomNavigationBar(bottomNavBar: BottomNavigationView) {
-        with(bottomNavBar) {
-            if (visibility == View.GONE) visibility = View.VISIBLE
-        }
-        Log.d(LOG_TAG, "showBottomNavigationBar")
-    }
 
     private companion object {
 
