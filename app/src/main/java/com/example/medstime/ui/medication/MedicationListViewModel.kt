@@ -1,9 +1,8 @@
 package com.example.medstime.ui.medication
 
-import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.domain.models.MedicationIntakeModel
 import com.example.domain.models.ReminderModel
@@ -14,7 +13,6 @@ import com.example.domain.usecase.medication_intake.GetIntakeList
 import com.example.domain.usecase.reminder.ChangeNotificationStatusByReminderId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.util.Calendar
 
 class MedicationListViewModel(
@@ -24,18 +22,18 @@ class MedicationListViewModel(
     private val changeNotificationStatusUseCase: ChangeNotificationStatusByReminderId,
     private val changeActualTimeIntakeUseCase: ChangeActualTimeIntake,
 ) : ViewModel() {
+
     /**Все существующие приемы, сортировка происходит внутри фрагмента*/
-    lateinit var intakeListToday: LiveData<List<MedicationIntakeModel>>
+    private val _intakeListToday = MutableLiveData<List<MedicationIntakeModel>>()
+    val intakeListToday: LiveData<List<MedicationIntakeModel>> get() = _intakeListToday
 
-    companion object {
-        const val LOG_TAG = "MedicationListViewModel"
-    }
-
-    fun initIntakeListToday() {
-        runBlocking {//TODO!!!!!
-            intakeListToday = getIntakeListUseCase.invoke().asLiveData(Dispatchers.Main)
+    init {
+        viewModelScope.launch {
+            getIntakeListUseCase()
+                .collect { result ->
+                    _intakeListToday.value = result
+                }
         }
-        Log.d(LOG_TAG, intakeListToday.value.toString())
     }
 
 
@@ -46,13 +44,13 @@ class MedicationListViewModel(
             null
         }
         viewModelScope.launch(Dispatchers.IO) {
-            changeMedicationIntakeIsTakenUseCase.invoke(medicationIntakeId, isTaken, time)
+            changeMedicationIntakeIsTakenUseCase(medicationIntakeId, isTaken, time)
             val newReminderStatus = if (isTaken) {
                 ReminderModel.Status.TAKEN
             } else {
                 ReminderModel.Status.SKIP
             }
-            changeNotificationStatusUseCase.invoke(medicationIntakeId, newReminderStatus)
+            changeNotificationStatusUseCase(medicationIntakeId, newReminderStatus)
         }
     }
 
@@ -69,12 +67,17 @@ class MedicationListViewModel(
     }
 
     private suspend fun callRemoveMedication(medicationModelId: String) {
-        removeMedicationModelUseCase.invoke(medicationModelId)
+        removeMedicationModelUseCase(medicationModelId)
     }
 
     fun changeActualTime(medicationIntakeId: String, time: MedicationIntakeModel.Time) {
         viewModelScope.launch(Dispatchers.IO) {
-            changeActualTimeIntakeUseCase.invoke(medicationIntakeId, time)
+            changeActualTimeIntakeUseCase(medicationIntakeId, time)
         }
+    }
+
+    companion object {
+
+        const val LOG_TAG = "MedicationListViewModel"
     }
 }

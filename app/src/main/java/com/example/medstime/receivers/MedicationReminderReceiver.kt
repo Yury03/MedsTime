@@ -23,9 +23,6 @@ import java.util.Calendar
 
 
 class MedicationReminderReceiver : BroadcastReceiver() {
-    companion object {
-        private const val LOG_TAG = "MedicationReminderReceiver"
-    }
 
     private val getMedicationIntakeModel: GetMedicationIntakeModel by KoinJavaComponent.inject(
         GetMedicationIntakeModel::class.java
@@ -42,9 +39,9 @@ class MedicationReminderReceiver : BroadcastReceiver() {
         val reminderModelId = intent.getStringExtra("reminderModelId")!!//todo
         val type = intent.getStringExtra("type")!!
         CoroutineScope(Dispatchers.IO).launch {
-            val reminderModel = getReminderModelById.invoke(reminderModelId)
+            val reminderModel = getReminderModelById(reminderModelId)
             if (reminderModel.status == ReminderModel.Status.NONE) {
-                changeNotificationStatus.invoke(reminderModelId, ReminderModel.Status.SHOWN)
+                changeNotificationStatus(reminderModelId, ReminderModel.Status.SHOWN)
                 when (type) {
                     ReminderModel.Type.PUSH_NOTIFICATION.toString() -> sendNotification(
                         context = context!!,
@@ -75,7 +72,7 @@ class MedicationReminderReceiver : BroadcastReceiver() {
     private fun sendNotification(context: Context, medicationIntakeId: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val requestCode = System.currentTimeMillis().toInt()
-            val intake = getMedicationIntakeModel.invoke(medicationIntakeId)
+            val intake = getMedicationIntakeModel(medicationIntakeId)
             val notificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val channel = NotificationChannel(
@@ -133,5 +130,10 @@ class MedicationReminderReceiver : BroadcastReceiver() {
             calendar.get(Calendar.HOUR_OF_DAY),
             calendar.get(Calendar.MINUTE)
         )
+    }
+
+    companion object {
+
+        private const val LOG_TAG = "MedicationReminderReceiver"
     }
 }

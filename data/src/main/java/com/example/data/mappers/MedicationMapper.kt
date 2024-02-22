@@ -9,6 +9,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 object MedicationMapper {
+
     fun mapToEntity(model: MedicationModel): Pair<MedicationEntity, MedsTrackEntity> {
         val intakeTimes = model.intakeTimes.map { it.hour to it.minute }
 

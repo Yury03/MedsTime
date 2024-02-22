@@ -21,7 +21,9 @@ data class MedicationEntity(
     val useBanner: Boolean,
     val medsTrackModelId: String,
 ) {
+
     class IntListConverter {
+
         @TypeConverter
         fun fromIntList(value: List<Int>): String {
             return value.joinToString(",")
@@ -35,6 +37,7 @@ data class MedicationEntity(
 
 
     class IntPairListConverter {
+
         @TypeConverter
         fun fromIntPairList(value: List<Pair<Int, Int>>): String {
             return value.joinToString(";") { "${it.first},${it.second}" }

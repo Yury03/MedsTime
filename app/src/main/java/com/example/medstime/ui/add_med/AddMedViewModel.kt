@@ -2,8 +2,6 @@ package com.example.medstime.ui.add_med
 
 import android.content.res.Resources
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.models.MedicationModel
@@ -19,8 +17,11 @@ import com.example.medstime.ui.utils.getCurrentDateString
 import com.example.medstime.ui.utils.toDate
 import com.example.medstime.ui.utils.toDisplayString
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class AddMedViewModel(
     private val saveNewMedicationUseCase: SaveNewMedication,
@@ -28,10 +29,11 @@ class AddMedViewModel(
     private val replaceMedicationModelUseCase: ReplaceMedicationModel,
     private val resources: Resources,
 ) : ViewModel() {
-    private val _state: MutableLiveData<AddMedState> =
-        MutableLiveData()
-    val state: LiveData<AddMedState>
-        get() = _state
+
+    private val _state: MutableStateFlow<AddMedState> =
+        MutableStateFlow(AddMedState())
+    val state: StateFlow<AddMedState> = _state.asStateFlow()
+
     private var editMedicationModelId: String? = null
 
     init {
@@ -39,38 +41,29 @@ class AddMedViewModel(
     }
 
     private fun saveNewModelInRoom(medicationModel: MedicationModel) {
-        runBlocking {//TODO!!!
-            viewModelScope.launch(Dispatchers.IO) {
-                saveNewMedicationUseCase.invoke(medicationModel)//todo return true or false
-                _state.postValue(state.value!!.copy(isSavedNewMedication = true))
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            saveNewMedicationUseCase(medicationModel)//todo return true or false
+            _state.update { it.copy(isSavedNewMedication = true) }
         }
     }
 
     fun send(event: AddMedEvent) {
         when (event) {
-            is AddMedEvent.AddMedTrackButtonClicked -> {
-
-            }
-
             is AddMedEvent.ContinueButtonClicked -> {
                 saveMedicationModel()
             }
 
             is AddMedEvent.ErrorWasShown -> {
-                _state.value = _state.value!!.copy(inputError = 0)
+                _state.value = _state.value.copy(inputError = 0)
             }
 
-            is AddMedEvent.Mode -> {
-                if (event.mode == EDIT_MODE) {
-                    editMedicationModelId = event.medicationModelId
-                    getMedicationModelById(event.medicationModelId)
-                }
+            is AddMedEvent.SetEditMode -> {
+                editMedicationModelId = event.medicationModelId
+                getMedicationModelById(event.medicationModelId)
             }
 
             is AddMedEvent.UpdateState -> {
                 _state.value = event.state
-                Log.i("11.01.24", _state.value.toString())
             }
         }
     }
@@ -78,27 +71,24 @@ class AddMedViewModel(
     private fun saveMedicationModel() {
         val medicationModel = makeMedicationModel()
         medicationModel.first?.let { model ->
-            when (state.value!!.mode) {
+            when (state.value.mode) {
                 ADD_MODE -> saveNewModelInRoom(model)
                 EDIT_MODE -> replaceModelInRoom(model)
             }
-        } ?: _state.postValue(state.value!!.copy(inputError = medicationModel.second))
+        } ?: _state.update { it.copy(inputError = medicationModel.second) }
     }
 
     private fun replaceModelInRoom(medicationModel: MedicationModel) {
-        runBlocking {//TODO!!!
-            viewModelScope.launch(Dispatchers.IO) {
-                replaceMedicationModelUseCase.invoke(medicationModel)//todo return true or false
-                _state.postValue(state.value!!.copy(isSavedNewMedication = true))
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            replaceMedicationModelUseCase(medicationModel)//todo return true or false
+            _state.update { it.copy(isSavedNewMedication = true) }
         }
     }
 
     private fun makeMedicationModel(): Pair<MedicationModel?, Int> {
-        with(state.value!!) {
+        with(state.value) {
             var errorCode = 0
-            val medTrackID = generateStringId()
-            val medicationID = if (state.value!!.mode == ADD_MODE) {
+            val medicationID = if (state.value.mode == ADD_MODE) {
                 generateStringId()
             } else {
                 editMedicationModelId!!//todo?
@@ -137,7 +127,7 @@ class AddMedViewModel(
     }
 
     private fun getTrackModel(trackingType: MedsTrackModel.TrackType): MedsTrackModel {
-        with(state.value!!) {
+        with(state.value) {
             val trackModel = MedsTrackModel(
                 id = generateStringId(),
                 name = medicationName,
@@ -172,13 +162,13 @@ class AddMedViewModel(
 
     private fun trackingDataIsCorrect(trackingType: MedsTrackModel.TrackType): Boolean {
         return when (trackingType) {
-            MedsTrackModel.TrackType.STOCK_OF_MEDICINE -> state.value!!.stockOfMedicine != -1.0
+            MedsTrackModel.TrackType.STOCK_OF_MEDICINE -> state.value.stockOfMedicine != -1.0
 
-            MedsTrackModel.TrackType.DATE -> state.value!!.endDate.isNotEmpty()
+            MedsTrackModel.TrackType.DATE -> state.value.endDate.isNotEmpty()
 
-            MedsTrackModel.TrackType.NUMBER_OF_DAYS -> state.value!!.numberOfDays != -1
+            MedsTrackModel.TrackType.NUMBER_OF_DAYS -> state.value.numberOfDays != -1
 
-            MedsTrackModel.TrackType.PACKAGES_TRACK -> state.value!!.packageItems
+            MedsTrackModel.TrackType.PACKAGES_TRACK -> state.value.packageItems
                 .isNotEmpty()
 
             MedsTrackModel.TrackType.NONE -> true
@@ -188,7 +178,7 @@ class AddMedViewModel(
     private fun getTrackingType()
             : MedsTrackModel.TrackType {
         val trackingTypeArray = resources.getStringArray(R.array.track_array)
-        return when (state.value!!.trackType) {
+        return when (state.value.trackType) {
             trackingTypeArray[0] -> MedsTrackModel.TrackType.NONE
             trackingTypeArray[1] -> MedsTrackModel.TrackType.STOCK_OF_MEDICINE
             trackingTypeArray[2] -> MedsTrackModel.TrackType.NUMBER_OF_DAYS
@@ -204,7 +194,7 @@ class AddMedViewModel(
     private fun getFrequency()
             : MedicationModel.Frequency {
         val frequencyArray = resources.getStringArray(R.array.frequency_array)
-        return when (state.value!!.frequency) {
+        return when (state.value.frequency) {
             frequencyArray[0] -> MedicationModel.Frequency.SELECTED_DAYS
             frequencyArray[1] -> MedicationModel.Frequency.EVERY_OTHER_DAY
             frequencyArray[2] -> MedicationModel.Frequency.DAILY
@@ -222,7 +212,7 @@ class AddMedViewModel(
     private fun getIntakeType()
             : MedicationModel.IntakeType {
         val intakeTypeArray = resources.getStringArray(R.array.intake_array)
-        return when (state.value!!.intakeType) {//todo state or _state??
+        return when (state.value.intakeType) {//todo state or _state??
             intakeTypeArray[0] -> MedicationModel.IntakeType.NONE
             intakeTypeArray[1] -> MedicationModel.IntakeType.BEFORE_MEAL
             intakeTypeArray[2] -> MedicationModel.IntakeType.DURING_MEAL
@@ -235,9 +225,9 @@ class AddMedViewModel(
      * Также он парсит модель и изменяет ***_state***. */
     private fun getMedicationModelById(medicationModelId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val model = getMedicationModelUseCase.invoke(medicationModelId)
+            val model = getMedicationModelUseCase(medicationModelId)
             val selectedDays = model.selectedDays ?: listOf()
-            var newState = state.value!!
+            var newState = state.value
             newState = newState.copy(
                 medicationName = model.name,
                 dosage = model.dosage.toDisplayString(),
@@ -258,7 +248,7 @@ class AddMedViewModel(
                 numberOfDays = model.trackModel.numberOfDays,
                 endDate = model.trackModel.endDate.toDisplayString(),
             )
-            _state.postValue(newState)
+            _state.update { newState }
         }
     }
 
@@ -316,7 +306,7 @@ class AddMedViewModel(
         return when (this) {
             MedicationModel.Frequency.DAILY -> true
             MedicationModel.Frequency.EVERY_OTHER_DAY -> true
-            MedicationModel.Frequency.SELECTED_DAYS -> state.value!!.selectedDays.isNotEmpty()
+            MedicationModel.Frequency.SELECTED_DAYS -> state.value.selectedDays.isNotEmpty()
         }
     }
 }

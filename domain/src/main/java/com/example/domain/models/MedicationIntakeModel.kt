@@ -1,5 +1,7 @@
 package com.example.domain.models
 
+import kotlinx.serialization.Serializable
+
 data class MedicationIntakeModel(
     val id: String,
     val name: String,                   // Название лекарства
@@ -14,10 +16,12 @@ data class MedicationIntakeModel(
     val actualIntakeDate: Date? = null, // Дата фактического приема лекарства
     val intakeType: IntakeType,         // Тип приема
 ) {
+
     data class Time(
         val hour: Int,  // Час
         val minute: Int,// Минуты
     ) {
+
         fun toEntityString(): String {
             return "${hour},${minute}"
         }
@@ -31,11 +35,14 @@ data class MedicationIntakeModel(
         }
     }
 
-
+    /*todo WARNING! kotlinx.serialization compiler plugin is not applied to the module,
+       so this annotation would not be processed. Make sure that you've setup
+       your buildscript correctly and re-import project.*/
+    @Serializable
     data class Date(
-        val day: Int,   // День
-        val month: Int, // Месяц
-        val year: Int,  // Год
+        val day: Int = 0,   // День
+        val month: Int = 0, // Месяц
+        val year: Int = 0,  // Год
     )
 
     enum class IntakeType {

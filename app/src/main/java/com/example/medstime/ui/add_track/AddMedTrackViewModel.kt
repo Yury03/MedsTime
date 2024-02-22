@@ -12,10 +12,9 @@ import kotlinx.coroutines.flow.update
 import java.util.Date
 
 class AddMedTrackViewModel : ViewModel() {
-    private val _state: MutableStateFlow<AddMedTrackState> =
-        MutableStateFlow(AddMedTrackState())
+
+    private val _state: MutableStateFlow<AddMedTrackState> = MutableStateFlow(AddMedTrackState())
     val state: StateFlow<AddMedTrackState> = _state.asStateFlow()
-    private lateinit var addMedState: AddMedState
 
     private fun updateErrorCode(): Int {
         val stateValue = _state.value
@@ -75,16 +74,15 @@ class AddMedTrackViewModel : ViewModel() {
                 }
             }
 
-            //todo Возможно стоит убрать поле AddMedState и хранить json в AddMedTrackState
             is AddMedTrackEvent.HandleArguments -> {
-                addMedState =
+                val addMedState =
                     Gson().fromJson(event.addMedStateJsonString, AddMedState::class.java)
                 _state.update { currentState ->
                     currentState.copy(
                         medName = addMedState.medicationName,
                         dosageUnit = addMedState.dosageUnits,
                         actualPackageList = addMedState.packageItems,
-//                        addMedStateJson = event.addMedStateJsonString,
+                        addMedStateModel = addMedState,
                     )
                 }
             }
@@ -92,18 +90,18 @@ class AddMedTrackViewModel : ViewModel() {
             AddMedTrackEvent.BackButtonClicked -> {
                 _state.update { currentState ->
                     //изменение состояния AddMedFragment
-                    addMedState = addMedState.copy(
+                    val addMedState = currentState.addMedStateModel.copy(
                         medicationName = currentState.medName,
                         dosageUnits = currentState.dosageUnit,
                         packageItems = currentState.actualPackageList.toMutableList(),
                     )
-                    currentState.copy(addMedStateJson = getActualAddMedStateJson())
+                    currentState.copy(addMedStateJson = getAddMedStateJson(addMedState))
                 }
             }
         }
     }
 
-    private fun getActualAddMedStateJson(): String {
+    private fun getAddMedStateJson(addMedState: AddMedState): String {
         return Gson().toJson(addMedState)
     }
 

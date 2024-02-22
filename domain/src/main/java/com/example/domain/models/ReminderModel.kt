@@ -7,6 +7,7 @@ data class ReminderModel(
     val status: Status,
     var timeShow: Long,
 ) {
+
     enum class Type {
         BANNER,
         PUSH_NOTIFICATION,

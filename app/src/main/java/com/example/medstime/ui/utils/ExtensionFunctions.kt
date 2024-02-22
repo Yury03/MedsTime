@@ -1,6 +1,8 @@
 package com.example.medstime.ui.utils
 
 import android.annotation.SuppressLint
+import android.view.View
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -33,3 +35,13 @@ fun Double.toDisplayString() =
     } else {
         this.toString()
     }
+
+/**### Функция *BottomNavigationView.show()* меняет поле visibility на VISIBLE*/
+fun BottomNavigationView.show() {
+    visibility = View.VISIBLE
+}
+
+/**### Функция *BottomNavigationView.hide()* меняет поле visibility на GONE*/
+fun BottomNavigationView.hide() {
+    visibility = View.GONE
+}

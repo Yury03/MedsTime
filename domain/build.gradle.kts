@@ -1,6 +1,7 @@
 plugins {
+    alias(libs.plugins.jetbrains.kotlin.jvm)
     id("java-library")
-    id("org.jetbrains.kotlin.jvm")
+    kotlin("plugin.serialization")
 }
 
 java {
@@ -16,7 +17,7 @@ repositories {
 
 }
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.serialization.json)
 }
 

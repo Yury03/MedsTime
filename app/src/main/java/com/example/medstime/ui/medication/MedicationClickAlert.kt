@@ -14,6 +14,7 @@ class MedicationClickAlert(
     medicationIntakeModelID: String,
     timeAndDosageText: String,
 ) : DialogFragment() {
+
     //    init {
 //        val inflater = LayoutInflater.from(context)
 //        val binding = MedicationAlertDialogBinding.inflate(inflater)
@@ -41,7 +42,6 @@ class MedicationClickAlert(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.medication_alert_dialog, container, false)
-        return view
+        return inflater.inflate(R.layout.medication_alert_dialog, container, false)
     }
 }

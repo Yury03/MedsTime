@@ -15,7 +15,8 @@ data class MedsTrackModel(
     var packageCounter: Int = -1, // количество оставшихся упаковок [только у PACKAGES_TRACK]
     var totalDays: Int = -1, // [У всех типов отслеживания]
     var trackType: TrackType = TrackType.NONE,
-    ) : Serializable {
+) : Serializable {
+
     enum class TrackType {
         PACKAGES_TRACK,     // Отслеживание добавленных упаковок
         STOCK_OF_MEDICINE,  // Курс (количество лекарств)

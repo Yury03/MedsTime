@@ -2,41 +2,47 @@ package com.example.medstime.ui.medication
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavOptions
-import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.domain.models.MedicationIntakeModel
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentMedicationListBinding
-import com.example.medstime.ui.add_med.AddMedFragment
+import com.example.medstime.ui.add_med.AddMedState
 import com.example.medstime.ui.medication.adapters.TimesListAdapter
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
+
     private val viewModel by viewModel<MedicationListViewModel>()
     private var _binding: FragmentMedicationListBinding? = null
     private val binding get() = _binding!!
-    private lateinit var _date: MedicationIntakeModel.Date
-
-    companion object {
-        private const val TIME_PICKER_TAG = "TimePickerMedicationListFragment"
-    }
+    private var _date = MedicationIntakeModel.Date()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMedicationListBinding.bind(view)
-        val day = arguments?.getInt("day")!!                //todo обработка ошибок
-        val month = arguments?.getInt("month")!!
-        val year = arguments?.getInt("year")!!
-        _date = (MedicationIntakeModel.Date(day, month, year))
+        arguments?.getString("date")?.let {
+            val medicationDate = Json.decodeFromString<MedicationIntakeModel.Date>(it)
+            _date = MedicationIntakeModel.Date(
+                medicationDate.day,
+                medicationDate.month,
+                medicationDate.year,
+            )
+        } ?: run {
+            Toast.makeText(requireContext(), R.string.error_date_is_empty, Toast.LENGTH_LONG).show()
+        }
+
         val medicationClick = { model: MedicationIntakeModel ->
             createItemButtonClickMap(model)
         }
-        viewModel.initIntakeListToday()
         viewModel.intakeListToday.observe(viewLifecycleOwner) {
             val sortedList = splitIntakeList(it)
             if (sortedList.isEmpty()) {
@@ -92,13 +98,14 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
                 viewModel.changeIsTakenStatus(intake.id, false)
             }
             put(R.id.itemEditButton) {
-                val args = Bundle()
-                args.putString(AddMedFragment.ARG_KEY_MODE, "EditMode")//TODO
-                args.putString(AddMedFragment.ARG_KEY_MEDICATION_MODEL_ID, intake.medicationId)
-                val navController = findNavController(requireActivity(), R.id.fragmentContainerView)
+                val navController = requireActivity().findNavController(R.id.fragmentContainerView)
+                val action =
+                    MedicationFragmentDirections.actionMedicationFragmentToAddMedFragmentEdit(
+                        mode = AddMedState.EDIT_MODE,
+                        medicationModelId = intake.medicationId,
+                    )
                 navController.navigate(
-                    resId = R.id.addMedFragment,
-                    args = args,
+                    directions = action,
                     navOptions = NavOptions.Builder()
                         .setEnterAnim(R.anim.slide_in_right)
                         .setExitAnim(R.anim.slide_out_left)
@@ -122,5 +129,10 @@ class MedicationListFragment : Fragment(R.layout.fragment_medication_list) {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    companion object {
+
+        private const val TIME_PICKER_TAG = "TimePickerMedicationListFragment"
     }
 }

@@ -1,14 +1,8 @@
 package com.example.medstime.ui.add_med
 
-import android.Manifest
-import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
 import android.text.Editable.Factory
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,54 +13,47 @@ import android.widget.AutoCompleteTextView
 import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.core.app.ActivityCompat
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import com.example.domain.models.MedicationModel
 import com.example.medstime.R
 import com.example.medstime.databinding.FragmentAddMedBinding
 import com.example.medstime.services.ReminderService
-import com.example.medstime.ui.main_activity.MainActivity
+import com.example.medstime.ui.add_med.AddMedState.Companion.EDIT_MODE
+import com.example.medstime.ui.utils.ARG_KEY_MEDICATION_MODEL_ID
+import com.example.medstime.ui.utils.ARG_KEY_MODE
+import com.example.medstime.ui.utils.ARG_KEY_STATE
 import com.google.android.material.chip.Chip
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
-import com.google.common.util.concurrent.ListenableFuture
 import com.google.gson.Gson
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Calendar
 import java.util.Locale
 
 
 class AddMedFragment : Fragment(R.layout.fragment_add_med) {
-    companion object {
-        private const val LOG_TAG = "AddMedFragment"
-        private const val TIME_PICKER_TAG = "TimePickerAddMedFragment"
-        private const val DESTINATION_TO_MEDICATION_SCREEN = 1
-        private const val DESTINATION_TO_ADD_MED_TRACK_SCREEN = 2
-        private const val CAMERA_PERMISSION_CODE = 300
-        private const val SYSTEM_ALERT_WINDOW_CODE = 400
-        const val ARG_KEY_STATE = "state"
-        const val ARG_KEY_MODE = "mode"
-        const val ARG_KEY_MEDICATION_MODEL_ID = "medication_model_id"
-    }
 
     private val viewModel by viewModel<AddMedViewModel>()
-    private lateinit var binding: FragmentAddMedBinding
-    private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
-    private lateinit var _currentState: AddMedState
+    private var _binding: FragmentAddMedBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var _currentState: AddMedState//todo слишком много полей, на каждое нужен event?
+
+    //private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-//        cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext()) //ошибка с библиотекой камеры? Появилась после изменения грэдл. Приложение крашится
-        binding = FragmentAddMedBinding.inflate(inflater, container, false)
-        hideBottomNavigationBar()
+        //cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext()) //ошибка с библиотекой камеры? Появилась после изменения грэдл. Приложение крашится
+        _binding = FragmentAddMedBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -81,27 +68,37 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         setAdapterSpinFrequency()
 //        betaFunctions()
         initView()
+        setOnBackButtonCallback()
     }
 
-    private fun hideBottomNavigationBar() {
-        (requireActivity() as MainActivity).hideBottomNavigationBar()
+    private fun setOnBackButtonCallback() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    closeFragment(DESTINATION_TO_MEDICATION_SCREEN)
+                }
+            })
     }
 
-    private fun showBottomNavigationBar() {
-        (requireActivity() as MainActivity).showBottomNavigationBar()
-    }
-
+    /**
+     * ### Функция handleArguments() обрабатывает входящие аргументы от MedicationFragment(MedicationListFragment) и AddMedTrackFragment.
+     * *stateJson* приходит из **AddMedTrackFragment**, отвечает за восстановление состояния **AddMedFragment** после редактирования **AddMedState** внутри **AddMedTrackFragment**.
+     *
+     * *mode* приходит из **MedicationFragment**:
+     * - в случае **EDIT_MODE**, viewModel получает модель по *medicationModelId*, а фрагмент открывается в режиме редактирования;
+     * - в случае **ADD_MODE** *medicationModelId* не будет существовать.
+     * */
     private fun handleArguments() {
         arguments?.let { args ->
-            if (args.getString(ARG_KEY_MODE).equals(AddMedState.EDIT_MODE)) {
-                val id = args.getString(ARG_KEY_MEDICATION_MODEL_ID)!!
-                viewModel.send(AddMedEvent.Mode(AddMedState.EDIT_MODE, id))
+            val mode = args.getString(ARG_KEY_MODE)
+            val medicationModelId = args.getString(ARG_KEY_MEDICATION_MODEL_ID)
+            val stateJson = args.getString(ARG_KEY_STATE, "")//todo?
+
+            if (mode.equals(EDIT_MODE) && medicationModelId != null) {
+                viewModel.send(AddMedEvent.SetEditMode(medicationModelId))
                 changeViewTextToEditMode()
-            }
-            //передача текущего состояния фрагмента, для последующего восстановления
-            val stateJson = args.getString(ARG_KEY_STATE)
-            stateJson?.let {
-                val addMedState = Gson().fromJson(it, AddMedState::class.java)
+            } else if (stateJson?.isNotEmpty() == true) {
+                val addMedState = Gson().fromJson(stateJson, AddMedState::class.java)
                 updateAllData(state = addMedState, isForcedUpdate = true)
                 viewModel.send(AddMedEvent.UpdateState(addMedState))
             }
@@ -119,7 +116,6 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     private fun medicationSaved() {
         val serviceIntent = Intent(requireContext(), ReminderService::class.java)
         requireContext().startService(serviceIntent)
-
     }
 
     private fun initView() {
@@ -155,11 +151,11 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             backButton.setOnClickListener {
                 closeFragment(DESTINATION_TO_MEDICATION_SCREEN)
             }
-            scanBarcode.setOnClickListener {
-                checkCameraPermission()
-                if (scanBarcodeLayout.isExpanded) scanBarcodeLayout.collapse()
-                else scanBarcodeLayout.expand()
-            }
+//            scanBarcode.setOnClickListener {
+//                checkCameraPermission()
+//                if (scanBarcodeLayout.isExpanded) scanBarcodeLayout.collapse()
+//                else scanBarcodeLayout.expand()
+//            }
             medicationName.addTextChangedListener {
                 if (textFieldMedicationName.isErrorEnabled) {
                     textFieldMedicationName.isErrorEnabled = false
@@ -177,10 +173,14 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     }
 
     private fun observeViewModelData() {
-        viewModel.state.observe(viewLifecycleOwner) { state ->
-            _currentState = state
-            Log.e(LOG_TAG, state.toString())
-            updateAllData(state)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collect { state ->
+                    _currentState = state
+                    Log.e(LOG_TAG, state.toString())
+                    updateAllData(state)
+                }
+            }
         }
     }
 
@@ -189,7 +189,7 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     private fun updateAllData(state: AddMedState, isForcedUpdate: Boolean = false) {
         with(binding) {
             startIntakeDate.updateText(state.startIntakeDate)
-            if (state.mode == AddMedState.EDIT_MODE || isForcedUpdate) {
+            if (state.mode == EDIT_MODE || isForcedUpdate) {
                 medicationName.updateText(state.medicationName)
                 dosage.updateText(state.dosage)
                 dosageUnits.updateAutoCompleteText(state.dosageUnits)
@@ -233,40 +233,40 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         return selectedDays
     }
 
-    private fun checkSystemAlertWindowPermission(): Boolean {
-        val systemAlertWindowIsGranted = ContextCompat.checkSelfPermission(
-            requireContext(), Manifest.permission.SYSTEM_ALERT_WINDOW
-        ) == PackageManager.PERMISSION_DENIED
-        if (systemAlertWindowIsGranted) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.SYSTEM_ALERT_WINDOW),
-                SYSTEM_ALERT_WINDOW_CODE
-            )
-        }
-        if (!Settings.canDrawOverlays(requireContext())) {
-            val settingsIntent = Intent(
-                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                Uri.parse("package:${requireContext().packageName}")
-            )
-            //TODO:3 Dialog
-            startActivity(settingsIntent)
-        }
-        return Settings.canDrawOverlays(requireContext()) && systemAlertWindowIsGranted
-    }
+//    private fun checkSystemAlertWindowPermission(): Boolean {
+//        val systemAlertWindowIsGranted = ContextCompat.checkSelfPermission(
+//            requireContext(), Manifest.permission.SYSTEM_ALERT_WINDOW
+//        ) == PackageManager.PERMISSION_DENIED
+//        if (systemAlertWindowIsGranted) {
+//            ActivityCompat.requestPermissions(
+//                requireActivity(),
+//                arrayOf(Manifest.permission.SYSTEM_ALERT_WINDOW),
+//                SYSTEM_ALERT_WINDOW_CODE
+//            )
+//        }
+//        if (!Settings.canDrawOverlays(requireContext())) {
+//            val settingsIntent = Intent(
+//                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+//                Uri.parse("package:${requireContext().packageName}")
+//            )
+//            //TODO:3 Dialog
+//            startActivity(settingsIntent)
+//        }
+//        return Settings.canDrawOverlays(requireContext()) && systemAlertWindowIsGranted
+//    }
 
     /**## Метод closeFragment() обрабатывает все операции перехода с помощью **navController**.*/
-    private fun closeFragment(destination: Int, args: Bundle = Bundle()) {
+    private fun closeFragment(destination: Int, stateArg: String = "") {
+        val navController = requireActivity().findNavController(R.id.fragmentContainerView)
         when (destination) {
             DESTINATION_TO_MEDICATION_SCREEN -> {
-                showBottomNavigationBar()
-                requireActivity().findNavController(R.id.fragmentContainerView)
-                    .navigate(R.id.medicationFragment)
+                navController.navigate(R.id.action_addMedFragment_to_medicationFragment)
             }
 
             DESTINATION_TO_ADD_MED_TRACK_SCREEN -> {
-                requireActivity().findNavController(R.id.fragmentContainerView)
-                    .navigate(R.id.addMedTrackFragment, args)
+                val action =
+                    AddMedFragmentDirections.actionAddMedFragmentToAddMedTrackFragment(state = stateArg)
+                navController.navigate(action)
             }
         }
     }
@@ -274,18 +274,15 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
     private fun openAddMedTrackFragment() {
         updateCurrentState()
         val stateJson = Gson().toJson(_currentState)
-        val args = Bundle().apply {
-            putString(ARG_KEY_STATE, stateJson)
-        }
-        closeFragment(DESTINATION_TO_ADD_MED_TRACK_SCREEN, args)
+        closeFragment(DESTINATION_TO_ADD_MED_TRACK_SCREEN, stateJson)
     }
 
-    private fun showInfoAboutBannerDialog() =
-        AlertDialog.Builder(requireActivity()).setTitle(R.string.dialog_title_info_about_banner)
-            .setMessage(R.string.dialog_message_info_about_banner)
-            .setPositiveButton(getString(R.string.positive_button_text)) { dialog, _ ->
-                dialog.dismiss()
-            }.create().show()
+//    private fun showInfoAboutBannerDialog() =
+//        AlertDialog.Builder(requireActivity()).setTitle(R.string.dialog_title_info_about_banner)
+//            .setMessage(R.string.dialog_message_info_about_banner)
+//            .setPositiveButton(getString(R.string.positive_button_text)) { dialog, _ ->
+//                dialog.dismiss()
+//            }.create().show()
 
     private fun showError(error: Int) {
         Log.e(LOG_TAG, "ERROR CONTINUE BUTTON")
@@ -347,10 +344,8 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
 
     private fun callTimePicker(hour: Int = 12, minute: Int = 0) =
         MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_24H).setHour(hour)
-            .setMinute(minute)
-            .setTitleText(R.string.title_add_reminder)
-            .setTheme(R.style.TimePickerDialog)
-            .build()
+            .setMinute(minute).setTitleText(R.string.title_add_reminder)
+            .setTheme(R.style.TimePickerDialog).build()
 
     private fun addChipTime(hour: Int, minute: Int) {
         val chipText = timeToDisplayString(hour, minute)
@@ -422,58 +417,57 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         }
     }
 
-    private fun betaFunctions() {
-        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
-        val defaultValue = resources.getBoolean(R.bool.sp_camera_beta_default)
-        val cameraBeta = sharedPref.getBoolean(getString(R.string.sp_key_camera_beta), defaultValue)
-        if (cameraBeta) {
-            activateCamera()
-            activateUseBanner()
-            binding.scanBarcode.visibility = View.VISIBLE
-        }
-    }
+//    private fun betaFunctions() {
+//        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
+//        val defaultValue = resources.getBoolean(R.bool.sp_camera_beta_default)
+//        val cameraBeta = sharedPref.getBoolean(getString(R.string.sp_key_camera_beta), defaultValue)
+//        if (cameraBeta) {
+//            activateCamera()
+//            activateUseBanner()
+//            binding.scanBarcode.visibility = View.VISIBLE
+//        }
+//    }
 
-    /**Использование баннера работает неправильно, периодически крашится*/
-    private fun activateUseBanner() {
-        with(binding) {
-            bannerLayout.visibility = View.VISIBLE
-            useBannerChBox.setOnClickListener {
-                if (!checkSystemAlertWindowPermission()) {
-                    (it as CheckBox).isChecked = false
-                }
-            }
-            infoAboutBanner.setOnClickListener {
-                showInfoAboutBannerDialog()
-            }
-        }
+//    /**Использование баннера работает неправильно, периодически крашится*/
+//    private fun activateUseBanner() {
+//        with(binding) {
+//            bannerLayout.visibility = View.VISIBLE
+//            useBannerChBox.setOnClickListener {
+//                if (!checkSystemAlertWindowPermission()) {
+//                    (it as CheckBox).isChecked = false
+//                }
+//            }
+//            infoAboutBanner.setOnClickListener {
+//                showInfoAboutBannerDialog()
+//            }
+//        }
+//    }
 
-    }
+//    private fun checkCameraPermission() {
+//        if (ContextCompat.checkSelfPermission(
+//                requireContext(), Manifest.permission.CAMERA
+//            ) == PackageManager.PERMISSION_DENIED
+//        ) {
+//            ActivityCompat.requestPermissions(
+//                requireActivity(), arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE
+//            )
+//        }
+//    }
 
-    private fun checkCameraPermission() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(), Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_DENIED
-        ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(), arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE
-            )
-        }
-    }
+//    private fun activateCamera() {
+//        cameraProviderFuture.addListener({
+//            val cameraProvider = cameraProviderFuture.get()
+//            bindPreview(cameraProvider)
+//        }, ContextCompat.getMainExecutor(requireContext()))
+//    }
 
-    private fun activateCamera() {
-        cameraProviderFuture.addListener({
-            val cameraProvider = cameraProviderFuture.get()
-            bindPreview(cameraProvider)
-        }, ContextCompat.getMainExecutor(requireContext()))
-    }
-
-    private fun bindPreview(cameraProvider: ProcessCameraProvider) {
-        val preview: Preview = Preview.Builder().build()
-        val cameraSelector: CameraSelector =
-            CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
-        preview.setSurfaceProvider(binding.previewView.surfaceProvider)
-        cameraProvider.bindToLifecycle(this as LifecycleOwner, cameraSelector, preview)
-    }
+//    private fun bindPreview(cameraProvider: ProcessCameraProvider) {
+//        val preview: Preview = Preview.Builder().build()
+//        val cameraSelector: CameraSelector =
+//            CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
+//        preview.setSurfaceProvider(binding.previewView.surfaceProvider)
+//        cameraProvider.bindToLifecycle(this as LifecycleOwner, cameraSelector, preview)
+//    }
 
     private fun AutoCompleteTextView.updateAutoCompleteText(text: String) {
         if (this.text.toString() != text) {
@@ -560,9 +554,8 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
         }
     }
 
-    private fun timeToDisplayString(hour: Int, minute: Int) =
-        if (minute < 10) "${hour}:0${minute}"
-        else "$hour:$minute"
+    private fun timeToDisplayString(hour: Int, minute: Int) = if (minute < 10) "${hour}:0${minute}"
+    else "$hour:$minute"
 
     private fun updateCurrentState() {
         val stockOfMedicine =
@@ -585,5 +578,15 @@ class AddMedFragment : Fragment(R.layout.fragment_add_med) {
             numberOfDays = numberOfDays ?: 0, //todo test
             endDate = binding.endIntakeDate.text.toString(),
         )
+    }
+
+    companion object {
+
+        private const val LOG_TAG = "AddMedFragment"
+        private const val TIME_PICKER_TAG = "TimePickerAddMedFragment"
+        private const val DESTINATION_TO_MEDICATION_SCREEN = 1
+        private const val DESTINATION_TO_ADD_MED_TRACK_SCREEN = 2
+        //private const val CAMERA_PERMISSION_CODE = 300
+        //private const val SYSTEM_ALERT_WINDOW_CODE = 400
     }
 }

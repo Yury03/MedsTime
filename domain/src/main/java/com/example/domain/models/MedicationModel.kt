@@ -15,6 +15,7 @@ data class MedicationModel(
     val useBanner: Boolean,//Использовать баннер
     var trackModel: MedsTrackModel = MedsTrackModel(),
 ) {
+
     data class Time(
         val hour: Int, // Час
         val minute: Int // Минуты
