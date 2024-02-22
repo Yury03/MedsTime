@@ -38,12 +38,6 @@ import kotlin.time.Duration.Companion.minutes
  * - **get medication model by id** получает модель Medication по id.
  * */
 class CommonContractImpl(private val context: Context) : Repository.CommonContract {
-    private companion object {
-        //по дефолту генерируем приемы только на 14 дней
-        const val DEFAULT_NUMBER_DAYS_GENERATE = 14
-        const val DEFAULT_PURCHASE_REMINDER_DAYS = 3
-        const val LOG_TAG = "Common contract implementation"
-    }
 
     private val medicationDatabase: MedicationDatabase by lazy {
         MedicationDatabase.getDatabase(context)
@@ -407,11 +401,20 @@ class CommonContractImpl(private val context: Context) : Repository.CommonContra
      * - удаляет все *приемы лекарств по id модели Medication*
      * - удаляет модель Medication*/
     override suspend fun removeMedicationModel(medicationModelId: String) {
-        val status = ReminderModel.Status.DEPRECATED.toString()//todo возможно стоит просто удалять эти модели из бд?
+        val status =
+            ReminderModel.Status.DEPRECATED.toString()//todo возможно стоит просто удалять эти модели из бд?
         medicationIntakeDao.getByMedicationModelId(medicationModelId).forEach {
             reminderDao.updateStatusByMedicationIntakeId(it.id, status)
         }
         medicationIntakeDao.deleteByMedicationModelId(medicationModelId)
         medicationDao.deleteById(medicationModelId)
+    }
+
+    private companion object {
+
+        //по дефолту генерируем приемы только на 14 дней
+        const val DEFAULT_NUMBER_DAYS_GENERATE = 14
+        const val DEFAULT_PURCHASE_REMINDER_DAYS = 3
+        const val LOG_TAG = "Common contract implementation"
     }
 }

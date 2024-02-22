@@ -9,6 +9,7 @@ import com.example.domain.models.MedsTrackModel
 import com.example.domain.models.PackageItemModel
 
 class MedsTrackContractImpl(context: Context) : Repository.MedsTrackContract {
+
     private val medsTrackDatabase: MedsTrackDatabase by lazy {
         MedsTrackDatabase.getDatabase(context)
     }

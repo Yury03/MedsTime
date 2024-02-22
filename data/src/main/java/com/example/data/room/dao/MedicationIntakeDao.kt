@@ -3,12 +3,12 @@ package com.example.data.room.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
 import com.example.data.room.entity.MedicationIntakeEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MedicationIntakeDao {
+
     @Query("SELECT * FROM medication_intake_database")
     fun getAll(): Flow<List<MedicationIntakeEntity>?>
 

@@ -16,14 +16,11 @@ import kotlinx.coroutines.flow.map
  * - **change medication intake is taken** меняет статус приема;
  * - **get medication intake model** получает модель MedicationIntake по id.*/
 class MedicationIntakeContractImpl(context: Context) : Repository.MedicationIntakeContract {
+
     private val medicationIntakeDatabase: MedicationIntakeDatabase by lazy {
         MedicationIntakeDatabase.getDatabase(context)
     }
     private val medicationIntakeDao: MedicationIntakeDao by lazy { medicationIntakeDatabase.medicationIntakeDao() }
-
-    companion object {
-        const val LOG_TAG = "MedicationIntakeContractImpl"
-    }
 
     override suspend fun getIntakeList(): Flow<List<MedicationIntakeModel>> {
         val medicationIntakeList = medicationIntakeDao.getAll()
@@ -59,4 +56,8 @@ class MedicationIntakeContractImpl(context: Context) : Repository.MedicationInta
     override suspend fun getMedicationIntakeModel(medicationIntakeId: String) =
         MedicationIntakeMapper.mapToModel(medicationIntakeDao.getById(medicationIntakeId))
 
+    companion object {
+
+        const val LOG_TAG = "MedicationIntakeContractImpl"
+    }
 }

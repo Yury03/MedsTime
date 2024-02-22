@@ -5,9 +5,10 @@ import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.domain.models.MedicationIntakeModel
 import com.example.medstime.R
@@ -23,10 +24,6 @@ import java.util.concurrent.TimeUnit
 
 
 class MedicationFragment : Fragment(R.layout.fragment_medication) {
-    companion object {
-        const val MAX_NUMBER_DAYS: Long = 14
-        const val MIN_NUMBER_DAYS: Long = 14
-    }
 
     private var _binding: FragmentMedicationBinding? = null
     private val binding get() = _binding!!
@@ -41,8 +38,18 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMedicationBinding.bind(view)
-
+        setOnBackButtonCallback()
         initView()
+    }
+
+    private fun setOnBackButtonCallback() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    //пользователь нажимает кнопку назад, находясь на MedicationFragment
+                    requireActivity().finish()
+                }
+            })
     }
 
     private fun initView() {
@@ -75,9 +82,8 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
             val maxDate = TimeUnit.DAYS.toMillis(MAX_NUMBER_DAYS)
             calendar.maxDate = (Date().time + maxDate)
             addNewMedication.setOnClickListener {
-                val navHostFragment =
-                    requireActivity().supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
-                navHostFragment.navController.navigate(R.id.addMedFragment)
+                val navController = requireActivity().findNavController(R.id.fragmentContainerView)
+                navController.navigate(R.id.action_medicationFragment_to_addMedFragment)
             }
             viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
 
@@ -89,7 +95,6 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
             })
         }
     }
-
 
     private fun setPagerAdapter(date: MedicationIntakeModel.Date) {
         dateList = generateDateList(date)
@@ -156,5 +161,11 @@ class MedicationFragment : Fragment(R.layout.fragment_medication) {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    companion object {
+
+        const val MAX_NUMBER_DAYS: Long = 14
+        const val MIN_NUMBER_DAYS: Long = 14
     }
 }

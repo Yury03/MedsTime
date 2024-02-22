@@ -25,7 +25,9 @@ data class AddMedState(
     val endDate: String = "",
     val trackType: String = "",
 ) {
+
     companion object {
+
         const val EDIT_MODE = "edit"
         const val ADD_MODE = "add"
     }

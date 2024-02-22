@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 object MedsTrackMapper {
+
     fun mapToEntity(model: MedsTrackModel): MedsTrackEntity {
         return MedsTrackEntity(
             id = model.id,
@@ -37,7 +38,7 @@ object MedsTrackMapper {
             stockOfMedicine = entity.stockOfMedicine,
             numberOfDays = entity.numberOfDays,
             trackType = MedsTrackModel.TrackType.valueOf(entity.trackType),
-            )
+        )
     }
 
     private fun mapStringToList(list: String): MutableList<PackageItemModel> {

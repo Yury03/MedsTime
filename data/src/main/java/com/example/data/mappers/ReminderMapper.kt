@@ -4,6 +4,7 @@ import com.example.data.room.entity.ReminderEntity
 import com.example.domain.models.ReminderModel
 
 object ReminderMapper {
+
     fun mapToEntity(model: ReminderModel): ReminderEntity {
         return ReminderEntity(
             id = model.id,

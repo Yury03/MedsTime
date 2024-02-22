@@ -25,16 +25,11 @@ import com.example.medstime.ui.meds_tracking.components.MedsTrackingList
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MedsTrackingFragment : Fragment() {
-    companion object {
-        private const val TAG = "MedsTrackingFragment"
-    }
 
     //todo при полной миграции оставить только MedsTrackingScreen()
     private val viewModel by viewModel<MedsTrackViewModel>()
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
@@ -48,8 +43,7 @@ class MedsTrackingFragment : Fragment() {
     private fun MedsTrackingScreen() {
         val state by viewModel.state.asFlow().collectAsState(
             initial = MedsTrackState(
-                isLoading = true,
-                medsTrackList = listOf()
+                isLoading = true, medsTrackList = listOf()
             )
         )
         Box(
@@ -67,5 +61,10 @@ class MedsTrackingFragment : Fragment() {
                 }
             }
         }
+    }
+
+    companion object {
+
+        private const val TAG = "MedsTrackingFragment"
     }
 }

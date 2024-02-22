@@ -18,6 +18,7 @@ class TimesListAdapter(
     RecyclerView.Adapter<TimesListAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
         val time: TextView = itemView.findViewById(R.id.timeMedicationWithTimeItem)
         val intakeList: RecyclerView = itemView.findViewById(R.id.intakeList)
     }

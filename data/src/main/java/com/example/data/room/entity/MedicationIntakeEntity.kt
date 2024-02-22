@@ -21,7 +21,9 @@ data class MedicationIntakeEntity(
     @TypeConverters(IntTripleConverter::class) val actualIntakeDate: Triple<Int, Int, Int>?, //day, month, year
     val intakeType: String,
 ) {
+
     class IntPairConverter {
+
         @TypeConverter
         fun fromIntPair(value: Pair<Int, Int>?): String? {
             return value?.let { "${it.first},${it.second}" }
@@ -36,6 +38,7 @@ data class MedicationIntakeEntity(
     }
 
     class IntTripleConverter {
+
         @TypeConverter
         fun fromIntTriple(value: Triple<Int, Int, Int>?): String? {
             return value?.let { "${it.first},${it.second},${it.third}" }

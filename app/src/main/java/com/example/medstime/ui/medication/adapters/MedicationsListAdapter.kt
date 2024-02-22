@@ -17,12 +17,14 @@ class MedicationsListAdapter(
     private val context: Context,
 ) :
     RecyclerView.Adapter<MedicationsListAdapter.ViewHolder>() {
+
     enum class Status { NONE, IS_TAKEN, IS_NOT_TAKEN }
 
     private var status = Status.NONE
 
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
         val name: TextView = itemView.findViewById(R.id.medName)
         val dosage: TextView = itemView.findViewById(R.id.medDosage)
         val timeMedication: TextView = itemView.findViewById(R.id.timeMedication)

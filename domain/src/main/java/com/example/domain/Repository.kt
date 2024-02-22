@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface Repository {
     interface MedicationIntakeContract {
+
         suspend fun getIntakeList(): Flow<List<MedicationIntakeModel>>
         suspend fun changeActualTimeIntake(
             medicationIntakeId: String,
@@ -24,6 +25,7 @@ interface Repository {
     }
 
     interface ReminderContract {
+
         suspend fun getReminderModelById(reminderId: String): ReminderModel
         suspend fun getRemindersWithStatus(reminderStatus: ReminderModel.Status): List<ReminderModel>
         suspend fun changeNotificationStatusByReminderId(
@@ -38,6 +40,7 @@ interface Repository {
     }
 
     interface CommonContract {
+
         suspend fun saveNewMedication(medicationModel: MedicationModel)
         suspend fun removeMedicationModel(medicationModelId: String)
         suspend fun replaceMedicationModel(medicationModel: MedicationModel)
@@ -45,6 +48,7 @@ interface Repository {
     }
 
     interface MedsTrackContract {
+
         suspend fun getAllTracks(): List<MedsTrackModel>
         suspend fun getTrackById(medsTrackModelId: String): MedsTrackModel
     }

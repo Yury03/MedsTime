@@ -13,11 +13,13 @@ import com.example.data.room.entity.MedicationEntity
     MedicationEntity.IntListConverter::class
 
 )
-@Database(entities = [MedicationEntity::class], version = 1)
+@Database(entities = [MedicationEntity::class], version = 1, exportSchema = false)
 abstract class MedicationDatabase : RoomDatabase() {
+
     abstract fun medicationDao(): MedicationDao
 
     companion object {
+
         @Volatile
         private var INSTANCE: MedicationDatabase? = null
         fun getDatabase(context: Context): MedicationDatabase {
